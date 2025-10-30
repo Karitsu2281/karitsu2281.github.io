@@ -6,7 +6,7 @@ environments: Web
 status: Published
 feedback link: Un enlace en el que los usuarios puedan darte feedback (quizás creando un issue en un repositorio de git)
 analytics account: ID de Google Analytics
-# Guía de bastionamiento para PC de alto rendimiento con placa base Aorus B550 Elite AX V2
+# Guia de bastionamiento para PC de alto rendimiento con placa base Aorus B550 Elite AX V2
 ---
 
 ## Materiales necesarios
@@ -14,14 +14,15 @@ analytics account: ID de Google Analytics
 - PC con placa base Aorus B550 Elite V2 AX
 - Memoria USB formateada en FAT32
 - Teclado USB (obviamente, entonces como entras a la BIOS...)
-- Conexión a Internet para actualizar la BIOS
+- Conexion a Internet para actualizar la BIOS
 
 ---
 
-## Paso 1: Actualización de BIOS
+## Paso 1: Obtencion y actualizacion de BIOS
 
-1. Identifica la revisión de tu placa base impresa en la placa (ejemplo: rev. 1.1, 1.2, etc.)
-2. Descarga la última versión de BIOS para tu revisión en la web oficial de Gigabyte:
+1. Lo primero que vamos a hacer, es identificar que revision tiene la placa base. Se puede buscar en la propia caja de la placa base o en la misma placa, en mi caso seria REV 1.5 (foto ejemplo de placa base con REV 1.4 marcado en la flecha)
+![img1](/img/img1.png)
+2. Descargamos la ultima version de la BIOS de nuestra placa de la pagina oficial de Gigabyte:
    - https://www.gigabyte.com/es/Motherboard/B550-AORUS-ELITE-AX-V2-rev-11/support
 3. Extrae el archivo BIOS a tu memoria USB FAT32 vacía.
 4. Reinicia y entra en BIOS presionando `Supr` durante el inicio.
