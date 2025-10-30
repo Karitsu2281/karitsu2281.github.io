@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2025-10-30T09:18:12+01:00",
+  "id": "identificador-unico-del-codelab",
+  "duration": 0,
+  "title": "CodeLab: Bastionamiento Completo de BIOS para Aorus B550 Elite V2 A",
+  "summary": "Guía de bastionamiento de PC de alto rendimiento con placa base Aorus B550 Elite AX V2",
+  "source": "codelab.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "codelab",
+    "markdown"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "Un enlace en el que los usuarios puedan darte feedback (quizás creando un issue en un repositorio de git)",
+  "ga": "ID de Google Analytics",
+  "url": "identificador-unico-del-codelab"
+}

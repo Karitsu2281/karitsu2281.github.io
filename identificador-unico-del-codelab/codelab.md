@@ -1,4 +1,12 @@
-# CodeLab: Bastionamiento Completo de BIOS para Aorus B550 Elite V2 AX
+author: Hugo Flores
+summary: Guía de bastionamiento de PC de alto rendimiento con placa base Aorus B550 Elite AX V2
+id: identificador-unico-del-codelab
+categories: codelab,markdown
+environments: Web
+status: Published
+feedback link: Un enlace en el que los usuarios puedan darte feedback (quizás creando un issue en un repositorio de git)
+analytics account: ID de Google Analytics
+# CodeLab: Bastionamiento Completo de BIOS para Aorus B550 Elite V2 A
 
 Este CodeLab te guiará paso a paso para realizar el bastionamiento (hardening) de la BIOS de tu placa base **Aorus B550 Elite V2 AX**. El objetivo es asegurar tu PC de alto rendimiento desde el nivel más bajo, mejorando la seguridad, estabilidad y protección ante ataques de bajo nivel.
 

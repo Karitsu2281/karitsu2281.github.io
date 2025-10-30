@@ -1,0 +1,160 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>CodeLab: Bastionamiento Completo de BIOS para Aorus B550 Elite V2 A</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="ID de Google Analytics"
+                  id="identificador-unico-del-codelab"
+                  title="CodeLab: Bastionamiento Completo de BIOS para Aorus B550 Elite V2 A"
+                  environment="web"
+                  feedback-link="Un enlace en el que los usuarios puedan darte feedback (quizás creando un issue en un repositorio de git)">
+    
+      <google-codelab-step label="Prerrequisitos" duration="0">
+        <ul>
+<li>PC con placa base Aorus B550 Elite V2 AX</li>
+<li>Memoria USB formateada en FAT32</li>
+<li>Acceso a la configuración de BIOS (tecla <code>Supr</code> o <code>Del</code> durante el arranque)</li>
+<li>Conexión a Internet para descargar actualizaciones</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Paso 1: Actualización de BIOS" duration="0">
+        <ol type="1">
+<li>Identifica la revisión de tu placa base impresa en la placa (ejemplo: rev. 1.1, 1.2, etc.)</li>
+<li>Descarga la última versión de BIOS para tu revisión en la web oficial de Gigabyte: <ul>
+<li>https://www.gigabyte.com/es/Motherboard/B550-AORUS-ELITE-AX-V2-rev-11/support</li>
+</ul>
+</li>
+<li>Extrae el archivo BIOS a tu memoria USB FAT32 vacía.</li>
+<li>Reinicia y entra en BIOS presionando <code>Supr</code> durante el inicio.</li>
+<li>Abre la utilidad <strong>Q-Flash</strong> pulsando <code>F8</code>.</li>
+<li>Selecciona &#34;Update BIOS&#34; y elige el archivo desde la USB.</li>
+<li>Espera a que finalice el proceso sin apagar el equipo.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Paso 2: Configuración de Secure Boot" duration="0">
+        <ol type="1">
+<li>Entra nuevamente a la BIOS (<code>Supr</code> al iniciar).</li>
+<li>Ve a la pestaña <strong>Boot</strong>.</li>
+<li>Desactiva <code>CSM Support</code> (establece en <code>Disabled</code>).</li>
+<li>Guarda y reinicia (<code>F10</code>), vuelve a entrar a BIOS.</li>
+<li>En <strong>Boot &gt; Secure Boot</strong>: <ul>
+<li>Activa <code>Secure Boot</code> en <code>Enabled</code>.</li>
+<li>Si no se activa, cambia a <code>Custom</code> y selecciona <code>Restore Factory Keys</code>.</li>
+</ul>
+</li>
+<li>Guarda y sal.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Paso 3: Contraseñas de BIOS" duration="0">
+        <ol type="1">
+<li>En la pestaña <strong>System</strong>: <ul>
+<li>Establece una contraseña segura en <code>Administrator Password</code>.</li>
+<li>Opcional: configura <code>User Password</code> para acceso restringido.</li>
+</ul>
+</li>
+<li>Guarda y sal.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Paso 4: Activación de TPM (fTPM)" duration="0">
+        <ol type="1">
+<li>Ve a la pestaña <strong>Peripherals</strong> o <strong>Settings</strong>.</li>
+<li>Busca <code>AMD CPU fTPM</code> y ponla en <code>Enabled</code>.</li>
+<li>Guarda cambios.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Paso 5: Desactivación de hardware no utilizado" duration="0">
+        <ol type="1">
+<li>En <strong>Peripherals</strong> o <strong>Settings &gt; IO Ports</strong>: <ul>
+<li>Desactiva <code>Serial Port</code> y <code>Parallel Port</code> si no los usas.</li>
+<li>Desactiva <code>HD Audio Controller</code> si tienes tarjeta de sonido externa.</li>
+<li>Desactiva <code>Onboard WIFI</code> o <code>Onboard LAN</code> si no los usas.</li>
+<li>Desactiva puertos SATA no usados.</li>
+</ul>
+</li>
+<li>Guarda y sal.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Paso 6: Ajustes de estabilidad y virtualización" duration="0">
+        <ol type="1">
+<li>Ve a la pestaña <strong>Tweaker</strong> o <strong>Settings</strong>.</li>
+<li>Activa <code>SVM Mode</code> (Virtualización) en <code>Enabled</code>.</li>
+<li>Activa <code>Extreme Memory Profile (X.M.P.)</code> seleccionando <code>Profile 1</code>.</li>
+<li>Deja los voltajes de CPU en <code>Auto</code> para estabilidad.</li>
+<li>Opcional: Activa <code>Precision Boost Overdrive</code> en <code>Auto</code> o <code>Enabled</code>.</li>
+<li>Guarda y sal.</li>
+</ol>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Paso 7: Verificación Final en SO Windows" duration="0">
+        <ol type="1">
+<li>Ejecuta <code>msinfo32</code> y verifica: <ul>
+<li><code>Estado de arranque seguro</code>: Activado.</li>
+</ul>
+</li>
+<li>En el Administrador de dispositivos, confirma que el dispositivo <code>Módulo de plataforma segura 2.0 (TPM)</code> esté presente.</li>
+</ol>
+<p>¡Listo! Tu BIOS está ahora bastionada para seguridad y rendimiento máximos.</p>
+<p><strong>Nota:</strong> Mantén siempre actualizada la BIOS y revisa periódicamente la configuración para nuevas opciones de seguridad. No modifiques opciones avanzadas sin conocer sus efectos para evitar inestabilidad.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Créditos y Fuentes" duration="0">
+        <ul>
+<li>Página oficial Gigabyte B550 AORUS ELITE AX V2</li>
+<li>Guías sobre Secure Boot y TPM para placas Gigabyte</li>
+<li>Mejoras recomendadas en foros tecnológicos y videos tutoriales</li>
+</ul>
+<p>Fin del CodeLab.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
