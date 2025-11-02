@@ -18,14 +18,23 @@ analytics account: ID de Google Analytics
 
 ---
 
-## Paso 1: Obtencion y actualizacion de BIOS
+## Paso 1: Obtención y actualizacion de BIOS
 
-1. Lo primero que vamos a hacer, es identificar que revision tiene la placa base. Se puede buscar en la propia caja de la placa base o en la misma placa, en mi caso seria REV 1.5 (foto ejemplo de placa base con REV 1.4 marcado en la flecha)
-![img1](/img/img1.png)
-2. Descargamos la ultima version de la BIOS de nuestra placa de la pagina oficial de Gigabyte:
-   - https://www.gigabyte.com/es/Motherboard/B550-AORUS-ELITE-AX-V2-rev-11/support
-3. Extrae el archivo BIOS a tu memoria USB FAT32 vacía.
-4. Reinicia y entra en BIOS presionando `Supr` durante el inicio.
+1. Lo primero que vamos a hacer, es identificar que revisión tiene la placa base. Se puede buscar en la propia caja de la placa base o en la misma placa, en mi caso seria REV 1.5 (foto ejemplo de placa base con REV 1.4 marcado en la flecha)
+
+   ![img1](img/img1.png)
+
+2. Descargamos la ultima versión de la BIOS de nuestra placa de la pagina oficial de Gigabyte (es importante elegir la revisión de nuestra placa base para evitar errores en la instalacion):
+   - https://www.gigabyte.com/es/Motherboard/B550-AORUS-ELITE-AX-V2-rev-15
+
+   ![img2](img/img2.png)
+
+3. Extraemos el archivo BIOS a nuestra memoria USB FAT32 vacía.
+
+   ![img3](img/img3.png)
+
+4. Reiniciamos el ordenador y entramos en BIOS machacando la tecla `Supr` tan pronto como reiniciemos.
+
 5. Abre la utilidad **Q-Flash** pulsando `F8`.
 6. Selecciona "Update BIOS" y elige el archivo desde la USB.
 7. Espera a que finalice el proceso sin apagar el equipo.
