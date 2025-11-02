@@ -35,31 +35,40 @@ analytics account: ID de Google Analytics
 
 4. Reiniciamos el ordenador y entramos en BIOS machacando la tecla `Supr` tan pronto como reiniciemos.
 
-5. Abre la utilidad **Q-Flash** pulsando `F8`.
-6. Selecciona "Update BIOS" y elige el archivo desde la USB.
-7. Espera a que finalice el proceso sin apagar el equipo.
+5. Abrimos la utilidad **Q-Flash** pulsando `F8`. o haciendo clic en el menú de la BIOS,"Q-Flash". 
+
+![img4](img/img4.png)
+
+En este modelo de placa base también podemos actualizar directamente la placa base sin necesidad de CPU con un botón llamado "Q-Flash Plus"
+
+![img5](img/img5.png)
+
+6. Elegimos el archivo de la BIOS actualizada desde la USB y esperamos a que se actualice.
 
 ---
 
 ## Paso 2: Configuración de Secure Boot
 
-1. Entra nuevamente a la BIOS (`Supr` al iniciar).
-2. Ve a la pestaña **Boot**.
-3. Desactiva `CSM Support` (establece en `Disabled`).
-4. Guarda y reinicia (`F10`), vuelve a entrar a BIOS.
-5. En **Boot > Secure Boot**:
+1. Entramos nuevamente a la BIOS (machacando `Supr` al iniciar el ordenador).
+
+2. Vamos a la pestaña **Boot**, antes activando el modo avanzado.
+
+
+3. Desactivamos  `CSM Support` (establece en `Disabled`).
+
+
+4. En **Boot > Secure Boot**:
    - Activa `Secure Boot` en `Enabled`.
-   - Si no se activa, cambia a `Custom` y selecciona `Restore Factory Keys`.
-6. Guarda y sal.
+   - Normalmente suele tardar un poco en activarse, en el caso de que no se pueda, le daríamos clic a "Restore Factory Keys" y debería activarse sin problema.
+
 
 ---
 
 ## Paso 3: Contraseñas de BIOS
 
-1. En la pestaña **System**:
+En la pestaña **System**:
    - Establece una contraseña segura en `Administrator Password`.
-   - Opcional: configura `User Password` para acceso restringido.
-2. Guarda y sal.
+   - Configuramos `User Password` para acceso restringido.
 
 ---
 
@@ -73,27 +82,15 @@ analytics account: ID de Google Analytics
 
 ## Paso 5: Desactivación de hardware no utilizado
 
-1. En **Peripherals** o **Settings > IO Ports**:
-   - Desactiva `Serial Port` y `Parallel Port` si no los usas.
+En **Peripherals** o **Settings > IO Ports**:
    - Desactiva `HD Audio Controller` si tienes tarjeta de sonido externa.
    - Desactiva `Onboard WIFI` o `Onboard LAN` si no los usas.
    - Desactiva puertos SATA no usados.
-2. Guarda y sal.
+
 
 ---
 
-## Paso 6: Ajustes de estabilidad y virtualización
-
-1. Ve a la pestaña **Tweaker** o **Settings**.
-2. Activa `SVM Mode` (Virtualización) en `Enabled`.
-3. Activa `Extreme Memory Profile (X.M.P.)` seleccionando `Profile 1`.
-4. Deja los voltajes de CPU en `Auto` para estabilidad.
-5. Opcional: Activa `Precision Boost Overdrive` en `Auto` o `Enabled`.
-6. Guarda y sal.
-
----
-
-## Paso 7: Verificación Final en SO Windows
+## Paso 6: Verificación Final en Windows
 
 1. Ejecuta `msinfo32` y verifica:
    - `Estado de arranque seguro`: Activado.
