@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karitsu2281 - Proyectos</title>
+    <style>
+        :root {
+            --color-white: rgba(255, 255, 255, 1);
+            --color-black: rgba(0, 0, 0, 1);
+            --color-olive-50: rgba(45, 48, 42, 1);
+            --color-olive-100: rgba(52, 56, 48, 1);
+            --color-olive-200: rgba(60, 64, 54, 1);
+            --color-olive-300: rgba(88, 94, 78, 1);
+            --color-olive-400: rgba(106, 113, 94, 1);
+            --color-olive-500: rgba(124, 132, 110, 1);
+            --color-tan-200: rgba(212, 204, 186, 1);
+            --color-tan-300: rgba(198, 188, 166, 1);
+            --color-tan-400: rgba(180, 168, 143, 1);
+            --color-green-500: rgba(68, 84, 58, 1);
+            --color-green-600: rgba(58, 72, 48, 1);
+            --color-green-700: rgba(48, 60, 40, 1);
+            
+            --color-olive-rgb: 88, 94, 78;
+            --color-green-rgb: 68, 84, 58;
+            --color-tan-rgb: 180, 168, 143;
+            
+            --color-background: rgba(38, 42, 36, 1);
+            --color-surface: rgba(45, 50, 43, 1);
+            --color-text: var(--color-tan-200);
+            --color-text-secondary: var(--color-tan-400);
+            --color-primary: var(--color-green-500);
+            --color-primary-hover: var(--color-green-600);
+            --color-primary-active: var(--color-green-700);
+            --color-secondary: rgba(var(--color-olive-rgb), 0.2);
+            --color-secondary-hover: rgba(var(--color-olive-rgb), 0.3);
+            --color-border: rgba(var(--color-olive-rgb), 0.4);
+            --color-card-border: rgba(var(--color-olive-rgb), 0.3);
+            --color-focus-ring: rgba(var(--color-green-rgb), 0.5);
+            
+            --font-family-base: "Courier New", Consolas, monospace;
+            --font-size-base: 14px;
+            --font-size-lg: 16px;
+            --font-size-xl: 18px;
+            --font-size-2xl: 20px;
+            --font-size-3xl: 24px;
+            --font-size-4xl: 30px;
+            --font-weight-medium: 500;
+            --font-weight-semibold: 550;
+            --font-weight-bold: 600;
+            --line-height-tight: 1.2;
+            --line-height-normal: 1.5;
+            --letter-spacing-tight: -0.01em;
+            
+            --space-8: 8px;
+            --space-12: 12px;
+            --space-16: 16px;
+            --space-20: 20px;
+            --space-24: 24px;
+            --space-32: 32px;
+            --space-48: 48px;
+            
+            --radius-base: 8px;
+            --radius-md: 10px;
+            --radius-lg: 12px;
+            
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+            
+            --duration-normal: 250ms;
+            --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-gray-400-rgb: 119, 124, 124;
+                --color-teal-300-rgb: 50, 184, 198;
+                --color-gray-300-rgb: 167, 169, 169;
+                --color-gray-200-rgb: 245, 245, 245;
+                
+                --color-background: var(--color-charcoal-700);
+                --color-surface: var(--color-charcoal-800);
+                --color-text: var(--color-gray-200);
+                --color-text-secondary: rgba(var(--color-gray-300-rgb), 0.7);
+                --color-primary: var(--color-teal-300);
+                --color-primary-hover: var(--color-teal-400);
+                --color-secondary: rgba(var(--color-gray-400-rgb), 0.15);
+                --color-secondary-hover: rgba(var(--color-gray-400-rgb), 0.25);
+                --color-border: rgba(var(--color-gray-400-rgb), 0.3);
+                --color-card-border: rgba(var(--color-gray-400-rgb), 0.2);
+                --color-focus-ring: rgba(var(--color-teal-300-rgb), 0.4);
+            }
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: var(--font-family-base);
+            font-size: var(--font-size-base);
+            line-height: var(--line-height-normal);
+            color: var(--color-text);
+            background-color: var(--color-background);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-20);
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: var(--space-48);
+        }
+        
+        .header h1 {
+            font-size: var(--font-size-3xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text);
+            letter-spacing: 0.05em;
+            margin-bottom: var(--space-12);
+            text-transform: uppercase;
+        }
+        
+        .header p {
+            font-size: var(--font-size-lg);
+            color: var(--color-text-secondary);
+        }
+        
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-24);
+            margin-bottom: var(--space-32);
+        }
+        
+        .project-card {
+            background-color: var(--color-surface);
+            border: 2px solid var(--color-card-border);
+            border-radius: 2px;
+            padding: var(--space-32);
+            transition: all var(--duration-normal) var(--ease-standard);
+            text-decoration: none;
+            display: block;
+            box-shadow: none;
+            position: relative;
+        }
+        
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--color-primary);
+            opacity: 0;
+            transition: opacity var(--duration-normal) var(--ease-standard);
+        }
+        
+        .project-card:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: var(--color-primary);
+            background-color: rgba(var(--color-olive-rgb), 0.15);
+        }
+        
+        .project-card:hover::before {
+            opacity: 1;
+        }
+        
+        .project-card:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
+        }
+        
+        .project-icon {
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: 2px solid var(--color-primary);
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-20);
+            font-size: var(--font-size-2xl);
+            font-family: var(--font-family-base);
+            color: var(--color-primary);
+            font-weight: var(--font-weight-bold);
+        }
+        
+        .project-title {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text);
+            margin-bottom: var(--space-8);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .project-description {
+            font-size: var(--font-size-base);
+            color: var(--color-text-secondary);
+            line-height: var(--line-height-normal);
+            margin-bottom: var(--space-16);
+        }
+        
+        .project-link {
+            color: var(--color-primary);
+            font-weight: var(--font-weight-medium);
+            font-size: var(--font-size-base);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-8);
+        }
+        
+        .arrow {
+            transition: transform var(--duration-normal) var(--ease-standard);
+        }
+        
+        .project-card:hover .arrow {
+            transform: translateX(4px);
+        }
+        
+        .footer {
+            text-align: center;
+            padding-top: var(--space-32);
+            border-top: 1px solid var(--color-border);
+        }
+        
+        .footer p {
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-base);
+        }
+        
+        .footer a {
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: var(--font-weight-medium);
+        }
+        
+        .footer a:hover {
+            color: var(--color-primary-hover);
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: var(--font-size-3xl);
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>// CLASSIFIED PROJECTS</h1>
+            <p>SECURITY CLEARANCE: PUBLIC ACCESS</p>
+        </header>
+        
+        <div class="projects-grid">
+            <a href="./proyecto1/index.html" class="project-card">
+                <div class="project-icon">01</div>
+                <h2 class="project-title">OPERATION: PROYECTO 1</h2>
+                <p class="project-description">
+                    [CLASSIFIED] Mission briefing available. Access authorized personnel only.
+                </p>
+                <span class="project-link">
+                    ACCESS &gt;&gt; <span class="arrow">→</span>
+                </span>
+            </a>
+            
+            <a href="./proyecto2/index.html" class="project-card">
+                <div class="project-icon">02</div>
+                <h2 class="project-title">OPERATION: PROYECTO 2</h2>
+                <p class="project-description">
+                    [CLASSIFIED] Mission briefing available. Access authorized personnel only.
+                </p>
+                <span class="project-link">
+                    ACCESS &gt;&gt; <span class="arrow">→</span>
+                </span>
+            </a>
+        </div>
+        
+        <footer class="footer">
+            <p>
+                Creado por <a href="https://github.com/karitsu2281" target="_blank" rel="noopener noreferrer">Karitsu2281</a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
