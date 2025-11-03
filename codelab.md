@@ -37,11 +37,11 @@ analytics account: ID de Google Analytics
 
 5. Abrimos la utilidad **Q-Flash** pulsando `F8`. o haciendo clic en el menú de la BIOS,"Q-Flash". 
 
-![img4](img/img4.png)
+   ![img4](img/img4.png)
 
 En este modelo de placa base también podemos actualizar directamente la placa base sin necesidad de CPU con un botón llamado "Q-Flash Plus"
 
-![img5](img/img5.png)
+   ![img5](img/img5.png)
 
 6. Elegimos el archivo de la BIOS actualizada desde la USB y esperamos a que se actualice.
 
@@ -56,12 +56,13 @@ En este modelo de placa base también podemos actualizar directamente la placa b
 ![img6](img/img6.png)
 
 
-3. Desactivamos  `Soporte CSM` (establece en `Deshabilitado`).
+3. Desactivamos  `Soporte CSM` (establece en `Deshabilitado`). 
+Consiste en una función de la placa donde podemos emular la BIOS antigua para poder ejecutar software más antiguo o Windows de 32 bits. Al desactivarlo, hace que no podamos ejecutar software antiguo o sistemas operativos viejos (Win7 o Win8) con vulnerabilidades conocidas, reduciendo así, la posibilidad de ataque. 
 
 ![img8](img/img8.png)
 
 4. En **Boot > Secure Boot**:
-   - Cambiamos el estado de `Secure Boot` a `Activado`.
+   - Cambiamos el estado de `Secure Boot` a `Activado`. El Secure Boot es una función que evita que se pueda ejecutar software sin firma digital o malicioso, si lo tenemos desactivado, el atacante podrá ejecutar cualquier software malicioso en nuestra máquina, al no comprobar la firma digital.
 
 ![img9](img/img9.png)
 
@@ -71,17 +72,19 @@ En este modelo de placa base también podemos actualizar directamente la placa b
 
 ---
 
-## Paso 3: Contraseñas de BIOS
+## Paso 3: Contraseñas de BIOS y arranque
 
 En la pestaña **System**:
-   - Estableceremos una contraseña segura en `Contraseña de administrador` (tiene que ser mínimo de 12 carácteres, tanto con mayúsculas, minúsculas, números o símbolos especiales).
+   - Estableceremos una contraseña segura en la `Contraseña de administrador` (tiene que ser mínimo de 12 carácteres, tanto con mayúsculas, minúsculas, números o símbolos especiales). Esto hace que al querer hacer cualquier acción (como cambiar la orden de arranque a un USB) requiera una contraseña para poder realizarse.
 
 ![img10](img/img10.png)
 
-   - También configuraremos `Contraseña de usuario` para acceso restringido y protección adicional.
-
+   - También configuraremos la `Contraseña de usuario` para restringir aún mas el acceso a la BIOS y evitar arranques desde USBs no autorizados o también desde la tarjeta de red, o una unidad óptica. Esto hace para que si quiera acceder a la BIOS debamos introducir su contraseña, por lo que aumenta la seguridad. Hay que recordar que ambas contraseñas deben ser diferentes para evitar riesgos de seguridad por reutilización de contraseñas.
+  
+  - En el arranque, la primera opción siempre será la de "Windows Boot Manager", para evitar que el ordenador arranque automáticamente al conectar un USB malicioso (para ello, siempre lo pondremos en la última prioridad, para reducir posibilidades de ataque)
 ![img11](img/img11.png)
 
+- 
 ---
 
 ## Paso 4: Activación de TPM (fTPM)
@@ -90,7 +93,7 @@ En la pestaña **System**:
 
 ![img12](img/img12.png)
 
-2. Buscamos `AMD CPU fTPM` y lo ajustamos en `Enabled`.
+2. Buscamos `AMD CPU fTPM` y lo ajustamos en `Activado`. Lo que hace el TPM, es que genera y almacena claves de firmado, verifica la integridad del SO durante el arranque y protege contra accesos no autorizados. Al no tenerlo, nuestro ordenador es más vulnerable a ataques que alteran el proceso de arranque y no se podría cifrar el disco con BitLocker.
 
 ![img13](img/img13.png)
 
@@ -101,7 +104,7 @@ En la pestaña **System**:
 ## Paso 5: Desactivación de hardware no utilizado
 
 En **Settings**:
-   - Desactivamos `HD Audio Controller` en caso de usar un DAC USB externo.
+   - Desactivamos `HD Audio Controller` en caso de usar un DAC USB externo. 
 
    ![img14](img/img14.png)
 
@@ -109,6 +112,7 @@ En **Settings**:
 
    ![img19](img/img19.png)
 
+   Estas acciones adicionales se realizan para reducir aún mas la superficie de ataque, ya que nos protegemos de escuchas no autorizadas en el caso del HD Audio Controller o en el caso del LAN Controller, evitar que puedan encender remotamente el ordenador y/o instalar un SO infectado.
 
 
 ---
