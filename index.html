@@ -47,9 +47,8 @@
 <img alt="img2" src="img\\c2618f0242f9bd17.png"></li>
 <li>Extraemos el archivo de la BIOS a nuestra memoria USB FAT32 vacía.<img alt="img3" src="img\\31912d59d2583c9c.png"></li>
 <li>Reiniciamos el ordenador y entramos en BIOS machacando la tecla <code>Supr</code> tan pronto como reiniciemos.</li>
-<li>Abrimos la utilidad <strong>Q-Flash</strong> pulsando <code>F8</code>. o haciendo clic en el menú de la BIOS,&#34;Q-Flash&#34;.</li>
+<li>Abrimos la utilidad <strong>Q-Flash</strong> pulsando <code>F8</code>. o haciendo clic en el menú de la BIOS,&#34;Q-Flash&#34;.<img alt="img4" src="img\\8dfb32831b641a50.png"></li>
 </ol>
-<p class="image-container"><img alt="img4" src="img\\8dfb32831b641a50.png"></p>
 <p>En este modelo de placa base también podemos actualizar directamente la placa base sin necesidad de CPU con un botón llamado &#34;Q-Flash Plus&#34;</p>
 <p class="image-container"><img alt="img5" src="img\\e5e4334e2cc8633e.png"></p>
 <ol type="1" start="6">
@@ -66,12 +65,12 @@
 </ol>
 <p class="image-container"><img alt="img6" src="img\\257255b83c6f5ab9.png"></p>
 <ol type="1" start="3">
-<li>Desactivamos  <code>Soporte CSM</code> (establece en <code>Deshabilitado</code>).</li>
+<li>Desactivamos  <code>Soporte CSM</code> (establece en <code>Deshabilitado</code>). Consiste en una función de la placa donde podemos emular la BIOS antigua para poder ejecutar software más antiguo o Windows de 32 bits. Al desactivarlo, hace que no podamos ejecutar software antiguo o sistemas operativos viejos (Win7 o Win8) con vulnerabilidades conocidas, reduciendo así, la posibilidad de ataque.</li>
 </ol>
 <p class="image-container"><img alt="img8" src="img\\2f9427c18ee2e161.png"></p>
 <ol type="1" start="4">
 <li>En <strong>Boot &gt; Secure Boot</strong>: <ul>
-<li>Cambiamos el estado de <code>Secure Boot</code> a <code>Activado</code>.</li>
+<li>Cambiamos el estado de <code>Secure Boot</code> a <code>Activado</code>. El Secure Boot es una función que evita que se pueda ejecutar software sin firma digital o malicioso, si lo tenemos desactivado, el atacante podrá ejecutar cualquier software malicioso en nuestra máquina, al no comprobar la firma digital.</li>
 </ul>
 </li>
 </ol>
@@ -84,16 +83,16 @@
 
       </google-codelab-step>
     
-      <google-codelab-step label="Paso 3: Contraseñas de BIOS" duration="0">
+      <google-codelab-step label="Paso 3: Contraseñas de BIOS y arranque" duration="0">
         <p>En la pestaña <strong>System</strong>:</p>
 <ul>
-<li>Estableceremos una contraseña segura en <code>Contraseña de administrador</code> (tiene que ser mínimo de 12 carácteres, tanto con mayúsculas, minúsculas, números o símbolos especiales).</li>
+<li>Estableceremos una contraseña segura en la <code>Contraseña de administrador</code> (tiene que ser mínimo de 12 carácteres, tanto con mayúsculas, minúsculas, números o símbolos especiales). Esto hace que al querer hacer cualquier acción (como cambiar la orden de arranque a un USB) requiera una contraseña para poder realizarse.</li>
 </ul>
 <p class="image-container"><img alt="img10" src="img\\7329285790ff1ff2.png"></p>
 <ul>
-<li>También configuraremos <code>Contraseña de usuario</code> para acceso restringido y protección adicional.</li>
+<li>También configuraremos la <code>Contraseña de usuario</code> para restringir aún mas el acceso a la BIOS y evitar arranques desde USBs no autorizados o también desde la tarjeta de red, o una unidad óptica. Esto hace para que si quiera acceder a la BIOS debamos introducir su contraseña, por lo que aumenta la seguridad. Hay que recordar que ambas contraseñas deben ser diferentes para evitar riesgos de seguridad por reutilización de contraseñas.</li>
+<li>En el arranque, la primera opción siempre será la de &#34;Windows Boot Manager&#34;, para evitar que el ordenador arranque automáticamente al conectar un USB malicioso (para ello, siempre lo pondremos en la última opción, para reducir posibilidades de ataque) <img alt="img11" src="img\\3b993459bf4fffc8.png"></li>
 </ul>
-<p class="image-container"><img alt="img11" src="img\\3b993459bf4fffc8.png"></p>
 
 
       </google-codelab-step>
@@ -104,7 +103,7 @@
 </ol>
 <p class="image-container"><img alt="img12" src="img\\3e8a840022d3728.png"></p>
 <ol type="1" start="2">
-<li>Buscamos <code>AMD CPU fTPM</code> y lo ajustamos en <code>Enabled</code>.</li>
+<li>Buscamos <code>AMD CPU fTPM</code> y lo ajustamos en <code>Activado</code>. Lo que hace el TPM, es que genera y almacena claves de firmado, verifica la integridad del SO durante el arranque y protege contra accesos no autorizados. Al no tenerlo, nuestro ordenador es más vulnerable a ataques que alteran el proceso de arranque y no se podría cifrar el disco con BitLocker.</li>
 </ol>
 <p class="image-container"><img alt="img13" src="img\\9cabecc01c2405f2.png"></p>
 <ol type="1" start="3">
@@ -124,6 +123,7 @@
 <li>Desactivamos <code>Onboard LAN</code> si solo queremos usar WiFi.</li>
 </ul>
 <p class="image-container"><img alt="img19" src="img\\1cf735ce48bd665c.png"></p>
+<p>Estas acciones adicionales se realizan para reducir aún mas la superficie de ataque, ya que nos protegemos de escuchas no autorizadas en el caso del HD Audio Controller o en el caso del LAN Controller, evitar que puedan encender remotamente el ordenador y/o instalar un SO infectado.</p>
 
 
       </google-codelab-step>

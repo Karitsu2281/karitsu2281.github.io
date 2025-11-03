@@ -81,7 +81,7 @@ En la pestaña **System**:
 
    - También configuraremos la `Contraseña de usuario` para restringir aún mas el acceso a la BIOS y evitar arranques desde USBs no autorizados o también desde la tarjeta de red, o una unidad óptica. Esto hace para que si quiera acceder a la BIOS debamos introducir su contraseña, por lo que aumenta la seguridad. Hay que recordar que ambas contraseñas deben ser diferentes para evitar riesgos de seguridad por reutilización de contraseñas.
   
-  - En el arranque, la primera opción siempre será la de "Windows Boot Manager", para evitar que el ordenador arranque automáticamente al conectar un USB malicioso (para ello, siempre lo pondremos en la última prioridad, para reducir posibilidades de ataque)
+  - En el arranque, la primera opción siempre será la de "Windows Boot Manager", para evitar que el ordenador arranque automáticamente al conectar un USB malicioso (para ello, siempre lo pondremos en la última opción, para reducir posibilidades de ataque)
 ![img11](img/img11.png)
 
 - 
