@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
   <meta name="theme-color" content="#4F7DC9">
   <meta charset="UTF-8">
-  <title>Guia de bastionamiento para PC de alto rendimiento con placa base Aorus B550 Elite AX V2</title>
+  <title>Guia de bastionamiento de arranque de Debian 13</title>
   <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
   <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
@@ -22,128 +22,79 @@
 <body>
   <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
   <google-codelab codelab-gaid="ID de Google Analytics"
-                  id="identificador-unico-del-codelab"
-                  title="Guia de bastionamiento para PC de alto rendimiento con placa base Aorus B550 Elite AX V2"
+                  id="1"
+                  title="Guia de bastionamiento de arranque de Debian 13"
                   environment="web"
                   feedback-link="Un enlace en el que los usuarios puedan darte feedback (quizás creando un issue en un repositorio de git)">
     
-      <google-codelab-step label="Materiales necesarios" duration="0">
+      <google-codelab-step label="Paso 1: Ocultación del menú de arranque" duration="0">
+        <p>Lo primero que vamos a hacer es ocultar el menú de arranque, para evitar que atacantes o usuarios sin conocimientos que modificen parámetros de arranques, reduciendo la posibilidad de que puedan acceder a funciones adicionales, como el arranque como root. Para ello, introducimos en la terminal:</p>
+<pre><code>sudo nano /etc/default/grub
+</code></pre>
+<p class="image-container"><img alt="img1" src="img\\b3e58ac3d06d8786.png"></p>
+<p>Modificamos y/o añadimos las líneas siguientes:</p>
+<pre><code>GRUB_TIMEOUT_STYLE=hidden
+GRUB_TIMEOUT=0
+</code></pre>
+<p class="image-container"><img alt="img2" src="img\\e506f5f8bc21c670.png"></p>
+<p>Guardamos los cambios con (<code>Ctrl + O</code> y Enter) y salimos de nano (<code>Ctrl + X</code>).</p>
+<p>Actualizamos la configuración de GRUB:</p>
+<pre><code>sudo update-grub
+</code></pre>
+<p class="image-container"><img alt="img3" src="img\\52ba5e5e52833876.png"></p>
+<p><strong>Resultado:</strong> El menú se oculta. Solo aparece usando <code>Esc</code> durante el arranque.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Paso 2: Configurar contraseña de arranque" duration="0">
+        <p>Configurar la contraseña del GRUB hace que usuarios no autorizados no puedan editar opciones del arranque, acceder a la consola o modificar entradas para obtener acceso root (init=/bin/bash).</p>
+<p>Generamos el hash de la contraseña con el siguiente comando:</p>
+<pre><code>sudo grub-mkpasswd-pbkdf2
+</code></pre>
+<p class="image-container"><img alt="img4" src="img\\26d42b0ea1c4c0f6.png"></p>
+<p>Introducimos la contraseña del GRUB y copiamos el hash en un lugar seguro.</p>
+<p>Ahora, editaremos el script de configuración personalizado con el usuario de Debian y el hash recién creado:</p>
+<pre><code>sudo nano /etc/grub.d/40_custom
+</code></pre>
+<p>Añadimos al final (sustituimos <code>usuario</code> y <code>hash</code>):</p>
+<pre><code>set superusers=&#34;usuario&#34;
+password_pbkdf2 usuario hash
+</code></pre>
+<p class="image-container"><img alt="img5" src="img\\c5772eb6622b2893.png"></p>
+<p>Guardamos, cerramos y actualizamos GRUB:</p>
+<pre><code>sudo update-grub
+</code></pre>
+<p class="image-container"><img alt="img6" src="img\\489b4f3a0eb637a2.png"></p>
+<p><strong>Resultado:</strong> Habría que introducir usuario/contraseña para cualquier acción administrativa en GRUB, hasta para acceder al sistema operativo.</p>
+<p class="image-container"><img alt="img7" src="img\\2163817bb2f22bbe.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Paso 3: Copia de seguridad de la configuración del arranque" duration="0">
+        <p>Antes de modificar nada del GRUB, crearemos copias de seguridad. Se realiza en el caso de que hagamos errores al modificar las opciones de arranque y poder recuperar rápidamente la funcionalidad del equipo. Si se comete un error en el GRUB, puede dejar el sistema inutilizable.</p>
+<p>Se realizan con:</p>
+<pre><code>sudo cp /etc/default/grub ~/grub-backup-default
+sudo cp -r /etc/grub.d ~/grub-backup-grub.d
+</code></pre>
+<p class="image-container"><img alt="img8" src="img\\cc57142e3def8efd.png"></p>
+<p><strong>Para restaurar:</strong></p>
+<pre><code>sudo cp ~/grub-backup-default /etc/default/grub
+sudo cp -r ~/grub-backup-grub.d/* /etc/grub.d/
+sudo update-grub
+</code></pre>
+<p class="image-container"><img alt="img9" src="img\\2fc7534c41dee67a.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Paso 4: Otras opciones de seguridad" duration="0">
         <ul>
-<li>PC con placa base Aorus B550 Elite V2 AX</li>
-<li>Memoria USB formateada en FAT32</li>
-<li>Teclado USB (obviamente, entonces como entras a la BIOS...)</li>
-<li>Conexion a Internet para actualizar la BIOS</li>
+<li><strong>Contraseña BIOS/UEFI:</strong> Como en el proyecto anterior, podemos introducir la contraseña de administrador y usuario de la BIOS para mayor seguridad ante intento de acceso físico.</li>
+<li><strong>Secure Boot:</strong> Evita de que el atacante pueda ejecutar software no firmado o malicioso, reduciendo la superficie de ataque</li>
+<li><strong>Cifrado completo de disco:</strong> Seleccionamos durante la instalación (&#34;LVM cifrado&#34;), y también pudiendose separar en particiones, en el caso de Debian</li>
 </ul>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="Paso 1: Obtención y actualización de BIOS" duration="0">
-        <ol type="1">
-<li>Lo primero que vamos a hacer, es identificar que revisión tiene la placa base. Se puede buscar en la propia caja de la placa base o en la misma placa, en mi caso seria REV 1.5 (foto ejemplo de placa base con REV 1.4 marcado en la flecha)<img alt="img1" src="img\\42b6fe497d6f3581.png"></li>
-<li>Descargamos la ultima versión de la BIOS de nuestra placa de la pagina oficial de Gigabyte (es importante elegir la revisión de nuestra placa base para evitar errores en la instalacion):<ul>
-<li>https://www.gigabyte.com/es/Motherboard/B550-AORUS-ELITE-AX-V2-rev-15</li>
-</ul>
-<img alt="img2" src="img\\c2618f0242f9bd17.png"></li>
-<li>Extraemos el archivo de la BIOS a nuestra memoria USB FAT32 vacía.<img alt="img3" src="img\\31912d59d2583c9c.png"></li>
-<li>Reiniciamos el ordenador y entramos en BIOS machacando la tecla <code>Supr</code> tan pronto como reiniciemos.</li>
-<li>Abrimos la utilidad <strong>Q-Flash</strong> pulsando <code>F8</code>. o haciendo clic en el menú de la BIOS,&#34;Q-Flash&#34;.<img alt="img4" src="img\\8dfb32831b641a50.png"></li>
-</ol>
-<p>En este modelo de placa base también podemos actualizar directamente la placa base sin necesidad de CPU con un botón llamado &#34;Q-Flash Plus&#34;</p>
-<p class="image-container"><img alt="img5" src="img\\e5e4334e2cc8633e.png"></p>
-<ol type="1" start="6">
-<li>Elegimos el archivo de la BIOS actualizada desde la USB y esperamos a que se actualice.</li>
-</ol>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="Paso 2: Configuración de Secure Boot" duration="0">
-        <ol type="1">
-<li>Entramos nuevamente a la BIOS (machacando <code>Supr</code> al iniciar el ordenador).</li>
-<li>Vamos a la pestaña <strong>Boot</strong>, antes activando el modo avanzado.</li>
-</ol>
-<p class="image-container"><img alt="img6" src="img\\257255b83c6f5ab9.png"></p>
-<ol type="1" start="3">
-<li>Desactivamos  <code>Soporte CSM</code> (establece en <code>Deshabilitado</code>). Consiste en una función de la placa donde podemos emular la BIOS antigua para poder ejecutar software más antiguo o Windows de 32 bits. Al desactivarlo, hace que no podamos ejecutar software antiguo o sistemas operativos viejos (Win7 o Win8) con vulnerabilidades conocidas, reduciendo así, la posibilidad de ataque.</li>
-</ol>
-<p class="image-container"><img alt="img8" src="img\\2f9427c18ee2e161.png"></p>
-<ol type="1" start="4">
-<li>En <strong>Boot &gt; Secure Boot</strong>: <ul>
-<li>Cambiamos el estado de <code>Secure Boot</code> a <code>Activado</code>. El Secure Boot es una función que evita que se pueda ejecutar software sin firma digital o malicioso, si lo tenemos desactivado, el atacante podrá ejecutar cualquier software malicioso en nuestra máquina, al no comprobar la firma digital.</li>
-</ul>
-</li>
-</ol>
-<p class="image-container"><img alt="img9" src="img\\a13f74f94fba110a.png"></p>
-<ul>
-<li>Normalmente suele tardar un poco en activarse, en el caso de que no se pueda, le daríamos clic a &#34;Restore Factory Keys&#34; y debería activarse sin problema.</li>
-</ul>
-<p class="image-container"><img alt="img15" src="img\\2ea08dabf3e9dcb6.png"></p>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="Paso 3: Contraseñas de BIOS y arranque" duration="0">
-        <p>En la pestaña <strong>System</strong>:</p>
-<ul>
-<li>Estableceremos una contraseña segura en la <code>Contraseña de administrador</code> (tiene que ser mínimo de 12 carácteres, tanto con mayúsculas, minúsculas, números o símbolos especiales). Esto hace que al querer hacer cualquier acción (como cambiar la orden de arranque a un USB) requiera una contraseña para poder realizarse.</li>
-</ul>
-<p class="image-container"><img alt="img10" src="img\\7329285790ff1ff2.png"></p>
-<ul>
-<li>También configuraremos la <code>Contraseña de usuario</code> para restringir aún mas el acceso a la BIOS y evitar arranques desde USBs no autorizados o también desde la tarjeta de red, o una unidad óptica. Esto hace para que si quiera acceder a la BIOS debamos introducir su contraseña, por lo que aumenta la seguridad. Hay que recordar que ambas contraseñas deben ser diferentes para evitar riesgos de seguridad por reutilización de contraseñas.</li>
-<li>En el arranque, la primera opción siempre será la de &#34;Windows Boot Manager&#34;, para evitar que el ordenador arranque automáticamente al conectar un USB malicioso (para ello, siempre lo pondremos en la última opción, para reducir posibilidades de ataque) <img alt="img11" src="img\\3b993459bf4fffc8.png"></li>
-</ul>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="Paso 4: Activación de TPM (fTPM)" duration="0">
-        <ol type="1">
-<li>Vamos a la pestaña a <strong>Varios</strong>, en la sección <strong>Settings</strong>.</li>
-</ol>
-<p class="image-container"><img alt="img12" src="img\\3e8a840022d3728.png"></p>
-<ol type="1" start="2">
-<li>Buscamos <code>AMD CPU fTPM</code> y lo ajustamos en <code>Activado</code>. Lo que hace el TPM, es que genera y almacena claves de firmado, verifica la integridad del SO durante el arranque y protege contra accesos no autorizados. Al no tenerlo, nuestro ordenador es más vulnerable a ataques que alteran el proceso de arranque y no se podría cifrar el disco con BitLocker.</li>
-</ol>
-<p class="image-container"><img alt="img13" src="img\\9cabecc01c2405f2.png"></p>
-<ol type="1" start="3">
-<li>Guardamos los cambios presionando F10.</li>
-</ol>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="Paso 5: Desactivación de hardware no utilizado" duration="0">
-        <p>En <strong>Settings</strong>:</p>
-<ul>
-<li>Desactivamos <code>HD Audio Controller</code> en caso de usar un DAC USB externo.</li>
-</ul>
-<p class="image-container"><img alt="img14" src="img\\a0d2cc8a67f95c27.png"></p>
-<ul>
-<li>Desactivamos <code>Onboard LAN</code> si solo queremos usar WiFi.</li>
-</ul>
-<p class="image-container"><img alt="img19" src="img\\1cf735ce48bd665c.png"></p>
-<p>Estas acciones adicionales se realizan para reducir aún mas la superficie de ataque, ya que nos protegemos de escuchas no autorizadas en el caso del HD Audio Controller o en el caso del LAN Controller, evitar que puedan encender remotamente el ordenador y/o instalar un SO infectado.</p>
-
-
-      </google-codelab-step>
-    
-      <google-codelab-step label="Paso 6: Verificación Final en Windows" duration="0">
-        <ol type="1">
-<li>Ejecutamos <code>msinfo32</code> en el buscador:</li>
-</ol>
-<p class="image-container"><img alt="img16" src="img\\605cc23bbe81ec27.png"></p>
-<ol type="1" start="2">
-<li>Tenemos que comprobar que la siguiente pestaña esté en &#34;Activado&#34; Si lo está, significa que hemos activado correctamente el arranque seguro. <ul>
-<li><code>Estado de arranque seguro</code>: Activado.</li>
-</ul>
-</li>
-</ol>
-<p class="image-container"><img alt="img17" src="img\\dfcd1695ee2142c8.png"></p>
-<ol type="1" start="2">
-<li>En el Administrador de dispositivos, confirma que el dispositivo <code>Módulo de plataforma segura 2.0 (TPM)</code> esté presente.</li>
-</ol>
-<p>¡Listo! Ya tendríamos nuestro ordenador más resistente ante ataques físicos.</p>
 
 
       </google-codelab-step>
