@@ -42,7 +42,7 @@ GRUB_TIMEOUT=0
 <pre><code>sudo update-grub
 </code></pre>
 <p class="image-container"><img alt="img3" src="img\\52ba5e5e52833876.png"></p>
-<p><strong>Resultado:</strong> El menú se oculta. Solo aparece usando <code>Esc</code> durante el arranque.</p>
+<p>Lo que hace estos parámetros es que se oculte el GRUB al arrancar el ordenador y no se muestre, lo que solamente lo hace accesible a través de la tecla &#34;Esc&#34;</p>
 
 
       </google-codelab-step>
@@ -53,7 +53,7 @@ GRUB_TIMEOUT=0
 <pre><code>sudo grub-mkpasswd-pbkdf2
 </code></pre>
 <p class="image-container"><img alt="img4" src="img\\26d42b0ea1c4c0f6.png"></p>
-<p>Introducimos la contraseña del GRUB y copiamos el hash en un lugar seguro.</p>
+<p>Introducimos la contraseña del GRUB que queremos asignar y copiamos el hash en un lugar seguro.</p>
 <p>Ahora, editaremos el script de configuración personalizado con el usuario de Debian y el hash recién creado:</p>
 <pre><code>sudo nano /etc/grub.d/40_custom
 </code></pre>
@@ -66,7 +66,7 @@ password_pbkdf2 usuario hash
 <pre><code>sudo update-grub
 </code></pre>
 <p class="image-container"><img alt="img6" src="img\\489b4f3a0eb637a2.png"></p>
-<p><strong>Resultado:</strong> Habría que introducir usuario/contraseña para cualquier acción administrativa en GRUB, hasta para acceder al sistema operativo.</p>
+<p>Lo que hace estos comandos es que para entrar siquiera al sistema operativo, nos pide la contraseña recién creada, además de también pedirla para cambiar cualquier parámetro del GRUB.</p>
 <p class="image-container"><img alt="img7" src="img\\2163817bb2f22bbe.png"></p>
 
 
@@ -74,12 +74,12 @@ password_pbkdf2 usuario hash
     
       <google-codelab-step label="Paso 3: Copia de seguridad de la configuración del arranque" duration="0">
         <p>Antes de modificar nada del GRUB, crearemos copias de seguridad. Se realiza en el caso de que hagamos errores al modificar las opciones de arranque y poder recuperar rápidamente la funcionalidad del equipo. Si se comete un error en el GRUB, puede dejar el sistema inutilizable.</p>
-<p>Se realizan con:</p>
+<p><strong>Podemos realizar los comandos siguientes para el backup del GRUB:</strong></p>
 <pre><code>sudo cp /etc/default/grub ~/grub-backup-default
 sudo cp -r /etc/grub.d ~/grub-backup-grub.d
 </code></pre>
 <p class="image-container"><img alt="img8" src="img\\cc57142e3def8efd.png"></p>
-<p><strong>Para restaurar:</strong></p>
+<p><strong>Y Para restaurar:</strong></p>
 <pre><code>sudo cp ~/grub-backup-default /etc/default/grub
 sudo cp -r ~/grub-backup-grub.d/* /etc/grub.d/
 sudo update-grub
@@ -92,8 +92,8 @@ sudo update-grub
       <google-codelab-step label="Paso 4: Otras opciones de seguridad" duration="0">
         <ul>
 <li><strong>Contraseña BIOS/UEFI:</strong> Como en el proyecto anterior, podemos introducir la contraseña de administrador y usuario de la BIOS para mayor seguridad ante intento de acceso físico.</li>
-<li><strong>Secure Boot:</strong> Evita de que el atacante pueda ejecutar software no firmado o malicioso, reduciendo la superficie de ataque</li>
-<li><strong>Cifrado completo de disco:</strong> Seleccionamos durante la instalación (&#34;LVM cifrado&#34;), y también pudiendose separar en particiones, en el caso de Debian</li>
+<li><strong>Secure Boot:</strong> Esta opción hace de que si queremos arrancar algo, deba estar firmado digitalmente para evitar la carga de software desconocido o malicioso por parte del atacante.</li>
+<li><strong>Cifrado completo de disco:</strong> Durante la instalación de Debian, podemos elegir cifrar el disco duro con LVM, además de poder hacerlo con las propias particiones separadas (/home,/var...)</li>
 </ul>
 
 
