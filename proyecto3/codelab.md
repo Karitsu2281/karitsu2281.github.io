@@ -98,14 +98,42 @@ shutdown /s /t 0
 Documentaremos la hora exacta del apagado (11/11/2025 19:37 CET). Evitaremos el uso del botón de apagado físico o cierre abrupto de la VM que podría perder datos en caché.​
 
 ## 3.1.2 Adquisición forense bit-a-bit
-Para realizar la adquisición es imprescindible hacer una copia bit-a-bit del disco duro para asegurarnos de que la evidencia original no sea modificada de ninguna manera. Utilizaremos FTK Imager como herramienta en análisis forense para crear una imagen completa del disco virtual de 32 GB
+Para realizar la adquisición es imprescindible hacer una copia bit-a-bit del disco duro para asegurarnos de que la evidencia original no sea modificada. Utilizaremos FTK Imager como herramienta para crear una imagen completa del disco virtual de 32 GB
+
+- Iniciaremos FTK Imager en nuestra estación forense y seleccionaremos File > Create Disk Image. En el cuadro de diálogo "Select Source", elegiremos la opción "Physical Drive" para capturar el disco completo sector por sector incluyendo espacio no asignado y archivos eliminados.
+- En nuestro caso utilizaríamos "File Image", ya que al tratarse de una VM, debemos coger la imagen de la propia máquina. Se haría con "Add Evidence Item - Image File", elegimos la imagen de la VM a analizar y al dar clic a Finish, nos debería salir el disco completo
+
+- Ahora, para hacer la copia completa del disco, nos vamos a "File - Create Disk Image", elegimos la imagen de nuestra VM, e introducimos la siguiente información en los parámetros:
+
+```
+Evidence Item Information:
+- Case Number: FOR-2025-1111-W7-HFM
+- Evidence Number: EVI-001-DISCO-PRINCIPAL
+- Unique Description: Disco sistema Windows 7 comprometido - Ransomware
+- Examiner: Hugo Flores Molina
+- Notes: VM VMWare - Alerta 2025-8847
+
+Image Destination Folder: E:\Evidencia\
+Image Filename: WIN7_COMP_32GB_20251111
+Image Fragment Size: 2000 MB (2 GB por segmento)
+
+☑ Verify images after they are created
+☑ Create directory listings of all files
+
+```
+![img7](img/img7.png)
+
+
+![img8](img/img8.png)
+
+NOTA IMPORTANTE: También para esta sección he elegido verificar la imagen con hash tanto de MD5 y SHA256 para garantizar que no haya cambios.
 
 
 ```
 sudo cp /etc/default/grub ~/grub-backup-default
 sudo cp -r /etc/grub.d ~/grub-backup-grub.d
 ```
-![img8](img/img8.png)
+
 
 **Y Para restaurar:**
 
