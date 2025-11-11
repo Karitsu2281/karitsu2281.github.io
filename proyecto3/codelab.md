@@ -30,7 +30,7 @@ Después registraremos las especificaciones de la máquina
 
 | Característica      | Detalle                             |
 | ------------------- | ----------------------------------- |
-| Sistema Operativo   | Windows 7 Home Premium |
+| Sistema Operativo   | Windows 7 Professional 64-bit |
 | Capacidad Disco     | 32GB                                |
 | Memoria RAM         | 1GB                                 |
 | Sistema de Archivos | NTFS                                |
@@ -40,7 +40,13 @@ Después registraremos las especificaciones de la máquina
 ---
 
 ## Paso 2: Adquisición de evidencias volátiles
+
+## 2.1 Preparación del entorno
 Inmediatamente después de que encendamos nuestro equipo, para la adquisición de la memoria volátil (RAM), conectaremos una memoria USB que contenga el programa "FTK Imager". Es importante de que nuestro USB esté cifrado con un algoritmo fuerte (AES-256) y que esté libre de cualquier tipo de malware, para evitar alterar las pruebas de la máquina.
+
+## 2.2 Captura de memoria RAM
+Ahora, para hacer la captura correctamente, abriremos FTK Imager en nuestra memoria USB (SIEMPRE HAY QUE EJECUTARLO AHÍ, PARA EVITAR ALTERACION DE PRUEBAS)
+
 
 ---
 
