@@ -6,7 +6,7 @@ environments: Web
 status: Published
 feedback link: Un enlace en el que los usuarios puedan darte feedback (quizás creando un issue en un repositorio de git)
 analytics account: ID de Google Analytics
-# Guia de bastionamiento de arranque de Debian 13
+# Guia de adquisición forense con FTK Imager en una máquina Win7
 ---
 
 ## Paso 1: Identificación del equipo
@@ -42,19 +42,64 @@ Después registraremos las especificaciones de la máquina
 ## Paso 2: Adquisición de evidencias volátiles
 
 ## 2.1 Preparación del entorno
-Inmediatamente después de que encendamos nuestro equipo, para la adquisición de la memoria volátil (RAM), conectaremos una memoria USB que contenga el programa "FTK Imager". Es importante de que nuestro USB esté cifrado con un algoritmo fuerte (AES-256) y que esté libre de cualquier tipo de malware, para evitar alterar las pruebas de la máquina.
+Inmediatamente después de que encendamos nuestro equipo, para la adquisición de la memoria volátil (RAM), conectaremos una memoria USB que contenga el programa "FTK Imager", siguiendo la norma NIST SP 800-86, siguendo el principio de orden de volatibildad.
+
+La memoria RAM contiene evidencias importantes que se perderían al apagar bien el equipo: procesos, conexiones, claves de cifrado y código malicioso.
+
+## 2.1.1 Uso de la memoria USB
+Es importante de que nuestro USB esté cifrado con un algoritmo fuerte (AES-256) y que esté libre de cualquier tipo de malware, para evitar alterar las pruebas de la máquina. Para esta adquisición utilizaremos un SSD PNY CS900 de 240 GB conectado a un convertor SATA a USB, revisado ante amenazas y cifrado con Veracrypt.
 
 ## 2.2 Captura de memoria RAM
-Ahora, para hacer la captura correctamente, abriremos FTK Imager en nuestra memoria USB (SIEMPRE HAY QUE EJECUTARLO AHÍ, PARA EVITAR ALTERACION DE PRUEBAS)
+En este caso, nuestra máquina da problemas al ejecutar FTK Imager, debido a la falta de librerías esenciales para su funcionamiento, además de probar con otros programas como Dumpit y no tener suerte, se explicará el procedimiento para poder replicarse correctamente. Después se probó con Volatility3 y se pudo sacar los procesos de la máquina correctamente
+
+- Insertamos nuestra memoria USB sin ejecutarla inmediatamente
+- Navegamos a la carpeta instalada de FTK Imager
+
+![img1](img/img1.png)
+
+- Ejecutamos FTK Imager.exe como administrador (clic derecho + Ejecutar como administrador )
+
+![img2](img/img2.png)
+
+- Ahora, para capturar la memoria de la máquina (si funcionara...), nos vamos a File > Capture Memory
+
+![img3](img/img3.png)
+
+ - Al seleccionar la opción, nos pedirá que eligamos la ruta para el dump de la memoria. Al elegirlo, le damos clic a Capture Memory y esperamos a que se realize.
+
+![img4](img/img4.png)
+
+- Al terminar la captura, nos debería generarse un archivo .dmp, y con Votality, podemos saber los procesos que ejecutaba la máquina. Para ello, introducimos en el cmd:
+```
+ .\vol.py -f .\FORENSIC_10-Snapshot1.vmem windows.pslist
+
+ ```
+ Nota: El proceso se realiza muy rápido, por lo que se recomienda grabar pantalla para poder capturar correctamente los procesos (para ello es la opción windows.pslist)
+
+![img5](img/img5.png)
+
+- MUY IMPORTANTE: Hay que realizar un hash inmediato de la RAM obtenida para garantizar que no se alteren los datos con su uso (ya sea con MD5 o SHA-256)
+
+![img6](img/img6.png)
 
 
 ---
 
-## Paso 3: Copia de seguridad de la configuración del arranque
+## Paso 3: Adquisición de evidencias no volátiles
 
-Antes de modificar nada del GRUB, crearemos copias de seguridad. Se realiza en el caso de que hagamos errores al modificar las opciones de arranque y poder recuperar rápidamente la funcionalidad del equipo. Si se comete un error en el GRUB, puede dejar el sistema inutilizable.
+## 3.1 Disco duro
+## 3.1.1 Apagado controlado del sistema
+Antes de proceder con la adquisición del disco, ejecutaremos un apagado ordenado del sistema para evitar problemas de corrupción de datos Desde CMD con privilegios de administrador ejecutaremos:​
 
-**Podemos realizar los comandos siguientes para el backup del GRUB:**
+```
+shutdown /s /t 0
+```
+
+Documentaremos la hora exacta del apagado (11/11/2025 19:37 CET). Evitaremos el uso del botón de apagado físico o cierre abrupto de la VM que podría perder datos en caché.​
+
+## 3.1.2 Adquisición forense bit-a-bit
+Para realizar la adquisición es imprescindible hacer una copia bit-a-bit del disco duro para asegurarnos de que la evidencia original no sea modificada de ninguna manera. Utilizaremos FTK Imager como herramienta en análisis forense para crear una imagen completa del disco virtual de 32 GB
+
 
 ```
 sudo cp /etc/default/grub ~/grub-backup-default
