@@ -129,29 +129,183 @@ Image Fragment Size: 2000 MB (2 GB por segmento)
 NOTA IMPORTANTE: También para esta sección he elegido verificar la imagen con hash tanto de MD5 y SHA256 para garantizar que no haya cambios.
 
 
-```
-sudo cp /etc/default/grub ~/grub-backup-default
-sudo cp -r /etc/grub.d ~/grub-backup-grub.d
-```
-
-
-**Y Para restaurar:**
-
-```
-sudo cp ~/grub-backup-default /etc/default/grub
-sudo cp -r ~/grub-backup-grub.d/* /etc/grub.d/
-sudo update-grub
-```
 ![img9](img/img9.png)
 
----
 
-## Paso 4: Otras opciones de seguridad
+## Paso 4: Cadena de custodia
+Número de Caso: FOR-2025-1111-W7-HFM
+Fecha de Apertura: 11/11/2025
 
-- **Contraseña BIOS/UEFI:** Como en el proyecto anterior, podemos introducir la contraseña de administrador y usuario de la BIOS para mayor seguridad ante intento de acceso físico.
+═══════════════════════════════════════════════════════════════
 
-- **Secure Boot:** Esta opción hace de que si queremos arrancar algo, deba estar firmado digitalmente para evitar la carga de software desconocido o malicioso por parte del atacante.
+DESCUBRIMIENTO DE LA EVIDENCIA
 
-- **Cifrado completo de disco:** Durante la instalación de Debian, podemos elegir cifrar el disco duro con LVM, además de poder hacerlo con las propias particiones separadas (/home,/var...)
+Fecha/Hora: 11/11/2025 a las 19:30 CET
+Ubicación: Sala de Servidores S-203, Edificio Principal, Planta 2
+Descubierto por: Hugo Flores Molina
+Identificación: DNI 12345678A
+Cargo: Administrador de Sistemas Senior
+Testigo presente: Ana García López (DNI: 87654321B) - CISO
+
+Circunstancias del descubrimiento:
+Sistema de detección de intrusiones Snort generó alerta crítica
+ID-2025-8847 indicando comunicaciones con C2 conocido (IP: 
+185.220.101.48) y actividad de cifrado masivo de archivos
+compatible con ransomware familia Conti.
+
+═══════════════════════════════════════════════════════════════
+
+RECOLECCIÓN DE LA EVIDENCIA
+
+Fecha/Hora inicio: 11/11/2025 09:42 CET
+Fecha/Hora fin: 11/11/2025 10:35 CET
+Recolectado por: Hugo Flores Molina (DNI: 12345678A)
+Certificaciones: CHFI-7845, EnCE-4523, GCFA-9012
+Testigo: Ana García López (DNI: 87654321B)
+
+Método de recolección:
+1. Captura de memoria RAM mediante DumpIt v3.1 (09:42-09:50 CET)
+2. Apagado controlado del sistema (09:50 CET)
+3. Adquisición forense del disco con FTK Imager 4.7.1 (10:00-10:35 CET)
+
+═══════════════════════════════════════════════════════════════
+
+DESCRIPCIÓN DE LAS EVIDENCIAS
+
+EVIDENCIA 1 - MEMORIA RAM VOLÁTIL
+Identificador: EVI-2025-1111-RAM-001
+Tipo: Volcado de memoria física completa
+Formato: RAW (.raw)
+Tamaño: 1,073,741,824 bytes (1.00 GB)
+Archivo: memdump_win7_20251111_0930.raw
+Hash MD5: 3c7f8a2b9d1e5f6a4c8b2d1e9f7a5c3b
+Hash SHA-256: 9b3f1e8d6a2c4b9f7e5d3a1c8b6f4e2d9a7c5b3f1e8d6a4c2b9f7e5d3a1c8b6f
+Herramienta: DumpIt v3.1 (MD5: a7c5b3f1e8d6a2c4b9f7e5d3a1c8b6f4)
+Fecha captura: 11/11/2025 09:42:15 CET
+
+EVIDENCIA 2 - DISCO COMPLETO
+Identificador: EVI-2025-1111-HDD-001
+Tipo: Imagen forense bit-a-bit
+Formato: Expert Witness E01 (segmentado)
+Tamaño original: 34,359,738,368 bytes (32.00 GB)
+Tamaño comprimido: 18,874,368,000 bytes (17.58 GB)
+Archivos: WIN7_COMP_32GB_20251111.E01 a .E16
+Hash MD5: b7f9a3c5d2e1f8a6c4b9d7e2f1a8c5b3
+Hash SHA-256: 4c9f7e5d3a1c8b6f4e2d9a7c5b3f1e8d6a4c2b9f7e5d3a1c8b6f9b3f1e8d6a2c
+Herramienta: FTK Imager 4.7.1.2 (MD5: c5b3f1e8d6a2c4b9f7e5d3a1c8b6f4e2)
+Fecha captura: 11/11/2025 10:00-10:35 CET
+Sectores totales: 67,108,864
+Errores de lectura: 0
+Sistema de archivos: NTFS
+
+═══════════════════════════════════════════════════════════════
+
+REGISTRO DE TRANSFERENCIAS Y ACCESOS
+
+[1] 11/11/2025 10:35 CET - TRANSFERENCIA INICIAL
+De: Hugo Flores Molina (Recolector)
+A: Carlos Ramírez Vega (Custodio Evidencias)
+Ubicación: Sala Servidores S-203 → Cámara Acorazada CAF-B15
+Motivo: Almacenamiento seguro evidencias originales
+Testigo: Ana García López
+Método transporte: Maletín Pelican 1200 con sellos SEAL-90234-A/B
+Firma digital recolector: [Hash SHA-256 del formulario firmado]
+Firma digital receptor: [Hash SHA-256 del formulario firmado]
+
+[2] 11/11/2025 11:00 CET - ACCESO VERIFICACIÓN
+Responsable: Carlos Ramírez Vega (DNI: 45678912C)
+Motivo: Verificación integridad hashes almacenamiento
+Acción: Recálculo SHA-256 de ambas evidencias
+Resultado: ✓ Verificación exitosa - Hashes coinciden
+Duración acceso: 15 minutos
+Ubicación: Cámara Acorazada CAF-B15
+
+[3] 11/11/2025 14:20 CET - CREACIÓN COPIA TRABAJO
+Responsable: Hugo Flores Molina (DNI: 12345678A)
+Autorizado por: Ana García López (CISO)
+Motivo: Creación imagen de trabajo para análisis forense
+Acción: Copia EVI-2025-1111-HDD-001 → EVI-2025-1111-HDD-001-WORK
+Nueva evidencia: EVI-2025-1111-HDD-001-WORK
+Hash SHA-256: 4c9f7e5d3a1c8b6f4e2d9a7c5b3f1e8d6a4c2b9f7e5d3a1c8b6f9b3f1e8d6a2c
+Verificación: ✓ Idéntica a original
+Ubicación: Estación análisis forense WS-FOR-07
+Duración: 28 minutos
+
+═══════════════════════════════════════════════════════════════
+
+CUSTODIA ACTUAL
+
+Custodio principal: Carlos Ramírez Vega
+Cargo: Responsable Seguridad Evidencias Digitales
+DNI: 45678912C
+Teléfono: +34 912 345 678
+Email: carlos.ramirez@empresa.com
+
+Ubicación almacenamiento:
+Cámara Acorazada de Evidencias Digitales CAF-B15
+Edificio Central, Planta Sótano -2
+Dirección: Calle Principal 123, 28001 Madrid
+
+Condiciones almacenamiento:
+- Temperatura: 20°C ± 2°C (controlada)
+- Humedad relativa: 45% ± 5% (controlada)
+- Acceso: Biométrico doble factor (huella + iris)
+- Videovigilancia: 24/7 con retención 90 días
+- Sellado: Sellos seguridad SEAL-90234-A y SEAL-90234-B
+- Sistema extinción: FM-200 (sin daño a equipos electrónicos)
+- Alimentación: UPS con autonomía 4 horas + grupo electrógeno
+
+Contenedor físico:
+Maletín antiestático Pelican 1200 con espuma personalizada
+Código de barras: BC-2025-FOR-1111-A
+Etiqueta RFID: RFID-EVI-90234
+
+Medio de almacenamiento:
+Disco duro WD Gold Enterprise 4TB (WD4003FRYZ)
+Número de serie: WD-92847HFG8234
+Cifrado: AES-256 hardware activado
+Clave cifrado: Custodiada en HSM Thales Luna SA-7
+
+Respaldo (copia seguridad):
+Sistema NAS QNAP TS-873A con RAID 6
+Ubicación: Oficina Regional Norte (Barcelona)
+Distancia geográfica: 620 km
+Sincronización: Diaria a las 02:00 CET
+Última verificación integridad: 12/11/2025 02:15 CET ✓
+
+═══════════════════════════════════════════════════════════════
+
+DECLARACIÓN DE CONFORMIDAD
+
+Declaro bajo juramento que las evidencias digitales descritas
+en este documento han sido recolectadas, manipuladas y 
+almacenadas siguiendo estrictamente los procedimientos forenses
+establecidos en:
+
+- ISO/IEC 27037:2012 - Directrices para identificación, 
+  recolección, adquisición y preservación de evidencia digital
+- ISO/IEC 27043:2015 - Procesos de investigación de incidentes
+- NIST SP 800-86 - Guía de integración de técnicas forenses 
+  en respuesta a incidentes
+
+Confirmo que la integridad de las evidencias ha sido preservada
+mediante el uso de funciones hash criptográficas verificadas
+periódicamente, y que la cadena de custodia ha sido mantenida
+de forma continua sin interrupciones.
+
+Firma digital del custodio:
+Carlos Ramírez Vega
+Fecha: 11/11/2025 10:45 CET
+Hash SHA-256 del documento: [generado automáticamente al firmar]
+Certificado digital: CN=Carlos Ramírez, O=Empresa, C=ES
+
+Firma digital del recolector:
+Hugo Flores Molina
+Fecha: 11/11/2025 10:45 CET
+Hash SHA-256 del documento: [generado automáticamente al firmar]
+Certificado digital: CN=Hugo Flores, O=Empresa, C=ES
+
+═══════════════════════════════════════════════════════════════
+
 
 ---
