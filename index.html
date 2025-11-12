@@ -103,7 +103,8 @@
             font-size: var(--font-size-base);
             line-height: var(--line-height-normal);
             color: var(--color-text);
-            background-color: var(--color-background);
+            background: linear-gradient(135deg, #000000 0%, #1a0000 25%, #330000 50%, #1a0000 75%, #000000 100%);
+            background-attachment: fixed;
             -webkit-font-smoothing: antialiased;
             min-height: 100vh;
             display: flex;
@@ -111,11 +112,40 @@
             align-items: center;
             justify-content: center;
             padding: var(--space-20);
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 0, 0, 0.03) 2px, rgba(255, 0, 0, 0.03) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255, 0, 0, 0.03) 2px, rgba(255, 0, 0, 0.03) 4px);
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(0, 0, 0, 0.4) 100%);
+            pointer-events: none;
+            z-index: 1;
         }
         
         .container {
             max-width: 800px;
             width: 100%;
+            position: relative;
+            z-index: 2;
         }
         
         .header {
@@ -289,6 +319,28 @@
                 <h2 class="project-title">OPERATION: PROYECTO 2</h2>
                 <p class="project-description">
                     [CLASSIFIED] Mission briefing available. Access authorized personnel only.
+                </p>
+                <span class="project-link">
+                    ACCESS &gt;&gt; <span class="arrow">→</span>
+                </span>
+            </a>
+            
+            <a href="./proyecto2forense/1/index.html" class="project-card">
+                <div class="project-icon">03</div>
+                <h2 class="project-title">OPERATION: FORENSICS</h2>
+                <p class="project-description">
+                    [CLASSIFIED] Digital forensics investigation protocol. Authorized access required.
+                </p>
+                <span class="project-link">
+                    ACCESS &gt;&gt; <span class="arrow">→</span>
+                </span>
+            </a>
+            
+            <a href="./RAG sobre la LPI. Casos prácticos/1/index.html" class="project-card">
+                <div class="project-icon">04</div>
+                <h2 class="project-title">OPERATION: RAG-LPI</h2>
+                <p class="project-description">
+                    [CLASSIFIED] RAG system implementation. Legal protection intelligence cases.
                 </p>
                 <span class="project-link">
                     ACCESS &gt;&gt; <span class="arrow">→</span>
