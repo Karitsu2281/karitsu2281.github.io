@@ -1,0 +1,101 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Uso de Wireshark</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="ID de Google Analytics"
+                  id="10"
+                  title="Uso de Wireshark"
+                  environment="web"
+                  feedback-link="Un enlace en el que los usuarios puedan darte feedback (quizás creando un issue en un repositorio de git)">
+    
+      <google-codelab-step label="Instalación de WireShark" duration="0">
+        <ul>
+<li>Para instalar Wireshark, nos vamos a la página oficial <code>https://www.wireshark.org/</code>, y le damos a &#34;Windows X64 Installer&#34;</li>
+</ul>
+<p class="image-container"><img alt="img1" src="img\\b5cec6eea797a33c.png"></p>
+<ul>
+<li>Una vez descargado Wireshark, abrimos el instalador haciendo doble clic</li>
+<li>Ahora nos va a preguntar que componentes adicionales queremos instalar. En nuestro caso no hace falta cambiar nada, asi que se deja como está, y le damos a &#34;Next&#34;</li>
+</ul>
+<p class="image-container"><img alt="img2" src="img\\c80c4f523e3cf162.png"></p>
+<ul>
+<li>Después nos pedirá si queremos crear accesos directos para acceder rápidamente en el programa, recomiendo dejarlo puesto, y le daríamos a &#34;Next&#34;</li>
+</ul>
+<p class="image-container"><img alt="img3" src="img\\d20411b208b46e54.png"></p>
+<ul>
+<li>Después nos pedirá el directorio de instalación, por defecto nos lo hace en C:, aunque también se puede instalar en otro disco duro.</li>
+</ul>
+<p class="image-container"><img alt="img4" src="img\\c89bcbd2dd1a3aea.png"></p>
+<ul>
+<li>Después nos pedirá si queremos instalar &#34;Npcap&#34;, que es un programa para poder mirar puertos y dispositivos conectados en una red para buscar vulnerabilidades (durante la instalación se nos instalará los controladores necesarios para que funcione)</li>
+</ul>
+<p class="image-container"><img alt="img5" src="img\\b50997aa20a56903.png"></p>
+<ul>
+<li>Al abrir por primera vez Wireshark, nos aparecerá una interfaz con todas las tarjetas de red (físicas y virtuales). Para esta práctica capturaremos el tráfico de la tarjeta WiFi.</li>
+</ul>
+<p class="image-container"><img alt="img6" src="img\\2d9bd651d371c742.png"></p>
+<ul>
+<li>Ahora, para esta actividad, analizaremos el tráfico de la página web <code>http://testphp.vulnweb.com/login.php</code>. Para ello, podemos filtrar los paquetes de la red por &#34;HTTP&#34;.</li>
+</ul>
+<p class="image-container"><img alt="img7" src="img\\10dba76ba4882cdc.png"></p>
+<ul>
+<li>Al ser una página con HTTP, el tráfico que se enviará a la página será en texto plano, por lo que si alguien está con Wireshark en nuestra red y introducimos nuestros datos personales, nos lo puede interceptar y ser muy peligroso para nuestra privacidad.</li>
+</ul>
+<p class="image-container"><img alt="img8" src="img\\ff44c72b7e28c3b9.png"></p>
+<ul>
+<li>Para parar la captura de tráfico de los paquetes, le damos clic al cuadrado rojo.</li>
+</ul>
+<p class="image-container"><img alt="img9" src="img\\706d828773b1d9f5.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Observaciones" duration="0">
+        <ul>
+<li>He visto durante el &#34;login&#34; simulado que he hecho en la página web, me captura la dirección IP, la MAC del ordenador y hasta el puerto utilizado para ello, además (obviamente) los datos del login y la contraseña, ya que es HTTP y no se encripta el tráfico</li>
+</ul>
+<p class="image-container"><img alt="img10" src="img\\6cdf43e2b0dddab2.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Reflexiones" duration="0">
+        <ul>
+<li>La reflexión que he sacado con esta actividad es que no podemos enviar datos personales (ya sea correos o datos bancarios) a través de una WiFi insegura o pública en páginas inseguras (HTTP), ya que puede haber alguien vigilando el tráfico de red y nos puede liar muy parda, por lo que recomendaría es:</li>
+<li>Siempre utilizar datos móviles mientras estemos en la calle, o en la medida de lo posible, una red WiFi movil para mayor seguridad</li>
+<li>No rellenar formularios que parezcan sospechosos o que no tengan HTTPS.</li>
+<li>Realizar compras online o acciones que involucren datos sensibles en una red privada de confianza.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
