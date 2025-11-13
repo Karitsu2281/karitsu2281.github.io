@@ -82,7 +82,79 @@ En este caso, nuestra máquina da problemas al ejecutar FTK Imager, debido a la 
 
 ![img6](img/img6.png)
 
+P.D: También hay una forma mucho más sencilla de poder capturar los procesos de nuestra máquina.
+- Para sacar los procesos de nuestra RAM dentro del equipo, se realiza con 
+```
+tasklist /svc
+```
+Lo que hace este comando es sacar todos los procesos de la máquina junto con sus servicios asociados
+Resultado:
+```
+Image Name                     PID Services
+========================= ======== ============================================
+System Idle Process              0 N/A
+System                           4 N/A
+smss.exe                       280 N/A
+csrss.exe                      348 N/A
+wininit.exe                    396 N/A
+csrss.exe                      408 N/A
+services.exe                   464 N/A
+lsass.exe                      472 SamSs
+lsm.exe                        480 N/A
+winlogon.exe                   492 N/A
+svchost.exe                    612 DcomLaunch, PlugPlay, Power
+vmacthlp.exe                   676 VMware Physical Disk Helper service
+svchost.exe                    708 RpcEptMapper, RpcSs
+svchost.exe                    760 AudioSrv, Dhcp, eventlog,
+                                   HomeGroupProvider, lmhosts, wscsvc
+svchost.exe                    876 AudioEndpointBuilder, CscService, Netman,
+                                   PcaSvc, SysMain, TrkWks, UmRdpService,
+                                   UxSms, WdiSystemHost, wudfsvc
+svchost.exe                    920 AeLookupSvc, Appinfo, Browser, CertPropSvc,
+                                   gpsvc, IKEEXT, iphlpsvc, LanmanServer,
+                                   ProfSvc, Schedule, SENS, SessionEnv,
+                                   ShellHWDetection, Themes, Winmgmt, wuauserv
+svchost.exe                    292 EventSystem, fdPHost, netprofm, nsi,
+                                   WdiServiceHost, WinHttpAutoProxySvc
+svchost.exe                    632 CryptSvc, Dnscache, LanmanWorkstation,
+                                   NlaSvc, TermService
+spoolsv.exe                   1052 Spooler
+svchost.exe                   1088 BFE, DPS, MpsSvc
+svchost.exe                   1172 AppHostSvc
+svchost.exe                   1240 ftpsvc
+mqsvc.exe                     1292 MSMQ
+Service_KMS.exe               1432 Service KMSELDI
+VGAuthService.exe             1492 VGAuthService
+svchost.exe                   1548 W3SVC, WAS
+svchost.exe                   1980 PolicyAgent
+vmdllhost.exe                 2036 vmvss
+vmdllhost.exe                 1864 COMSysApp
+msdtc.exe                     2096 MSDTC
+WmiPrvSE.exe                  2572 N/A
+sppsvc.exe                    2628 sppsvc
+taskhost.exe                  2856 N/A
+dwm.exe                        700 N/A
+explorer.exe                  1884 N/A
+wscript.exe                   2480 N/A
+rundll32.exe                  2824 N/A
+dinotify.exe                  3060 N/A
+SearchIndexer.exe             2580 WSearch
+svchost.exe                   3256 FDResPub, FontCache, SSDPSRV
+wmpnetwk.exe                  3344 WMPNetworkSvc
+cmd.exe                       3708 N/A
+conhost.exe                   3716 N/A
+WmiPrvSE.exe                  3824 N/A
+svchost.exe                   3120 WinDefend
+TrustedInstaller.exe          3640 TrustedInstaller
+notepad.exe                   2880 N/A
+taskhost.exe                  3184 N/A
+KzcmVNSNKYkueQf.exe           1900 N/A
+tasklist.exe                  3536 N/A
+```
 
+Como podemos ver, vemos de primeras varios procesos muy sospechosos, como:
+- KzcmVNSNKYkueQf.exe (PID 1900) Tiene pinta de ser un proceso que ejecuta un payload dentro de la máquina
+- Service_KMS.exe (PID 1432) Es un servicio para activar ilegalmente versiones de Windows
 ---
 
 ## Paso 3: Adquisición de evidencias no volátiles
@@ -147,26 +219,23 @@ Identificación: DNI 12345678A
 Cargo: Administrador de Sistemas Senior
 Testigo presente: Ana García López (DNI: 87654321B) - CISO
 
-Circunstancias del descubrimiento:
-Sistema de detección de intrusiones Snort generó alerta crítica
-ID-2025-8847 indicando comunicaciones con C2 conocido (IP: 
-185.220.101.48) y actividad de cifrado masivo de archivos
-compatible con ransomware familia Conti.
+
+
 
 ═══════════════════════════════════════════════════════════════
 
 RECOLECCIÓN DE LA EVIDENCIA
 
-Fecha/Hora inicio: 11/11/2025 09:42 CET
-Fecha/Hora fin: 11/11/2025 10:35 CET
+Fecha/Hora inicio: 11/11/2025 19:42 CET
+Fecha/Hora fin: 11/11/2025 20:35 CET
 Recolectado por: Hugo Flores Molina (DNI: 12345678A)
 Certificaciones: CHFI-7845, EnCE-4523, GCFA-9012
 Testigo: Ana García López (DNI: 87654321B)
 
 Método de recolección:
-1. Captura de memoria RAM mediante DumpIt v3.1 (09:42-09:50 CET)
-2. Apagado controlado del sistema (09:50 CET)
-3. Adquisición forense del disco con FTK Imager 4.7.1 (10:00-10:35 CET)
+1. Captura de memoria RAM mediante DumpIt v3.1 (19:42-19:50 CET)
+2. Apagado controlado del sistema (19:50 CET)
+3. Adquisición forense del disco con FTK Imager 4.7.1 (20:00-20:35 CET)
 
 ═══════════════════════════════════════════════════════════════
 
@@ -197,115 +266,6 @@ Fecha captura: 11/11/2025 10:00-10:35 CET
 Sectores totales: 67,108,864
 Errores de lectura: 0
 Sistema de archivos: NTFS
-
-═══════════════════════════════════════════════════════════════
-
-REGISTRO DE TRANSFERENCIAS Y ACCESOS
-
-[1] 11/11/2025 10:35 CET - TRANSFERENCIA INICIAL
-De: Hugo Flores Molina (Recolector)
-A: Carlos Ramírez Vega (Custodio Evidencias)
-Ubicación: Sala Servidores S-203 → Cámara Acorazada CAF-B15
-Motivo: Almacenamiento seguro evidencias originales
-Testigo: Ana García López
-Método transporte: Maletín Pelican 1200 con sellos SEAL-90234-A/B
-Firma digital recolector: [Hash SHA-256 del formulario firmado]
-Firma digital receptor: [Hash SHA-256 del formulario firmado]
-
-[2] 11/11/2025 11:00 CET - ACCESO VERIFICACIÓN
-Responsable: Carlos Ramírez Vega (DNI: 45678912C)
-Motivo: Verificación integridad hashes almacenamiento
-Acción: Recálculo SHA-256 de ambas evidencias
-Resultado: ✓ Verificación exitosa - Hashes coinciden
-Duración acceso: 15 minutos
-Ubicación: Cámara Acorazada CAF-B15
-
-[3] 11/11/2025 14:20 CET - CREACIÓN COPIA TRABAJO
-Responsable: Hugo Flores Molina (DNI: 12345678A)
-Autorizado por: Ana García López (CISO)
-Motivo: Creación imagen de trabajo para análisis forense
-Acción: Copia EVI-2025-1111-HDD-001 → EVI-2025-1111-HDD-001-WORK
-Nueva evidencia: EVI-2025-1111-HDD-001-WORK
-Hash SHA-256: 4c9f7e5d3a1c8b6f4e2d9a7c5b3f1e8d6a4c2b9f7e5d3a1c8b6f9b3f1e8d6a2c
-Verificación: ✓ Idéntica a original
-Ubicación: Estación análisis forense WS-FOR-07
-Duración: 28 minutos
-
-═══════════════════════════════════════════════════════════════
-
-CUSTODIA ACTUAL
-
-Custodio principal: Carlos Ramírez Vega
-Cargo: Responsable Seguridad Evidencias Digitales
-DNI: 45678912C
-Teléfono: +34 912 345 678
-Email: carlos.ramirez@empresa.com
-
-Ubicación almacenamiento:
-Cámara Acorazada de Evidencias Digitales CAF-B15
-Edificio Central, Planta Sótano -2
-Dirección: Calle Principal 123, 28001 Madrid
-
-Condiciones almacenamiento:
-- Temperatura: 20°C ± 2°C (controlada)
-- Humedad relativa: 45% ± 5% (controlada)
-- Acceso: Biométrico doble factor (huella + iris)
-- Videovigilancia: 24/7 con retención 90 días
-- Sellado: Sellos seguridad SEAL-90234-A y SEAL-90234-B
-- Sistema extinción: FM-200 (sin daño a equipos electrónicos)
-- Alimentación: UPS con autonomía 4 horas + grupo electrógeno
-
-Contenedor físico:
-Maletín antiestático Pelican 1200 con espuma personalizada
-Código de barras: BC-2025-FOR-1111-A
-Etiqueta RFID: RFID-EVI-90234
-
-Medio de almacenamiento:
-Disco duro WD Gold Enterprise 4TB (WD4003FRYZ)
-Número de serie: WD-92847HFG8234
-Cifrado: AES-256 hardware activado
-Clave cifrado: Custodiada en HSM Thales Luna SA-7
-
-Respaldo (copia seguridad):
-Sistema NAS QNAP TS-873A con RAID 6
-Ubicación: Oficina Regional Norte (Barcelona)
-Distancia geográfica: 620 km
-Sincronización: Diaria a las 02:00 CET
-Última verificación integridad: 12/11/2025 02:15 CET ✓
-
-═══════════════════════════════════════════════════════════════
-
-DECLARACIÓN DE CONFORMIDAD
-
-Declaro bajo juramento que las evidencias digitales descritas
-en este documento han sido recolectadas, manipuladas y 
-almacenadas siguiendo estrictamente los procedimientos forenses
-establecidos en:
-
-- ISO/IEC 27037:2012 - Directrices para identificación, 
-  recolección, adquisición y preservación de evidencia digital
-- ISO/IEC 27043:2015 - Procesos de investigación de incidentes
-- NIST SP 800-86 - Guía de integración de técnicas forenses 
-  en respuesta a incidentes
-
-Confirmo que la integridad de las evidencias ha sido preservada
-mediante el uso de funciones hash criptográficas verificadas
-periódicamente, y que la cadena de custodia ha sido mantenida
-de forma continua sin interrupciones.
-
-Firma digital del custodio:
-Carlos Ramírez Vega
-Fecha: 11/11/2025 10:45 CET
-Hash SHA-256 del documento: [generado automáticamente al firmar]
-Certificado digital: CN=Carlos Ramírez, O=Empresa, C=ES
-
-Firma digital del recolector:
-Hugo Flores Molina
-Fecha: 11/11/2025 10:45 CET
-Hash SHA-256 del documento: [generado automáticamente al firmar]
-Certificado digital: CN=Hugo Flores, O=Empresa, C=ES
-
-═══════════════════════════════════════════════════════════════
 
 
 ---
