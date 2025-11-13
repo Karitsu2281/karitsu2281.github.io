@@ -1,0 +1,293 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Guia de adquisición forense con FTK Imager en una máquina Win7</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="ID de Google Analytics"
+                  id="12"
+                  title="Guia de adquisición forense con FTK Imager en una máquina Win7"
+                  environment="web"
+                  feedback-link="Un enlace en el que los usuarios puedan darte feedback (quizás creando un issue en un repositorio de git)">
+    
+      <google-codelab-step label="Paso 1: Identificación del equipo" duration="0">
+        <p>Lo primero que vamos a hacer, es realizar fotografías del entorno, como:</p>
+<ul>
+<li>Estado de la máquina (si está encendida o mal apagada)</li>
+<li>Procesos de la máquina</li>
+<li>Conexiones de red</li>
+<li>Dispositivos conectados</li>
+</ul>
+<p>Ejemplo:</p>
+<pre><code>Fecha/Hora: 11/11/2025, 09:30 CET
+Ubicación: Sala servidores S-203, Edificio Principal
+Descubierto por: JHugo Flores Molina (DNI: 12345678A)
+Circunstancias: Alerta IDS Snort ID-2025-8847
+
+
+</code></pre>
+<p>Después registraremos las especificaciones de la máquina</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Característica</p>
+</td><td colspan="1" rowspan="1"><p>Detalle</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Sistema Operativo</p>
+</td><td colspan="1" rowspan="1"><p>Windows 7 Professional 64-bit</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Capacidad Disco</p>
+</td><td colspan="1" rowspan="1"><p>32GB</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Memoria RAM</p>
+</td><td colspan="1" rowspan="1"><p>1GB</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Sistema de Archivos</p>
+</td><td colspan="1" rowspan="1"><p>NTFS</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Hipervisor</p>
+</td><td colspan="1" rowspan="1"><p>VirtualBox</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>Estado Inicial</p>
+</td><td colspan="1" rowspan="1"><p>Sistema mal apagado, red encendida</p>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Paso 2: Adquisición de evidencias volátiles" duration="0">
+        
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="2.1 Preparación del entorno" duration="0">
+        <p>Inmediatamente después de que encendamos nuestro equipo, para la adquisición de la memoria volátil (RAM), conectaremos una memoria USB que contenga el programa &#34;FTK Imager&#34;, siguiendo la norma NIST SP 800-86, siguendo el principio de orden de volatibildad.</p>
+<p>La memoria RAM contiene evidencias importantes que se perderían al apagar bien el equipo: procesos, conexiones, claves de cifrado y código malicioso.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="2.1.1 Uso de la memoria USB" duration="0">
+        <p>Es importante de que nuestro USB esté cifrado con un algoritmo fuerte (AES-256) y que esté libre de cualquier tipo de malware, para evitar alterar las pruebas de la máquina. Para esta adquisición utilizaremos un SSD PNY CS900 de 240 GB conectado a un convertor SATA a USB, revisado ante amenazas y cifrado con Veracrypt.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="2.2 Captura de memoria RAM" duration="0">
+        <p>En este caso, nuestra máquina da problemas al ejecutar FTK Imager, debido a la falta de librerías esenciales para su funcionamiento, además de probar con otros programas como Dumpit y no tener suerte, se explicará el procedimiento para poder replicarse correctamente. Después se probó con Volatility3 y se pudo sacar los procesos de la máquina correctamente</p>
+<ul>
+<li>Insertamos nuestra memoria USB sin ejecutarla inmediatamente</li>
+<li>Navegamos a la carpeta instalada de FTK Imager</li>
+</ul>
+<p class="image-container"><img alt="img1" src="img\\2d7c025bbadad36f.png"></p>
+<ul>
+<li>Ejecutamos FTK Imager.exe como administrador (clic derecho + Ejecutar como administrador )</li>
+</ul>
+<p class="image-container"><img alt="img2" src="img\\880392e65813cb4d.png"></p>
+<ul>
+<li>Ahora, para capturar la memoria de la máquina (si funcionara...), nos vamos a File &gt; Capture Memory</li>
+</ul>
+<p class="image-container"><img alt="img3" src="img\\f71afb198bc24fa5.png"></p>
+<ul>
+<li>Al seleccionar la opción, nos pedirá que eligamos la ruta para el dump de la memoria. Al elegirlo, le damos clic a Capture Memory y esperamos a que se realize.</li>
+</ul>
+<p class="image-container"><img alt="img4" src="img\\d469f6dfcc982362.png"></p>
+<ul>
+<li>Al terminar la captura, nos debería generarse un archivo .dmp, y con Votality, podemos saber los procesos que ejecutaba la máquina. Para ello, introducimos en el cmd:</li>
+</ul>
+<pre><code> .\vol.py -f .\FORENSIC_10-Snapshot1.vmem windows.pslist
+
+</code></pre>
+<p>Nota: El proceso se realiza muy rápido, por lo que se recomienda grabar pantalla para poder capturar correctamente los procesos (para ello es la opción windows.pslist)</p>
+<p class="image-container"><img alt="img5" src="img\\e674d1f4a55cea6c.png"></p>
+<ul>
+<li>MUY IMPORTANTE: Hay que realizar un hash inmediato de la RAM obtenida para garantizar que no se alteren los datos con su uso (ya sea con MD5 o SHA-256)</li>
+</ul>
+<p class="image-container"><img alt="img6" src="img\\d78259eb5a71893a.png"></p>
+<p>P.D: También hay una forma mucho más sencilla de poder capturar los procesos de nuestra máquina.</p>
+<ul>
+<li>Para sacar los procesos de nuestra RAM dentro del equipo, se realiza con</li>
+</ul>
+<pre><code>tasklist /svc
+</code></pre>
+<p>Lo que hace este comando es sacar todos los procesos de la máquina junto con sus servicios asociados Resultado:</p>
+<pre><code>Image Name                     PID Services
+========================= ======== ============================================
+System Idle Process              0 N/A
+System                           4 N/A
+smss.exe                       280 N/A
+csrss.exe                      348 N/A
+wininit.exe                    396 N/A
+csrss.exe                      408 N/A
+services.exe                   464 N/A
+lsass.exe                      472 SamSs
+lsm.exe                        480 N/A
+winlogon.exe                   492 N/A
+svchost.exe                    612 DcomLaunch, PlugPlay, Power
+vmacthlp.exe                   676 VMware Physical Disk Helper service
+svchost.exe                    708 RpcEptMapper, RpcSs
+svchost.exe                    760 AudioSrv, Dhcp, eventlog,
+                                   HomeGroupProvider, lmhosts, wscsvc
+svchost.exe                    876 AudioEndpointBuilder, CscService, Netman,
+                                   PcaSvc, SysMain, TrkWks, UmRdpService,
+                                   UxSms, WdiSystemHost, wudfsvc
+svchost.exe                    920 AeLookupSvc, Appinfo, Browser, CertPropSvc,
+                                   gpsvc, IKEEXT, iphlpsvc, LanmanServer,
+                                   ProfSvc, Schedule, SENS, SessionEnv,
+                                   ShellHWDetection, Themes, Winmgmt, wuauserv
+svchost.exe                    292 EventSystem, fdPHost, netprofm, nsi,
+                                   WdiServiceHost, WinHttpAutoProxySvc
+svchost.exe                    632 CryptSvc, Dnscache, LanmanWorkstation,
+                                   NlaSvc, TermService
+spoolsv.exe                   1052 Spooler
+svchost.exe                   1088 BFE, DPS, MpsSvc
+svchost.exe                   1172 AppHostSvc
+svchost.exe                   1240 ftpsvc
+mqsvc.exe                     1292 MSMQ
+Service_KMS.exe               1432 Service KMSELDI
+VGAuthService.exe             1492 VGAuthService
+svchost.exe                   1548 W3SVC, WAS
+svchost.exe                   1980 PolicyAgent
+vmdllhost.exe                 2036 vmvss
+vmdllhost.exe                 1864 COMSysApp
+msdtc.exe                     2096 MSDTC
+WmiPrvSE.exe                  2572 N/A
+sppsvc.exe                    2628 sppsvc
+taskhost.exe                  2856 N/A
+dwm.exe                        700 N/A
+explorer.exe                  1884 N/A
+wscript.exe                   2480 N/A
+rundll32.exe                  2824 N/A
+dinotify.exe                  3060 N/A
+SearchIndexer.exe             2580 WSearch
+svchost.exe                   3256 FDResPub, FontCache, SSDPSRV
+wmpnetwk.exe                  3344 WMPNetworkSvc
+cmd.exe                       3708 N/A
+conhost.exe                   3716 N/A
+WmiPrvSE.exe                  3824 N/A
+svchost.exe                   3120 WinDefend
+TrustedInstaller.exe          3640 TrustedInstaller
+notepad.exe                   2880 N/A
+taskhost.exe                  3184 N/A
+KzcmVNSNKYkueQf.exe           1900 N/A
+tasklist.exe                  3536 N/A
+</code></pre>
+<p>Como podemos ver, vemos de primeras varios procesos muy sospechosos, como:</p>
+<ul>
+<li>KzcmVNSNKYkueQf.exe (PID 1900) Tiene pinta de ser un proceso que ejecuta un payload dentro de la máquina</li>
+<li>Service_KMS.exe (PID 1432) Es un servicio para activar ilegalmente versiones de Windows</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Paso 3: Adquisición de evidencias no volátiles" duration="0">
+        
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="3.1 Disco duro" duration="0">
+        
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="3.1.1 Apagado controlado del sistema" duration="0">
+        <p>Antes de proceder con la adquisición del disco, ejecutaremos un apagado ordenado del sistema para evitar problemas de corrupción de datos. Desde CMD con privilegios de administrador ejecutaremos:​</p>
+<pre><code>shutdown /s /t 0
+</code></pre>
+<p>Documentaremos la hora exacta del apagado (11/11/2025 19:37 CET). Evitaremos el uso del botón de apagado físico o cierre abrupto de la VM que podría perder datos en caché.​</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="3.1.2 Adquisición forense bit-a-bit" duration="0">
+        <p>Para realizar la adquisición es imprescindible hacer una copia bit-a-bit del disco duro para asegurarnos de que la evidencia original no sea modificada. Utilizaremos FTK Imager como herramienta para crear una imagen completa del disco virtual de 32 GB</p>
+<ul>
+<li>Iniciaremos FTK Imager en nuestra estación forense y seleccionaremos File &gt; Create Disk Image. En el cuadro de diálogo &#34;Select Source&#34;, elegiremos la opción &#34;Physical Drive&#34; para capturar el disco completo sector por sector incluyendo espacio no asignado y archivos eliminados.</li>
+<li>En nuestro caso utilizaríamos &#34;File Image&#34;, ya que al tratarse de una VM, debemos coger la imagen de la propia máquina. Se haría con &#34;Add Evidence Item - Image File&#34;, elegimos la imagen de la VM a analizar y al dar clic a Finish, nos debería salir el disco completo</li>
+<li>Ahora, para hacer la copia completa del disco, nos vamos a &#34;File - Create Disk Image&#34;, elegimos la imagen de nuestra VM, e introducimos la siguiente información en los parámetros:</li>
+</ul>
+<pre><code>Evidence Item Information:
+- Case Number: FOR-2025-1111-W7-HFM
+- Evidence Number: EVI-001-DISCO-PRINCIPAL
+- Unique Description: Disco sistema Windows 7 comprometido - Ransomware
+- Examiner: Hugo Flores Molina
+- Notes: VM VMWare - Alerta 2025-8847
+
+Image Destination Folder: E:\Evidencia\
+Image Filename: WIN7_COMP_32GB_20251111
+Image Fragment Size: 2000 MB (2 GB por segmento)
+
+☑ Verify images after they are created
+☑ Create directory listings of all files
+
+</code></pre>
+<p class="image-container"><img alt="img7" src="img\\93526761db26ec1a.png"></p>
+<p class="image-container"><img alt="img8" src="img\\d9cfb85df810e53e.png"></p>
+<p>NOTA IMPORTANTE: También para esta sección he elegido verificar la imagen con hash tanto de MD5 y SHA256 para garantizar que no haya cambios.</p>
+<p class="image-container"><img alt="img9" src="img\\7b5815ef25ef7358.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Paso 4: Cadena de custodia" duration="0">
+        <p>Número de Caso: FOR-2025-1111-W7-HFM Fecha de Apertura: 11/11/2025</p>
+<p>═══════════════════════════════════════════════════════════════</p>
+<p>DESCUBRIMIENTO DE LA EVIDENCIA</p>
+<p>Fecha/Hora: 11/11/2025 a las 19:30 CET Ubicación: Sala de Servidores S-203, Edificio Principal, Planta 2 Descubierto por: Hugo Flores Molina Identificación: DNI 12345678A Cargo: Administrador de Sistemas Senior Testigo presente: Ana García López (DNI: 87654321B) - CISO</p>
+<p>═══════════════════════════════════════════════════════════════</p>
+<p>RECOLECCIÓN DE LA EVIDENCIA</p>
+<p>Fecha/Hora inicio: 11/11/2025 19:42 CET Fecha/Hora fin: 11/11/2025 20:35 CET Recolectado por: Hugo Flores Molina (DNI: 12345678A) Certificaciones: CHFI-7845, EnCE-4523, GCFA-9012 Testigo: Ana García López (DNI: 87654321B)</p>
+<p>Método de recolección:</p>
+<ol type="1">
+<li>Captura de memoria RAM mediante DumpIt v3.1 (19:42-19:50 CET)</li>
+<li>Apagado controlado del sistema (19:50 CET)</li>
+<li>Adquisición forense del disco con FTK Imager 4.7.1 (20:00-20:35 CET)</li>
+</ol>
+<p>═══════════════════════════════════════════════════════════════</p>
+<p>DESCRIPCIÓN DE LAS EVIDENCIAS</p>
+<p>EVIDENCIA 1 - MEMORIA RAM Identificador: FORENSIC_10-6db778b3 Tipo: Volcado de memoria física completa Formato: VMEM (.vmem) Tamaño: 1,048,576 KB (1.00 GB) Archivo: FORENSIC_10-6db778b3.vmem Hash MD5: 387dd09ff8655edb54207c3f51bc2b7e Hash SHA-256: 5d8acc919651b5c83d16c4d284afceab49bb891cab3d8ca1202c4b4d6a3df7f6 Herramienta: Votality3 Fecha captura: 11/11/2025 19:42:15 CET</p>
+<p>EVIDENCIA 2 - DISCO COMPLETO Information for G:\EVIDENCIA\WIN7_COMP_32GB_20251111: Physical Evidentiary Item (Source) Information: [Device Info] Source Type: Physical [Drive Geometry] Cylinders: 4.177 Heads: 255 Sectors per Track: 63 Bytes per Sector: 512 Sector Count: 67.108.864 [Physical Drive Information] Drive Interface Type: lsilogic [Image] Image Type: VMWare Virtual Disk Source data size: 32768 MB Sector count:    67108864 [Computed Hashes] MD5 checksum:    590cdac31fd2dd2bb8eef2ad8aa25e51 SHA1 checksum:   cb68cdee535bd62308260883f6628a5aba7c42cc Fecha captura: 11/11/2025 20:00:30 CET</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Paso 5: Metolodogía usada" duration="0">
+        <p>Se priorizó el principio de orden de volatilidad para recolectar datos efímeros primero, minimizando alteraciones mediante herramientas validadas como FTK Imager y Volatility3.</p>
+<ul>
+<li>Fase de Preparación Esta fase inicial establece políticas, procedimientos y preparación técnica para actividades forenses, incluyendo roles y verificación de herramientas conforme a ISO 27037. Se evaluó la volatilidad de evidencias y se preparó almacenamiento cifrado para evitar contaminaciones.</li>
+<li>Fase de Identificación Se identifican fuentes potenciales de evidencia digital, documentando la escena para evaluar su valor probatorio sin alterarla, siguiendo principios de auditabilidad y justifiabilidad. Esta documentación inicial facilita la reproducibilidad y trazabilidad.</li>
+<li>Fase de Recolección y Adquisición La recolección implica remover físicamente dispositivos con evidencia potencial, mientras la adquisición crea copias forenses bit-a-bit sin modificar originales, aplicando métodos que preservan integridad mediante hashes y bloqueadores. Se evitó alteración ejecutando herramientas desde USB cifrado y grabando pantalla para auditabilidad.</li>
+<li>Fase de Preservación Se preserva la evidencia en su forma original, manteniendo un rastro de auditoría inmutable y condiciones controladas para evitar degradación, aplicando cadena de custodia continua desde el descubrimiento.</li>
+<li>Fase de Análisis y Reporte Esta metodología garantiza que la evidencia sea auditable, justificada y reproducible, cumpliendo ISO 27037 para manejo inicial y NIST SP 800-86 para integración en respuesta a incidentes.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
