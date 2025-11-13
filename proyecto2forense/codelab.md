@@ -1,6 +1,6 @@
 author: Hugo Flores
 summary: Guía de bastionamiento de Debian 13
-id: 1
+id: 12
 categories: codelab,markdown
 environments: Web
 status: Published
@@ -161,7 +161,7 @@ Como podemos ver, vemos de primeras varios procesos muy sospechosos, como:
 
 ## 3.1 Disco duro
 ## 3.1.1 Apagado controlado del sistema
-Antes de proceder con la adquisición del disco, ejecutaremos un apagado ordenado del sistema para evitar problemas de corrupción de datos Desde CMD con privilegios de administrador ejecutaremos:​
+Antes de proceder con la adquisición del disco, ejecutaremos un apagado ordenado del sistema para evitar problemas de corrupción de datos. Desde CMD con privilegios de administrador ejecutaremos:​
 
 ```
 shutdown /s /t 0
@@ -241,31 +241,57 @@ Método de recolección:
 
 DESCRIPCIÓN DE LAS EVIDENCIAS
 
-EVIDENCIA 1 - MEMORIA RAM VOLÁTIL
-Identificador: EVI-2025-1111-RAM-001
+EVIDENCIA 1 - MEMORIA RAM
+Identificador: FORENSIC_10-6db778b3
 Tipo: Volcado de memoria física completa
-Formato: RAW (.raw)
-Tamaño: 1,073,741,824 bytes (1.00 GB)
-Archivo: memdump_win7_20251111_0930.raw
-Hash MD5: 3c7f8a2b9d1e5f6a4c8b2d1e9f7a5c3b
-Hash SHA-256: 9b3f1e8d6a2c4b9f7e5d3a1c8b6f4e2d9a7c5b3f1e8d6a4c2b9f7e5d3a1c8b6f
-Herramienta: DumpIt v3.1 (MD5: a7c5b3f1e8d6a2c4b9f7e5d3a1c8b6f4)
-Fecha captura: 11/11/2025 09:42:15 CET
+Formato: VMEM (.vmem)
+Tamaño: 1,048,576 KB (1.00 GB)
+Archivo: FORENSIC_10-6db778b3.vmem
+Hash MD5: 387dd09ff8655edb54207c3f51bc2b7e
+Hash SHA-256: 5d8acc919651b5c83d16c4d284afceab49bb891cab3d8ca1202c4b4d6a3df7f6
+Herramienta: Votality3
+Fecha captura: 11/11/2025 19:42:15 CET
 
 EVIDENCIA 2 - DISCO COMPLETO
-Identificador: EVI-2025-1111-HDD-001
-Tipo: Imagen forense bit-a-bit
-Formato: Expert Witness E01 (segmentado)
-Tamaño original: 34,359,738,368 bytes (32.00 GB)
-Tamaño comprimido: 18,874,368,000 bytes (17.58 GB)
-Archivos: WIN7_COMP_32GB_20251111.E01 a .E16
-Hash MD5: b7f9a3c5d2e1f8a6c4b9d7e2f1a8c5b3
-Hash SHA-256: 4c9f7e5d3a1c8b6f4e2d9a7c5b3f1e8d6a4c2b9f7e5d3a1c8b6f9b3f1e8d6a2c
-Herramienta: FTK Imager 4.7.1.2 (MD5: c5b3f1e8d6a2c4b9f7e5d3a1c8b6f4e2)
-Fecha captura: 11/11/2025 10:00-10:35 CET
-Sectores totales: 67,108,864
-Errores de lectura: 0
-Sistema de archivos: NTFS
+Information for G:\EVIDENCIA\WIN7_COMP_32GB_20251111:
+Physical Evidentiary Item (Source) Information:
+[Device Info]
+ Source Type: Physical
+[Drive Geometry]
+ Cylinders: 4.177
+ Heads: 255
+ Sectors per Track: 63
+ Bytes per Sector: 512
+ Sector Count: 67.108.864
+[Physical Drive Information]
+ Drive Interface Type: lsilogic
+[Image]
+ Image Type: VMWare Virtual Disk
+ Source data size: 32768 MB
+ Sector count:    67108864
+[Computed Hashes]
+ MD5 checksum:    590cdac31fd2dd2bb8eef2ad8aa25e51
+ SHA1 checksum:   cb68cdee535bd62308260883f6628a5aba7c42cc
+ Fecha captura: 11/11/2025 20:00:30 CET
 
+
+---
+## Paso 5: Metolodogía usada
+Se priorizó el principio de orden de volatilidad para recolectar datos efímeros primero, minimizando alteraciones mediante herramientas validadas como FTK Imager y Volatility3.
+
+- Fase de Preparación
+Esta fase inicial establece políticas, procedimientos y preparación técnica para actividades forenses, incluyendo roles y verificación de herramientas conforme a ISO 27037. Se evaluó la volatilidad de evidencias y se preparó almacenamiento cifrado para evitar contaminaciones.
+
+- Fase de Identificación
+Se identifican fuentes potenciales de evidencia digital, documentando la escena para evaluar su valor probatorio sin alterarla, siguiendo principios de auditabilidad y justifiabilidad. Esta documentación inicial facilita la reproducibilidad y trazabilidad.
+
+- Fase de Recolección y Adquisición
+La recolección implica remover físicamente dispositivos con evidencia potencial, mientras la adquisición crea copias forenses bit-a-bit sin modificar originales, aplicando métodos que preservan integridad mediante hashes y bloqueadores. Se evitó alteración ejecutando herramientas desde USB cifrado y grabando pantalla para auditabilidad.
+
+- Fase de Preservación
+Se preserva la evidencia en su forma original, manteniendo un rastro de auditoría inmutable y condiciones controladas para evitar degradación, aplicando cadena de custodia continua desde el descubrimiento.
+
+- Fase de Análisis y Reporte
+Esta metodología garantiza que la evidencia sea auditable, justificada y reproducible, cumpliendo ISO 27037 para manejo inicial y NIST SP 800-86 para integración en respuesta a incidentes.
 
 ---
