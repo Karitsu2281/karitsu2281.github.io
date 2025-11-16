@@ -251,9 +251,7 @@ Lo que podemos ver en dicho texto es que en la dirección DNS, nos indica que se
 ---
 
 ## Paso 3: Adquisición de evidencias no volátiles
-
-## 3.1 Disco duro
-## 3.1.1 Apagado controlado del sistema
+## 3.1.1 Disco duro y apagado controlado
 Antes de proceder con la adquisición del disco, ejecutaremos un apagado ordenado del sistema para evitar problemas de corrupción de datos. Desde CMD con privilegios de administrador ejecutaremos:​
 
 ```
