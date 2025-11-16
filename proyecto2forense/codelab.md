@@ -50,7 +50,7 @@ La memoria RAM contiene evidencias importantes que se perderían al apagar bien 
 Es importante de que nuestro USB esté cifrado con un algoritmo fuerte (AES-256) y que esté libre de cualquier tipo de malware, para evitar alterar las pruebas de la máquina. Para esta adquisición utilizaremos un SSD PNY CS900 de 240 GB conectado a un convertor SATA a USB, revisado ante amenazas y cifrado con Veracrypt.
 
 ## 2.2 Captura de memoria RAM
-En este caso, nuestra máquina da problemas al ejecutar FTK Imager, debido a la falta de librerías esenciales para su funcionamiento, además de probar con otros programas como Dumpit y no tener suerte, se explicará el procedimiento para poder replicarse correctamente. Después se probó con Volatility3 y se pudo sacar los procesos de la máquina correctamente
+En este caso, nuestra máquina da problemas al ejecutar FTK Imager, debido a la falta de librerías esenciales para su funcionamiento, además de probar con otros programas como Dumpit y no tener suerte, se explicará el procedimiento para poder replicarse correctamente. Después se probó con Volatility3 y se pudo sacar los procesos de la máquina correctamente 
 
 - Insertamos nuestra memoria USB sin ejecutarla inmediatamente
 - Navegamos a la carpeta instalada de FTK Imager
@@ -272,7 +272,7 @@ Para realizar la adquisición es imprescindible hacer una copia bit-a-bit del di
 Evidence Item Information:
 - Case Number: FOR-2025-1111-W7-HFM
 - Evidence Number: EVI-001-DISCO-PRINCIPAL
-- Unique Description: Disco sistema Windows 7 comprometido - Ransomware
+- Unique Description: Disco sistema Windows 7 comprometido 
 - Examiner: Hugo Flores Molina
 - Notes: VM VMWare - Alerta 2025-8847
 
@@ -314,8 +314,8 @@ Testigo presente: Ana García López (DNI: 87654321B)
 
 RECOLECCIÓN DE LA EVIDENCIA
 
-Fecha/Hora inicio: 11/11/2025 19:42 CET
-Fecha/Hora fin: 11/11/2025 20:35 CET
+Fecha/Hora inicio de recolección: 11/11/2025 19:42 CET
+Fecha/Hora fin de recolección: 11/11/2025 20:35 CET
 Recolectado por: Hugo Flores Molina (DNI: 12345678A)
 Testigo: Ana García López (DNI: 87654321B)
 
@@ -336,7 +336,7 @@ Tamaño: 1,048,576 KB (1.00 GB)
 Archivo: FORENSIC_10-6db778b3.vmem
 Hash MD5: 387dd09ff8655edb54207c3f51bc2b7e
 Hash SHA-256: 5d8acc919651b5c83d16c4d284afceab49bb891cab3d8ca1202c4b4d6a3df7f6
-Herramienta: Votality3
+Herramienta: Votalility3
 Fecha captura: 11/11/2025 19:42:15 CET
 
 EVIDENCIA 2 - DISCO COMPLETO
