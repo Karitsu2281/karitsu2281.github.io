@@ -156,7 +156,9 @@ Como podemos ver, vemos de primeras varios procesos muy sospechosos, como:
 - KzcmVNSNKYkueQf.exe (PID 1900) Tiene pinta de ser un proceso que ejecuta un payload dentro de la máquina
 - Service_KMS.exe (PID 1432) Es un servicio para activar ilegalmente versiones de Windows
 
-## 2.3 Conexiones activas de la tabla ARP 
+## 2.2.1 Resultados iniciales del análisis
+
+## 2.2.2 Conexiones activas de la tabla ARP 
 En la máquina se han encontrado las siguientes conexiones establecidas con ARP (se realiza introduciendo en el CMD "arp -a")
 ```
 Interface: 172.26.1.113 --- 0x14
@@ -179,7 +181,7 @@ Interface: 172.26.1.113 --- 0x14
 ```
 Podemos ver en la tabla que tanto la IP 172.26.0.31 y 172.26.1.87 tienen la misma MAC (4c:1d:96:75:24:de), por lo que podría ser un posible ataque de ARP Spoofing o Man-In-The-Middle anunciando que su tarjeta de red tiene múltiples IP para interceptar tráfico de equipos.
 
-## 2.4 Conexiones activas de red
+## 2.2.3 Conexiones activas de red
 En la máquina se han encontado las conexiones siguientes a la red (se realiza introduciendo en el CMD "netstat -ano" ):
 ```
 Active Connections
@@ -205,12 +207,13 @@ TCP    172.26.1.113:139       0.0.0.0:0              LISTENING       4
 TCP    172.26.1.113:49189     10.28.5.1:53           SYN_SENT        3280
 TCP    [::]:80                [::]:0                 LISTENING       4
 
+
 ```
 Se puede ver que en la conexión 172.26.1.113:49189 se está intentando conectar a una IP externa que no se reconoce (10.28.5.1:53), lo que indica que posiblemente se puedan estar filtrando datos de la máquina a través del puerto asignado para DNS.
 Además, podemos ver 2 vulnerabilidades en nuestra máquina. La del RDP (puerto 3389), lo que significa que cualquiera podría acceder a través de Internet, y posiblemente se podrían haber conectado desde dicho puerto, además del puerto de SMB (445), lo que podría también entrar un ransomware (como WannaCry), si no tiene el parche correspondiente para corregir la vulnerabilidad.
 Además, aparece un nuevo PID que NO aparecía en la lista de procesos, por lo que de primeras podría tratarse de un malware o simplemente un proceso asociado a uno légitimo.
 
-## 2.5 Configuración de red de la máquina
+## 2.2.4 Configuración de red de la máquina
 Windows IP Configuration
 
    Host Name . . . . . . . . . . . . : FORENSE-06
@@ -292,8 +295,10 @@ NOTA IMPORTANTE: También para esta sección he elegido verificar la imagen con 
 
 ![img9](img/img9.png)
 
+## 3.2 R
 
 
+---
 
 ## Paso 4: Cadena de custodia
 Número de Caso: FOR-2025-1111-W7-HFM
