@@ -197,7 +197,7 @@ tasklist.exe                  3536 N/A
 
       </google-codelab-step>
     
-      <google-codelab-step label="2.2.1 Resultados iniciales del análisis" duration="0">
+      <google-codelab-step label="2.2.1 Resultados iniciales del análisis de tablas de la red" duration="0">
         
 
       </google-codelab-step>
@@ -261,10 +261,35 @@ TCP    [::]:80                [::]:0                 LISTENING       4
     
       <google-codelab-step label="2.2.4 Configuración de red de la máquina" duration="0">
         <p>Windows IP Configuration</p>
-<p>Host Name . . . . . . . . . . . . : FORENSE-06 Primary Dns Suffix  . . . . . . . : Node Type . . . . . . . . . . . . : Hybrid IP Routing Enabled. . . . . . . . : No WINS Proxy Enabled. . . . . . . . : No</p>
-<p>Ethernet adapter Local Area Connection 3:</p>
-<p>Connection-specific DNS Suffix  . : Description . . . . . . . . . . . : Intel(R) PRO/1000 MT Network Connection #3 Physical Address. . . . . . . . . : 08-00-27-79-D3-36 DHCP Enabled. . . . . . . . . . . : Yes Autoconfiguration Enabled . . . . : Yes Link-local IPv6 Address . . . . . : fe80::6ce0:102c:e4cb:abfb%20(Preferred) IPv4 Address. . . . . . . . . . . : 172.26.1.113(Preferred) Subnet Mask . . . . . . . . . . . : 255.255.252.0 Lease Obtained. . . . . . . . . . : Thursday, November 13, 2025 9:17:06 AM Lease Expires . . . . . . . . . . : Friday, November 14, 2025 9:17:06 AM Default Gateway . . . . . . . . . : 172.26.0.1 DHCP Server . . . . . . . . . . . : 172.26.0.1 DHCPv6 IAID . . . . . . . . . . . : 336068647 DHCPv6 client DUID. . . . . . . . : 00-01-00-01-20-E8-C2-B5-00-50-56-87-0E-4A DNS Servers . . . . . . . . . . . : 172.26.0.1 NetBIOS over Tcpip. . . . . . . . : Enabled</p>
-<p>Tunnel adapter isatap.{9EBDC36C-9617-4FCF-9A66-1A9D8E48E280}: Media State . . . . . . . . . . . : Media disconnected ...</p>
+<pre><code>   Host Name . . . . . . . . . . . . : FORENSE-06
+   Primary Dns Suffix  . . . . . . . : 
+   Node Type . . . . . . . . . . . . : Hybrid
+   IP Routing Enabled. . . . . . . . : No
+   WINS Proxy Enabled. . . . . . . . : No
+
+Ethernet adapter Local Area Connection 3:
+
+   Connection-specific DNS Suffix  . : 
+   Description . . . . . . . . . . . : Intel(R) PRO/1000 MT Network Connection #3
+   Physical Address. . . . . . . . . : 08-00-27-79-D3-36
+   DHCP Enabled. . . . . . . . . . . : Yes
+   Autoconfiguration Enabled . . . . : Yes
+   Link-local IPv6 Address . . . . . : fe80::6ce0:102c:e4cb:abfb%20(Preferred) 
+   IPv4 Address. . . . . . . . . . . : 172.26.1.113(Preferred) 
+   Subnet Mask . . . . . . . . . . . : 255.255.252.0
+   Lease Obtained. . . . . . . . . . : Thursday, November 13, 2025 9:17:06 AM
+   Lease Expires . . . . . . . . . . : Friday, November 14, 2025 9:17:06 AM
+   Default Gateway . . . . . . . . . : 172.26.0.1
+   DHCP Server . . . . . . . . . . . : 172.26.0.1
+   DHCPv6 IAID . . . . . . . . . . . : 336068647
+   DHCPv6 client DUID. . . . . . . . : 00-01-00-01-20-E8-C2-B5-00-50-56-87-0E-4A
+   DNS Servers . . . . . . . . . . . : 172.26.0.1
+   NetBIOS over Tcpip. . . . . . . . : Enabled
+
+Tunnel adapter isatap.{9EBDC36C-9617-4FCF-9A66-1A9D8E48E280}:
+   Media State . . . . . . . . . . . : Media disconnected
+   ...
+</code></pre>
 <p>Lo que podemos ver en dicho texto es que en la dirección DNS, nos indica que sería la 172.26.0.1, pero en la lista de conexiones activas, nos marcaba la IP anteriormente mencionada, por lo que podría ser un ataque de DNS Spoofing, al intentarse conectar a la otra DNS a la fuerza.</p>
 
 
@@ -319,11 +344,6 @@ Image Fragment Size: 2000 MB (2 GB por segmento)
 
       </google-codelab-step>
     
-      <google-codelab-step label="3.2 R" duration="0">
-        
-
-      </google-codelab-step>
-    
       <google-codelab-step label="Paso 4: Cadena de custodia" duration="0">
         <p>Número de Caso: FOR-2025-1111-W7-HFM Fecha de Apertura: 11/11/2025</p>
 <p>═══════════════════════════════════════════════════════════════</p>
@@ -338,9 +358,41 @@ Image Fragment Size: 2000 MB (2 GB por segmento)
 <li>Adquisición forense del disco con FTK Imager 4.7.1 (20:00-20:35 CET)</li>
 </ol>
 <p>═══════════════════════════════════════════════════════════════</p>
-<p>DESCRIPCIÓN DE LAS EVIDENCIAS</p>
-<p>EVIDENCIA 1 - MEMORIA RAM Identificador: FORENSIC_10-6db778b3 Tipo: Volcado de memoria física completa Formato: VMEM (.vmem) Tamaño: 1,048,576 KB (1.00 GB) Archivo: FORENSIC_10-6db778b3.vmem Hash MD5: 387dd09ff8655edb54207c3f51bc2b7e Hash SHA-256: 5d8acc919651b5c83d16c4d284afceab49bb891cab3d8ca1202c4b4d6a3df7f6 Herramienta: Votality3 Fecha captura: 11/11/2025 19:42:15 CET</p>
-<p>EVIDENCIA 2 - DISCO COMPLETO Information for G:\EVIDENCIA\WIN7_COMP_32GB_20251111: Physical Evidentiary Item (Source) Information: [Device Info] Source Type: Physical [Drive Geometry] Cylinders: 4.177 Heads: 255 Sectors per Track: 63 Bytes per Sector: 512 Sector Count: 67.108.864 [Physical Drive Information] Drive Interface Type: lsilogic [Image] Image Type: VMWare Virtual Disk Source data size: 32768 MB Sector count:    67108864 [Computed Hashes] MD5 checksum:    590cdac31fd2dd2bb8eef2ad8aa25e51 SHA1 checksum:   cb68cdee535bd62308260883f6628a5aba7c42cc Fecha captura: 11/11/2025 20:00:30 CET</p>
+<pre><code>DESCRIPCIÓN DE LAS EVIDENCIAS
+
+EVIDENCIA 1 - MEMORIA RAM
+Identificador: FORENSIC_10-6db778b3
+Tipo: Volcado de memoria física completa
+Formato: VMEM (.vmem)
+Tamaño: 1,048,576 KB (1.00 GB)
+Archivo: FORENSIC_10-6db778b3.vmem
+Hash MD5: 387dd09ff8655edb54207c3f51bc2b7e
+Hash SHA-256: 5d8acc919651b5c83d16c4d284afceab49bb891cab3d8ca1202c4b4d6a3df7f6
+Herramienta: Votality3
+Fecha captura: 11/11/2025 19:42:15 CET
+
+EVIDENCIA 2 - DISCO COMPLETO
+Information for G:\EVIDENCIA\WIN7_COMP_32GB_20251111:
+Physical Evidentiary Item (Source) Information:
+[Device Info]
+ Source Type: Physical
+[Drive Geometry]
+ Cylinders: 4.177
+ Heads: 255
+ Sectors per Track: 63
+ Bytes per Sector: 512
+ Sector Count: 67.108.864
+[Physical Drive Information]
+ Drive Interface Type: lsilogic
+[Image]
+ Image Type: VMWare Virtual Disk
+ Source data size: 32768 MB
+ Sector count:    67108864
+[Computed Hashes]
+ MD5 checksum:    590cdac31fd2dd2bb8eef2ad8aa25e51
+ SHA1 checksum:   cb68cdee535bd62308260883f6628a5aba7c42cc
+ Fecha captura: 11/11/2025 20:00:30 CET
+</code></pre>
 
 
       </google-codelab-step>

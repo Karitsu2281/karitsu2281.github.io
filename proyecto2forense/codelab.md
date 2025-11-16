@@ -156,7 +156,7 @@ Como podemos ver, vemos de primeras varios procesos muy sospechosos, como:
 - KzcmVNSNKYkueQf.exe (PID 1900) Tiene pinta de ser un proceso que ejecuta un payload dentro de la máquina
 - Service_KMS.exe (PID 1432) Es un servicio para activar ilegalmente versiones de Windows
 
-## 2.2.1 Resultados iniciales del análisis
+## 2.2.1 Resultados iniciales del análisis de tablas de la red
 
 ## 2.2.2 Conexiones activas de la tabla ARP 
 En la máquina se han encontrado las siguientes conexiones establecidas con ARP (se realiza introduciendo en el CMD "arp -a")
@@ -215,6 +215,7 @@ Además, aparece un nuevo PID que NO aparecía en la lista de procesos, por lo q
 
 ## 2.2.4 Configuración de red de la máquina
 Windows IP Configuration
+```
 
    Host Name . . . . . . . . . . . . : FORENSE-06
    Primary Dns Suffix  . . . . . . . : 
@@ -244,7 +245,7 @@ Ethernet adapter Local Area Connection 3:
 Tunnel adapter isatap.{9EBDC36C-9617-4FCF-9A66-1A9D8E48E280}:
    Media State . . . . . . . . . . . : Media disconnected
    ...
-
+```
 Lo que podemos ver en dicho texto es que en la dirección DNS, nos indica que sería la 172.26.0.1, pero en la lista de conexiones activas, nos marcaba la IP anteriormente mencionada, por lo que podría ser un ataque de DNS Spoofing, al intentarse conectar a la otra DNS a la fuerza.
 
 ---
@@ -295,9 +296,6 @@ NOTA IMPORTANTE: También para esta sección he elegido verificar la imagen con 
 
 ![img9](img/img9.png)
 
-## 3.2 R
-
-
 ---
 
 ## Paso 4: Cadena de custodia
@@ -329,7 +327,7 @@ Método de recolección:
 3. Adquisición forense del disco con FTK Imager 4.7.1 (20:00-20:35 CET)
 
 ═══════════════════════════════════════════════════════════════
-
+```
 DESCRIPCIÓN DE LAS EVIDENCIAS
 
 EVIDENCIA 1 - MEMORIA RAM
@@ -364,7 +362,7 @@ Physical Evidentiary Item (Source) Information:
  MD5 checksum:    590cdac31fd2dd2bb8eef2ad8aa25e51
  SHA1 checksum:   cb68cdee535bd62308260883f6628a5aba7c42cc
  Fecha captura: 11/11/2025 20:00:30 CET
-
+```
 
 ---
 ## Paso 5: Metolodogía usada
