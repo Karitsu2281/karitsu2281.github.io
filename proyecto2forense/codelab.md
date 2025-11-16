@@ -155,6 +155,95 @@ tasklist.exe                  3536 N/A
 Como podemos ver, vemos de primeras varios procesos muy sospechosos, como:
 - KzcmVNSNKYkueQf.exe (PID 1900) Tiene pinta de ser un proceso que ejecuta un payload dentro de la máquina
 - Service_KMS.exe (PID 1432) Es un servicio para activar ilegalmente versiones de Windows
+
+## 2.3 Conexiones activas de la tabla ARP 
+En la máquina se han encontrado las siguientes conexiones establecidas con ARP (se realiza introduciendo en el CMD "arp -a")
+```
+Interface: 172.26.1.113 --- 0x14
+  Internet Address      Physical Address      Type
+  172.26.0.1            74-83-c2-f7-90-c1     dynamic
+  172.26.0.31           4c-1d-96-75-24-de     dynamic
+  172.26.0.223          30-f6-ef-0a-bf-e0     dynamic
+  172.26.1.87           4c-1d-96-75-24-de     dynamic
+  172.26.1.116          00-42-38-bd-2f-13     dynamic
+  172.26.1.125          d4-1b-81-6d-cf-67     dynamic
+  172.26.1.142          5c-a3-9d-55-4b-00     dynamic
+  172.26.1.155          0c-96-e6-a8-c4-15     dynamic
+  172.26.2.83           e0-d3-62-5a-34-25     dynamic
+  172.26.2.152          4c-d5-77-2d-ea-eb     dynamic
+  172.26.3.255          ff-ff-ff-ff-ff-ff     static
+  224.0.0.22            01-00-5e-00-00-16     static
+  224.0.0.252           01-00-5e-00-00-fc     static
+  239.255.255.250       01-00-5e-7f-ff-fa     static
+  255.255.255.255       ff-ff-ff-ff-ff-ff     static
+```
+Podemos ver en la tabla que tanto la IP 172.26.0.31 y 172.26.1.87 tienen la misma MAC (4c:1d:96:75:24:de), por lo que podría ser un posible ataque de ARP Spoofing o Man-In-The-Middle anunciando que su tarjeta de red tiene múltiples IP para interceptar tráfico de equipos.
+
+## 2.4 Conexiones activas de red
+En la máquina se han encontado las conexiones siguientes a la red (se realiza introduciendo en el CMD "netstat -ano" ):
+```
+Active Connections
+
+Proto  Local Address          Foreign Address        State           PID
+TCP    0.0.0.0:80             0.0.0.0:0              LISTENING       4
+TCP    0.0.0.0:135            0.0.0.0:0              LISTENING       708
+TCP    0.0.0.0:445            0.0.0.0:0              LISTENING       4
+TCP    0.0.0.0:2103           0.0.0.0:0              LISTENING       1292
+TCP    0.0.0.0:2105           0.0.0.0:0              LISTENING       1292
+TCP    0.0.0.0:2107           0.0.0.0:0              LISTENING       1292
+TCP    0.0.0.0:3389           0.0.0.0:0              LISTENING       632
+TCP    0.0.0.0:5357           0.0.0.0:0              LISTENING       4
+TCP    0.0.0.0:49152          0.0.0.0:0              LISTENING       396
+TCP    0.0.0.0:49153          0.0.0.0:0              LISTENING       760
+TCP    0.0.0.0:49154          0.0.0.0:0              LISTENING       920
+TCP    0.0.0.0:49155          0.0.0.0:0              LISTENING       1292
+TCP    0.0.0.0:49156          0.0.0.0:0              LISTENING       464
+TCP    0.0.0.0:49157          0.0.0.0:0              LISTENING       1980
+TCP    0.0.0.0:49158          0.0.0.0:0              LISTENING       472
+TCP    127.0.0.1:1801         0.0.0.0:0              LISTENING       1292
+TCP    172.26.1.113:139       0.0.0.0:0              LISTENING       4
+TCP    172.26.1.113:49189     10.28.5.1:53           SYN_SENT        3280
+TCP    [::]:80                [::]:0                 LISTENING       4
+
+```
+Se puede ver que en la conexión 172.26.1.113:49189 se está intentando conectar a una IP externa que no se reconoce (10.28.5.1:53), lo que indica que posiblemente se puedan estar filtrando datos de la máquina a través del puerto asignado para DNS.
+Además, podemos ver 2 vulnerabilidades en nuestra máquina. La del RDP (puerto 3389), lo que significa que cualquiera podría acceder a través de Internet, y posiblemente se podrían haber conectado desde dicho puerto, además del puerto de SMB (445), lo que podría también entrar un ransomware (como WannaCry), si no tiene el parche correspondiente para corregir la vulnerabilidad.
+Además, aparece un nuevo PID que NO aparecía en la lista de procesos, por lo que de primeras podría tratarse de un malware o simplemente un proceso asociado a uno légitimo.
+
+## 2.5 Configuración de red de la máquina
+Windows IP Configuration
+
+   Host Name . . . . . . . . . . . . : FORENSE-06
+   Primary Dns Suffix  . . . . . . . : 
+   Node Type . . . . . . . . . . . . : Hybrid
+   IP Routing Enabled. . . . . . . . : No
+   WINS Proxy Enabled. . . . . . . . : No
+
+Ethernet adapter Local Area Connection 3:
+
+   Connection-specific DNS Suffix  . : 
+   Description . . . . . . . . . . . : Intel(R) PRO/1000 MT Network Connection #3
+   Physical Address. . . . . . . . . : 08-00-27-79-D3-36
+   DHCP Enabled. . . . . . . . . . . : Yes
+   Autoconfiguration Enabled . . . . : Yes
+   Link-local IPv6 Address . . . . . : fe80::6ce0:102c:e4cb:abfb%20(Preferred) 
+   IPv4 Address. . . . . . . . . . . : 172.26.1.113(Preferred) 
+   Subnet Mask . . . . . . . . . . . : 255.255.252.0
+   Lease Obtained. . . . . . . . . . : Thursday, November 13, 2025 9:17:06 AM
+   Lease Expires . . . . . . . . . . : Friday, November 14, 2025 9:17:06 AM
+   Default Gateway . . . . . . . . . : 172.26.0.1
+   DHCP Server . . . . . . . . . . . : 172.26.0.1
+   DHCPv6 IAID . . . . . . . . . . . : 336068647
+   DHCPv6 client DUID. . . . . . . . : 00-01-00-01-20-E8-C2-B5-00-50-56-87-0E-4A
+   DNS Servers . . . . . . . . . . . : 172.26.0.1
+   NetBIOS over Tcpip. . . . . . . . : Enabled
+
+Tunnel adapter isatap.{9EBDC36C-9617-4FCF-9A66-1A9D8E48E280}:
+   Media State . . . . . . . . . . . : Media disconnected
+   ...
+
+Lo que podemos ver en dicho texto es que en la dirección DNS, nos indica que sería la 172.26.0.1, pero en la lista de conexiones activas, nos marcaba la IP anteriormente mencionada, por lo que podría ser un ataque de DNS Spoofing, al intentarse conectar a la otra DNS a la fuerza.
+
 ---
 
 ## Paso 3: Adquisición de evidencias no volátiles
@@ -204,6 +293,8 @@ NOTA IMPORTANTE: También para esta sección he elegido verificar la imagen con 
 ![img9](img/img9.png)
 
 
+
+
 ## Paso 4: Cadena de custodia
 Número de Caso: FOR-2025-1111-W7-HFM
 Fecha de Apertura: 11/11/2025
@@ -217,11 +308,7 @@ Ubicación: Sala de Servidores S-203, Edificio Principal, Planta 2
 Descubierto por: Hugo Flores Molina
 Identificación: DNI 12345678A
 Cargo: Administrador de Sistemas Senior
-Testigo presente: Ana García López (DNI: 87654321B) - CISO
-
-
-
-
+Testigo presente: Ana García López (DNI: 87654321B)
 ═══════════════════════════════════════════════════════════════
 
 RECOLECCIÓN DE LA EVIDENCIA
@@ -229,11 +316,10 @@ RECOLECCIÓN DE LA EVIDENCIA
 Fecha/Hora inicio: 11/11/2025 19:42 CET
 Fecha/Hora fin: 11/11/2025 20:35 CET
 Recolectado por: Hugo Flores Molina (DNI: 12345678A)
-Certificaciones: CHFI-7845, EnCE-4523, GCFA-9012
 Testigo: Ana García López (DNI: 87654321B)
 
 Método de recolección:
-1. Captura de memoria RAM mediante DumpIt v3.1 (19:42-19:50 CET)
+1. Captura de memoria RAM mediante FTK Imager 4.7.1 (19:42-19:50 CET)
 2. Apagado controlado del sistema (19:50 CET)
 3. Adquisición forense del disco con FTK Imager 4.7.1 (20:00-20:35 CET)
 
