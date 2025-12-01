@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2025-12-01T22:51:48+01:00",
+  "id": "enrutamiento-estatico-vlan-cisco",
+  "duration": 30,
+  "title": "¿Cómo hacer un enrutamiento estático y configurar la red VLAN en una red en Cisco Packet Tracer?",
+  "authors": "Grupo 4",
+  "summary": "¿Cómo hacer un enrutamiento estático y configurar la red VLAN en una red en Cisco Packet Tracer?",
+  "source": ".\\codelab.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "redes"
+  ],
+  "tags": [
+    "cisco",
+    "enrutamiento",
+    "packet-tracer",
+    "vlan"
+  ],
+  "feedback": "https://github.com",
+  "url": "enrutamiento-estatico-vlan-cisco"
+}

@@ -14,24 +14,24 @@
             --color-olive-300: rgba(88, 94, 78, 1);
             --color-olive-400: rgba(106, 113, 94, 1);
             --color-olive-500: rgba(124, 132, 110, 1);
-            --color-tan-200: rgba(255, 245, 220, 1);
-            --color-tan-300: rgba(240, 230, 200, 1);
-            --color-tan-400: rgba(220, 210, 180, 1);
-            --color-green-500: rgba(100, 220, 100, 1);
-            --color-green-600: rgba(80, 200, 80, 1);
-            --color-green-700: rgba(60, 180, 60, 1);
+            --color-tan-200: rgba(255, 245, 230, 1);
+            --color-tan-300: rgba(240, 220, 200, 1);
+            --color-tan-400: rgba(200, 180, 160, 1);
+            --color-orange-500: rgba(255, 140, 0, 1);
+            --color-orange-600: rgba(255, 120, 0, 1);
+            --color-orange-700: rgba(220, 100, 0, 1);
             
-            --color-olive-rgb: 100, 220, 100;
-            --color-green-rgb: 100, 220, 100;
-            --color-tan-rgb: 255, 245, 220;
+            --color-olive-rgb: 255, 140, 0;
+            --color-green-rgb: 255, 140, 0;
+            --color-tan-rgb: 255, 245, 230;
             
-            --color-background: rgba(0, 0, 0, 1);
-            --color-surface: rgba(20, 10, 10, 0.8);
+            --color-background: rgba(10, 10, 15, 1);
+            --color-surface: rgba(20, 15, 10, 0.85);
             --color-text: var(--color-tan-200);
             --color-text-secondary: var(--color-tan-300);
-            --color-primary: var(--color-green-500);
-            --color-primary-hover: var(--color-green-600);
-            --color-primary-active: var(--color-green-700);
+            --color-primary: var(--color-orange-500);
+            --color-primary-hover: var(--color-orange-600);
+            --color-primary-active: var(--color-orange-700);
             --color-secondary: rgba(var(--color-olive-rgb), 0.2);
             --color-secondary-hover: rgba(var(--color-olive-rgb), 0.3);
             --color-border: rgba(var(--color-olive-rgb), 0.4);
@@ -103,7 +103,7 @@
             font-size: var(--font-size-base);
             line-height: var(--line-height-normal);
             color: var(--color-text);
-            background: linear-gradient(135deg, #000000 0%, #1a0000 25%, #330000 50%, #1a0000 75%, #000000 100%);
+            background: linear-gradient(180deg, #0a0a0f 0%, #1a1520 30%, #2a1f30 60%, #1a1520 90%, #0a0a0f 100%);
             background-attachment: fixed;
             -webkit-font-smoothing: antialiased;
             min-height: 100vh;
@@ -123,8 +123,8 @@
             width: 100%;
             height: 100%;
             background-image: 
-                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 0, 0, 0.03) 2px, rgba(255, 0, 0, 0.03) 4px),
-                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255, 0, 0, 0.03) 2px, rgba(255, 0, 0, 0.03) 4px);
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 140, 0, 0.05) 2px, rgba(255, 140, 0, 0.05) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255, 140, 0, 0.05) 2px, rgba(255, 140, 0, 0.05) 4px);
             pointer-events: none;
             z-index: 1;
         }
@@ -136,7 +136,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(0, 0, 0, 0.4) 100%);
+            background: radial-gradient(circle at 50% 30%, rgba(255, 140, 0, 0.08) 0%, transparent 40%, rgba(0, 0, 0, 0.5) 100%);
             pointer-events: none;
             z-index: 1;
         }
@@ -175,14 +175,14 @@
         }
         
         .project-card {
-            background-color: rgba(10, 5, 5, 0.9);
-            border: 2px solid rgba(100, 220, 100, 0.3);
-            border-radius: 2px;
+            background-color: rgba(15, 10, 10, 0.85);
+            border: 2px solid rgba(255, 140, 0, 0.3);
+            border-radius: 4px;
             padding: var(--space-32);
             transition: all var(--duration-normal) var(--ease-standard);
             text-decoration: none;
             display: block;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 140, 0, 0.1);
             position: relative;
         }
         
@@ -199,10 +199,10 @@
         }
         
         .project-card:hover {
-            transform: none;
-            box-shadow: 0 6px 12px rgba(100, 220, 100, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 140, 0, 0.4), 0 0 30px rgba(255, 140, 0, 0.2), inset 0 1px 0 rgba(255, 140, 0, 0.2);
             border-color: var(--color-primary);
-            background-color: rgba(20, 10, 10, 1);
+            background-color: rgba(25, 15, 10, 0.95);
         }
         
         .project-card:hover::before {
@@ -298,74 +298,85 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1>// CLASSIFIED PROJECTS</h1>
-            <p>SECURITY CLEARANCE: PUBLIC ACCESS</p>
+            <h1>// SURVIVOR ARCHIVES</h1>
+            <p>UV SAFE ZONE - NIGHT APPROACHES</p>
         </header>
         
         <div class="projects-grid">
             <a href="./proyecto1/index.html" class="project-card">
                 <div class="project-icon">01</div>
-                <h2 class="project-title">OPERATION: PROYECTO 1</h2>
+                <h2 class="project-title">SUPPLY RUN: PROYECTO 1</h2>
                 <p class="project-description">
-                    [CLASSIFIED] Mission briefing available. Access authorized personnel only.
+                    [SURVIVOR LOG] Mission data recovered. UV protection required for access.
                 </p>
                 <span class="project-link">
-                    ACCESS &gt;&gt; <span class="arrow">→</span>
+                    ENTER SAFEZONE &gt;&gt; <span class="arrow">→</span>
                 </span>
             </a>
             
             <a href="./proyecto2/index.html" class="project-card">
                 <div class="project-icon">02</div>
-                <h2 class="project-title">OPERATION: PROYECTO 2</h2>
+                <h2 class="project-title">SUPPLY RUN: PROYECTO 2</h2>
                 <p class="project-description">
-                    [CLASSIFIED] Mission briefing available. Access authorized personnel only.
+                    [SURVIVOR LOG] Secondary mission cache located. Nightfall imminent.
                 </p>
                 <span class="project-link">
-                    ACCESS &gt;&gt; <span class="arrow">→</span>
+                    ENTER SAFEZONE &gt;&gt; <span class="arrow">→</span>
+                </span>
+            </a>
+            
+            <a href="./proyecto2BastionadoG4/1/index.html" class="project-card">
+                <div class="project-icon">03</div>
+                <h2 class="project-title">OUTPOST: BASTIONADO G4</h2>
+                <p class="project-description">
+                    [SURVIVOR LOG] Fortified shelter data. Network hardening protocols active.
+                </p>
+                <span class="project-link">
+                    ENTER SAFEZONE &gt;&gt; <span class="arrow">→</span>
                 </span>
             </a>
             
             <a href="./proyecto2forense/1/index.html" class="project-card">
-                <div class="project-icon">03</div>
-                <h2 class="project-title">OPERATION: FORENSICS</h2>
+                <div class="project-icon">04</div>
+                <h2 class="project-title">EVIDENCE: FORENSICS</h2>
                 <p class="project-description">
-                    [CLASSIFIED] Digital forensics investigation protocol. Authorized access required.
+                    [SURVIVOR LOG] Digital traces recovered from infected zone. Handle with care.
                 </p>
                 <span class="project-link">
-                    ACCESS &gt;&gt; <span class="arrow">→</span>
+                    ENTER SAFEZONE &gt;&gt; <span class="arrow">→</span>
                 </span>
             </a>
             
             <a href="./RAG sobre la LPI. Casos prácticos/1/index.html" class="project-card">
-                <div class="project-icon">04</div>
-                <h2 class="project-title">OPERATION: RAG-LPI</h2>
+                <div class="project-icon">05</div>
+                <h2 class="project-title">ARCHIVE: RAG-LPI</h2>
                 <p class="project-description">
-                    [CLASSIFIED] RAG system implementation. Legal protection intelligence cases.
+                    [SURVIVOR LOG] Pre-outbreak legal database. AI retrieval system operational.
                 </p>
                 <span class="project-link">
-                    ACCESS &gt;&gt; <span class="arrow">→</span>
+                    ENTER SAFEZONE &gt;&gt; <span class="arrow">→</span>
                 </span>
             </a>
             
             <a href="./17forense/10/index.html" class="project-card">
-                <div class="project-icon">05</div>
-                <h2 class="project-title">OPERATION: 17-FORENSICS</h2>
+                <div class="project-icon">06</div>
+                <h2 class="project-title">EVIDENCE: SECTOR 17</h2>
                 <p class="project-description">
-                    [CLASSIFIED] Advanced forensic analysis protocol. Level 17 clearance required.
+                    [SURVIVOR LOG] Advanced forensic traces from quarantine zone 17. Danger level: HIGH.
                 </p>
                 <span class="project-link">
-                    ACCESS &gt;&gt; <span class="arrow">→</span>
+                    ENTER SAFEZONE &gt;&gt; <span class="arrow">→</span>
                 </span>
             </a>
             
             <a href="./Uso de RAG para consultas sobre normativa/9/index.html" class="project-card">
-                <div class="project-icon">06</div>
-                <h2 class="project-title">OPERATION: RAG-NORMATIVA</h2>
+                <div class="project-icon">07</div>
+                <h2 class="project-title">ARCHIVE: NORMATIVA</h2>
                 <p class="project-description">
-                    [CLASSIFIED] RAG deployment for regulatory compliance queries. Restricted access.
+                    [SURVIVOR LOG] Regulatory compliance AI system. Old world knowledge preserved.
                 </p>
                 <span class="project-link">
-                    ACCESS &gt;&gt; <span class="arrow">→</span>
+                    ENTER SAFEZONE &gt;&gt; <span class="arrow">→</span>
                 </span>
             </a>
         </div>

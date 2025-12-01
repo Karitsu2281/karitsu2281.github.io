@@ -1,0 +1,157 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>¿Cómo hacer un enrutamiento estático y configurar la red VLAN en una red en Cisco Packet Tracer?</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="enrutamiento-estatico-vlan-cisco"
+                  title="¿Cómo hacer un enrutamiento estático y configurar la red VLAN en una red en Cisco Packet Tracer?"
+                  environment="web"
+                  feedback-link="https://github.com">
+    
+      <google-codelab-step label="Introducción" duration="2">
+        <p>Para esta guía hemos decidido usar una red de que conforma tres routers(de la marca Cisco) interconectados entre sí, 6 switches (de cada departamento), dos servidores con los servicios esenciales para su funcionamiento y para probar la conectividad de la red, un PC con Ubuntu 22.04</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configuración de los routers" duration="10">
+        <h2 is-upgraded>Router 1</h2>
+<p>Lo primero que vamos a hacer es cambiar el hostname de nuestro router para poder identificarlo fácilmente y evitar confusiones al realizarlo en el resto de routers.</p>
+<p>Para ello, introducimos en la terminal &#34;enable&#34;, para ponernos en modo administrador, &#34;conf t&#34; para ponernos en modo configuración y para establecer el nombre, introducimos &#34;hostname R1&#34;. Repetimos lo mismo en los dos routers restantes, con &#34;R2&#34; y &#34;R3&#34;, respectivamente</p>
+<p class="image-container"><img alt="Captura 1" src="img\\92937bd0ffe2ebec.png"></p>
+<p>Después, vamos a asignar direcciones IP para poder comunicarnos con los switches de la red asociada a R1. Para ello, introducimos en la terminal &#34;interface gigabitEthernet1/0&#34;, para conectarlo al Switch 1</p>
+<p class="image-container"><img alt="Captura 2" src="img\\16656912188d913c.png"></p>
+<p>Ahora, vamos a configurar la dirección IP que vamos a asignar al puerto para comunicarnos con el switch. Para ello, introducimos en la terminal &#34;ip addr 172.16.0.1, que sería la puerta de enlace, y 255.255.255.192 como la máscara&#34;. Para activar el puerto después de configurar las IP, introducimos &#34;no shutdown&#34;.</p>
+<p class="image-container"><img alt="Captura 3" src="img\\b5e938e53a661c80.png"></p>
+<p>Después, repetimos el mismo proceso para el switch 02 y 03, pero con sus respectivas IP asignadas en el VLSM, además de sus mask asignadas por número de equipos.</p>
+<p class="image-container"><img alt="Captura 4" src="img\\e4f1dda9f2be1d31.png"></p>
+<p><strong>Nota importante:</strong> Para no perder el progreso de configuración de los routers, introduciremos en la terminal &#34;do wr&#34;, para guardar los cambios en la memoria.</p>
+<p>Ahora, para mayor comodidad al asignar las direcciones IP, vamos a configurar un pool DHCP para ahorrarnos mucho tiempo en asignarlas manualmente.</p>
+<p>Lo primero que vamos a hacer es introducir en la terminal &#34;ip dhcp excluded-access 172.16.10.x&#34;. Lo que hace este comando es cuando se asignan las direcciones DHCP, no las tiene en cuenta para evitar conflictos de direcciones. Lo normal es usar las puertas de enlace asignadas en las interfaces.</p>
+<p class="image-container"><img alt="Captura 5" src="img\\48f67aeed5858933.png"></p>
+<p>Ahora, para configurar el DHCP Pool, vamos a introducir en la terminal &#34;ip dhcp pool &#34;nombre del Pool&#34;. Lo recomendado es ponerlo al nombre del switch asignado, junto con el departamento para mayor facilidad de configuración.</p>
+<p>Cuando estemos dentro de la configuración, introducimos &#34;network 172.16.10.0 255.255.255.192&#34;, para asignar las IP que usará DHCP para asignarlo a los equipos, y la puerta de enlace con &#34;default-router 172.16.10.1&#34; para comunicarse correctamente con el router, y opcionalmente podemos asignar un servidor DNS (lo normal sería con el DNS de Google, que sería 8.8.8.8) con &#34;dns-server 8.8.8.8&#34;</p>
+<p class="image-container"><img alt="Captura 6" src="img\\907e75af8eeb3f10.png"></p>
+<p>Repetimos el mismo proceso para el resto de switches del router con sus respectivas IP y masks.</p>
+<p class="image-container"><img alt="Captura 7" src="img\\fc6791e0c690d2b9.png"></p>
+<p>Ahora, vamos a configurar la ruta para poder comunicarse con los otros routers. Para ello introducimos en la terminal &#34;ip route 0.0.0.0 0.0.0.0 172.16.10.217&#34;. Lo que hace este comando es dar una ruta para comunicarse con los routers, debido al tipo de distribución que tiene nuestra empresa, con este comando sirve para conectarse al resto de routers. Es importante configurar la interfaz que conecta el router con el resto para que el comando funcione correctamente, se realizaría con &#34;ip addr&#34;.</p>
+<p class="image-container"><img alt="Captura 8" src="img\\2ce85e717ab9ed1f.png"></p>
+<h2 is-upgraded>Router 2</h2>
+<p>Al ser el router central, transmite el internet de la nube NAT al resto de la red, por lo que el proceso va a ser algo diferente al resto de routers. Lo primero que vamos a hacer es configurar la interfaz que coge el Internet de la nube.</p>
+<p>Para ello, configuraremos el comando &#34;ip addr&#34; para que coga automáticamente la dirección IP de la nube. Se realizaría con &#34;ip addr dhcp&#34;. También usaremos el comando &#34;ip nat outside&#34; para que enrute los paquetes hacia la red.</p>
+<p class="image-container"><img alt="Captura 9" src="img\\3cd46abe75d81dcf.png"></p>
+<p>Ahora, configuraremos el resto de las interfaces para que se conecten con ambos routers correctamente. Se realizarían con los comandos &#34;int&#34; &#34;ip addr&#34; y &#34;no shutdown&#34;, como en el resto de routers.</p>
+<p>Ahora, lo más laborioso de este router, sería configurar todas las rutas para que se comunique correctamente con los routers.</p>
+<p class="image-container"><img alt="Captura 10" src="img\\65247a181c099fa4.png"></p>
+<h2 is-upgraded>Router 3</h2>
+<p>La configuración sería muy similar al router 1, pero aplicando las otras IP de los switches.</p>
+<p class="image-container"><img alt="Captura 11" src="img\\b2082e759115965.png"></p>
+<p class="image-container"><img alt="Captura 12" src="img\\a19375848c576763.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configuración de las Vlans" duration="8">
+        <p>En este apartado debemos usar los siguientes comandos para introducir las Vlans en los respectivos Switches con los siguientes comandos:</p>
+<h2 is-upgraded>Crear VLAN</h2>
+<p>Tendrá que repetirse para cada VLAN</p>
+<pre><code>enable
+configure terminal
+VLAN 20
+name vlan20
+</code></pre>
+<h2 is-upgraded>Asignar VLAN</h2>
+<p>Tendrá que repetirse para cada VLAN</p>
+<pre><code>enable
+configure terminal
+interface fastethernet 0/1
+switchport access VLAN 30
+</code></pre>
+<p>(asigna la VLAN a la interfaz)</p>
+<h2 is-upgraded>Asignar mode trunk</h2>
+<pre><code>enable
+configure terminal
+interface gigabitethernet 6/1
+switchport mode trunk
+switchport trunk allowed VLAN 10,20,30
+</code></pre>
+<ul>
+<li><code>switchport mode trunk</code>: sirve para transportar tráfico de múltiples VLAN por un único enlace</li>
+<li><code>switchport trunk allowed VLAN 10,20,30</code>: sirve para especificar las VLAN permitidas en la interfaz</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Seguridad en los switches" duration="5">
+        <p>Para añadir seguridad en los switches usamos los siguientes comandos:</p>
+<pre><code>enable
+configure terminal
+interface FastEthernet 0/2
+switchport port-security
+switchport port-security maximum 1
+switchport port-security mac-address sticky
+switchport port-security violation shutdown
+</code></pre>
+<p><strong>Descripción de los comandos:</strong></p>
+<ul>
+<li><code>enable</code>: Modo privilegiado</li>
+<li><code>configure terminal</code>: accedemos a la terminal</li>
+<li><code>interface FastEthernet 0/2</code>: Indicamos el puerto por el que no queremos que lleguen</li>
+<li><code>switchport port-security</code>: accedemos al modo seguridad para los puertos</li>
+<li><code>switchport port-security maximum 1</code>: Le damos un único dispositivo (Aprenderá una MAC)</li>
+<li><code>switchport port-security mac-address sticky</code>: Al mandar un paquete aprenderá la dirección del dispositivo conectado</li>
+<li><code>switchport port-security violation shutdown</code>: Al conectar un dispositivo a la mac se apague el puerto y solo el administrador pueda reactivar el puerto</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Sub-interfaz en los routers" duration="5">
+        <h2 is-upgraded>Creación de las subredes en un interfaz</h2>
+<p>Tendrá que repetirse para cada VLAN</p>
+<pre><code>enable
+configure terminal
+interface gigabitethernet 0/0/.10
+description VLAN20
+encapsulation dot1q 20
+ip address 192.16.10.65 255.255.255.224
+</code></pre>
+<p><strong>Descripción de los comandos:</strong></p>
+<ul>
+<li><code>interface gigabitethernet 0/0/.10</code>: Crea una interfaz virtual que permite enrutar VLANs entre sí</li>
+<li><code>encapsulation dot1q 20</code>: Indica por que VLAN se va a enrutar el tráfico de dicha VLAN</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
