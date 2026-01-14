@@ -329,6 +329,28 @@
             .cv-grid { grid-template-columns: 1fr; }
             .profile-section { padding: 30px; }
         }
+
+        /* Category Headers */
+        .category-header {
+            font-family: 'Teko', sans-serif;
+            font-size: 36px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 60px 0 24px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+        }
+
+        .category-header::before {
+            content: '';
+            width: 6px;
+            height: 36px;
+            background-color: var(--accent-color);
+            margin-right: 16px;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -347,7 +369,10 @@
             <p>Especialista en Configuración, Reparación de Equipos y Redes.<br>Administrador de Sistemas en Formación.</p>
         </header>
 
-        <!-- Projects Grid (Apple Bento Style) -->
+        <!-- Projects Grid Grouped by Subject -->
+
+        <!-- 1. Hacking & Bastionado -->
+        <h3 class="category-header">Hacking Ético y Bastionado de Sistemas</h3>
         <section class="bento-grid">
             
             <!-- 1. P3HackingEtico -->
@@ -396,6 +421,12 @@
                 <i class="fa-solid fa-network-wired card-icon"></i>
             </a>
 
+        </section>
+
+        <!-- 2. Forense -->
+        <h3 class="category-header">Análisis Forense</h3>
+        <section class="bento-grid">
+            
             <!-- 5. proyecto2forense -->
             <a href="./proyecto2forense/12/index.html" class="bento-card">
                 <div class="card-content">
@@ -417,6 +448,12 @@
                 </div>
                 <i class="fa-solid fa-magnifying-glass-chart card-icon"></i>
             </a>
+
+        </section>
+
+        <!-- 3. IA & Legal -->
+        <h3 class="category-header">Inteligencia Artificial y Normativa</h3>
+        <section class="bento-grid">
 
              <!-- 7. RAG sobre la LPI -->
             <a href="./RAG sobre la LPI. Casos prácticos/1/index.html" class="bento-card">
