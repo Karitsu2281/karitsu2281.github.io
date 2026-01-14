@@ -159,6 +159,76 @@
                 padding: 60px 0 40px;
             }
         }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin: 60px 0 30px;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .cv-container {
+            display: grid;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .cv-block {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .cv-item {
+            margin-bottom: 20px;
+            padding-left: 20px;
+            border-left: 3px solid var(--accent-color);
+        }
+
+        .cv-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .cv-item h3 {
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .cv-item .meta {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .contact-section {
+            text-align: center;
+            padding: 60px 0;
+            background: rgba(56, 189, 248, 0.05);
+            border-radius: 12px;
+            margin-bottom: 60px;
+            border: 1px solid var(--border-color);
+        }
+
+        .contact-button {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: #0f172a;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: background-color 0.2s;
+        }
+
+        .contact-button:hover {
+            background-color: var(--accent-hover);
+        }
     </style>
 </head>
 <body>
@@ -273,6 +343,77 @@
                 </span>
             </a>
         </main>
+
+        <!-- CV Section -->
+        <h2 class="section-title">Mi Perfil Profesional</h2>
+        
+        <div class="cv-container">
+            <!-- About -->
+            <div class="cv-block">
+                <h3 style="font-size: 1.4rem; margin-bottom: 15px; color: var(--accent-color);">Sobre Mí</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                    Soy un profesional técnico apasionado por la tecnología, con formación especializada en telecomunicaciones e informática.
+                </p>
+                <p style="color: var(--text-secondary);">
+                    Como persona autista, aporto una perspectiva única al entorno laboral caracterizada por una alta atención al detalle, lealtad y pensamiento lógico estructurado. Busco ser valorado por mis competencias técnicas y mi dedicación profesional, en un entorno de respeto mutuo donde se priorice el talento y los resultados.
+                </p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+                <!-- Experience -->
+                <div class="cv-block">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px; color: var(--text-primary);">Experiencia Laboral</h3>
+                    
+                    <div class="cv-item">
+                        <h3>Prácticas en Tienda de Informática</h3>
+                        <span class="meta">Durante el Grado Superior de Telecomunicaciones</span>
+                        <p style="font-size: 0.95rem; color: var(--text-secondary);">
+                            Diagnóstico y reparación de hardware, atención técnica a clientes en tienda, configuración de equipos y redes SOHO.
+                        </p>
+                    </div>
+                    
+                    <div class="cv-item">
+                        <h3>Técnico de Mantenimiento (Centros Educativos)</h3>
+                        <span class="meta">Durante el Grado Medio (SMR)</span>
+                        <p style="font-size: 0.95rem; color: var(--text-secondary);">
+                            Reparación y mantenimiento de equipos informáticos en colegios. Resolución de incidencias hardware/software y soporte a profesorado.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Education -->
+                <div class="cv-block">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 20px; color: var(--text-primary);">Formación Académica</h3>
+                    
+                    <div class="cv-item">
+                        <h3>Grado Superior en Telecomunicaciones e Informática</h3>
+                        <span class="meta">Título Oficial</span>
+                        <p style="font-size: 0.95rem; color: var(--text-secondary);">
+                            Infraestructuras de telecomunicación, redes de datos, sistemas de radiocomunicaciones y gestión de proyectos.
+                        </p>
+                    </div>
+                    
+                    <div class="cv-item">
+                        <h3>Grado Medio en Sistemas Microinformáticos y Redes (SMR)</h3>
+                        <span class="meta">Título Oficial</span>
+                        <p style="font-size: 0.95rem; color: var(--text-secondary);">
+                            Montaje y mantenimiento de equipos, instalación de servicios en red, seguridad informática básica.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="contact-section">
+            <h2 style="font-size: 1.8rem; margin-bottom: 15px;">Contacto</h2>
+            <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
+                ¿Estás interesado en mi perfil? Puedes contactarme directamente a través de mi correo electrónico.
+            </p>
+            <a href="mailto:hugofloresmolina23@gmail.com" class="contact-button">
+                hugofloresmolina23@gmail.com
+            </a>
+        </div>
 
         <footer>
             <p>&copy; 2026 Karitsu2281. Todos los derechos reservados.</p>
