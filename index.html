@@ -3,423 +3,469 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Karitsu2281 - Portafolio de Proyectos</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Karitsu2281</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --accent-color: #38bdf8;
-            --accent-hover: #0ea5e9;
-            --border-color: #334155;
-            --card-hover-border: #38bdf8;
+            --bg-color: #000000;
+            --surface-color: #1c1c1e;
+            --surface-hover: #2c2c2e;
+            --text-primary: #f5f5f7;
+            --text-secondary: #86868b;
+            --accent-color: #2997ff;
+            --border-radius: 18px;
+            --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font-stack);
             background-color: var(--bg-color);
             color: var(--text-primary);
-            line-height: 1.6;
-            min-height: 100vh;
+            line-height: 1.4;
+        }
+
+        /* Navbar mimics Apple's sticky header */
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-content {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 0 20px;
+            height: 48px;
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: -0.01em;
+        }
+
+        .nav-link {
+            font-size: 12px;
+            color: #d1d1d6;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .nav-link:hover {
+            opacity: 1;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 980px;
             margin: 0 auto;
             padding: 0 20px;
-            width: 100%;
         }
 
-        header {
-            padding: 80px 0 60px;
+        /* Hero Section */
+        .hero {
             text-align: center;
+            padding: 100px 0 60px;
+            animation: fadeIn 1s ease-out;
         }
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 16px;
+        .hero h1 {
+            font-size: 56px;
+            line-height: 1.07143;
             font-weight: 700;
-            color: var(--text-primary);
+            letter-spacing: -0.005em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #fff 0%, #a1a1aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .subtitle {
-            font-size: 1.125rem;
+        .hero p {
+            font-size: 24px;
+            line-height: 1.25;
+            font-weight: 400;
             color: var(--text-secondary);
+            margin-bottom: 30px;
+            letter-spacing: 0.004em;
             max-width: 600px;
-            margin: 0 auto;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        .projects-grid {
+        /* Benton Grid Layout for Projects */
+        .bento-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(2, 1fr); /* 2 columns like Apple feature blocks */
             gap: 24px;
-            margin-bottom: 60px;
+            margin-bottom: 80px;
         }
 
-        .project-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 24px;
-            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-            text-decoration: none;
+        .bento-card {
+            background-color: var(--surface-color);
+            border-radius: var(--border-radius);
+            padding: 40px;
             display: flex;
             flex-direction: column;
-            height: 100%;
-        }
-
-        .project-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--card-hover-border);
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-        }
-
-        .project-icon {
-            width: 48px;
-            height: 48px;
-            background-color: rgba(56, 189, 248, 0.1);
-            color: var(--accent-color);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-        }
-
-        .project-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 12px;
+            justify-content: space-between;
+            height: 400px;
+            text-decoration: none;
             color: var(--text-primary);
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s;
+            position: relative;
+            overflow: hidden;
         }
 
-        .project-description {
-            font-size: 0.95rem;
+        .bento-card:hover {
+            transform: scale(1.02); /* Subtle scale effect */
+            background-color: var(--surface-hover);
+        }
+        
+        /* Specific card for featured item to span full width */
+        .bento-card.featured {
+            grid-column: span 2;
+            height: 500px;
+            background: linear-gradient(180deg, #1c1c1e 0%, #2c2c2e 100%);
+        }
+
+        .card-content {
+            z-index: 2;
+        }
+
+        .card-subhead {
             color: var(--text-secondary);
-            margin-bottom: 24px;
-            flex-grow: 1;
+            font-size: 19px;
+            font-weight: 600;
+            margin-bottom: 6px;
         }
 
-        .project-link {
+        .card-title {
+            font-size: 40px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 12px;
+            letter-spacing: -0.01em;
+        }
+
+        .card-desc {
+            font-size: 19px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            max-width: 80%;
+        }
+
+        .card-icon {
+            font-size: 60px;
+            color: var(--text-primary);
+            opacity: 0.1;
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .bento-card:hover .card-icon {
+            opacity: 0.3;
+            transform: scale(1.1);
+        }
+
+        /* "Button" link appearance inside card */
+        .cta-link {
+            margin-top: 20px;
+            color: var(--accent-color);
+            font-size: 17px;
+            font-weight: 400;
             display: inline-flex;
             align-items: center;
-            color: var(--accent-color);
-            font-weight: 500;
-            font-size: 0.9rem;
-            margin-top: auto;
         }
-
-        .project-link svg {
+        
+        .cta-link i {
+            font-size: 12px;
             margin-left: 6px;
-            transition: transform 0.2s ease;
+            margin-top: 2px;
         }
 
-        .project-card:hover .project-link svg {
-            transform: translateX(4px);
-        }
-
-        footer {
-            margin-top: auto;
-            padding: 40px 0;
+        /* Profile Section */
+        .section-header {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 50px;
             text-align: center;
-            border-top: 1px solid var(--border-color);
         }
 
-        footer p {
+        .profile-section {
+            background-color: var(--surface-color);
+            border-radius: var(--border-radius);
+            padding: 60px;
+            margin-bottom: 24px;
+        }
+
+        .profile-intro h3 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .profile-intro p {
+            font-size: 21px;
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
         }
 
-        footer a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        footer a:hover {
-            color: var(--accent-color);
-        }
-
-        @media (max-width: 640px) {
-            h1 {
-                font-size: 2rem;
-            }
-            header {
-                padding: 60px 0 40px;
-            }
-        }
-
-        .section-title {
-            font-size: 1.8rem;
-            margin: 60px 0 30px;
-            color: var(--text-primary);
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 10px;
-            display: inline-block;
-        }
-
-        .cv-container {
+        .cv-grid {
             display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 40px;
-            margin-bottom: 60px;
+            margin-top: 50px;
         }
 
-        .cv-block {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
+        .cv-column h4 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 15px;
         }
 
         .cv-item {
-            margin-bottom: 20px;
-            padding-left: 20px;
-            border-left: 3px solid var(--accent-color);
+            margin-bottom: 30px;
         }
 
-        .cv-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .cv-item h3 {
-            font-size: 1.2rem;
-            color: var(--text-primary);
-            margin-bottom: 5px;
+        .cv-item h5 {
+            font-size: 19px;
+            font-weight: 600;
+            margin-bottom: 4px;
         }
 
         .cv-item .meta {
+            font-size: 14px;
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
             margin-bottom: 8px;
             display: block;
         }
 
-        .contact-section {
+        .cv-item p {
+            font-size: 17px;
+            color: #d1d1d6;
+            line-height: 1.5;
+        }
+
+        /* Contact Section */
+        .contact-footer {
             text-align: center;
-            padding: 60px 0;
-            background: rgba(56, 189, 248, 0.05);
-            border-radius: 12px;
-            margin-bottom: 60px;
-            border: 1px solid var(--border-color);
+            padding: 80px 0;
         }
 
-        .contact-button {
-            display: inline-block;
+        .contact-btn {
             background-color: var(--accent-color);
-            color: #0f172a;
-            padding: 12px 24px;
-            border-radius: 8px;
+            color: #fff;
+            padding: 12px 26px;
+            border-radius: 980px; /* Pill shape */
+            font-size: 17px;
+            font-weight: 400;
             text-decoration: none;
-            font-weight: 600;
-            margin-top: 20px;
-            transition: background-color 0.2s;
+            display: inline-block;
+            transition: background-color 0.3s;
         }
 
-        .contact-button:hover {
-            background-color: var(--accent-hover);
+        .contact-btn:hover {
+            background-color: #0077ed; /* Darker blue */
+        }
+
+        footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px 0;
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 40px; }
+            .hero p { font-size: 19px; }
+            .bento-grid { grid-template-columns: 1fr; }
+            .bento-card.featured { height: 450px; grid-column: span 1; }
+            .bento-card { height: 350px; }
+            .cv-grid { grid-template-columns: 1fr; }
+            .profile-section { padding: 30px; }
         }
     </style>
 </head>
 <body>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="#" class="nav-logo"><i class="fa-solid fa-code"></i> Karitsu2281</a>
+            <a href="mailto:hugofloresmolina23@gmail.com" class="nav-link">Contacto</a>
+        </div>
+    </nav>
+
     <div class="container">
-        <header>
-            <h1>Portafolio de Karitsu2281</h1>
-            <p class="subtitle">Explora mi colección de proyectos de ciberseguridad, administración de sistemas y desarrollo.</p>
+        <!-- Hero -->
+        <header class="hero">
+            <h1>Innovación Técnica.<br>Perspectiva Única.</h1>
+            <p>Especialista en Ciberseguridad, Redes y Administración de Sistemas.</p>
         </header>
 
-        <main class="projects-grid">
-            <!-- Proyecto 3 Hacking Ético (Nuevo) -->
-            <a href="./P3HackingEtico/index.html" class="project-card">
-                <div class="project-icon">🛡️</div>
-                <h2 class="project-title">Hacking Ético: Proyecto 3</h2>
-                <p class="project-description">
-                    Guía de bastionamiento de Debian 13 y prácticas de seguridad ofensiva y defensiva en entornos Linux. (TalentScout)
-                </p>
-                <span class="project-link">
-                    Ver Documentación
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </span>
+        <!-- Projects Grid (Apple Bento Style) -->
+        <section class="bento-grid">
+            
+            <!-- Featured: Proyecto 3 -->
+            <a href="./P3HackingEtico/index.html" class="bento-card featured">
+                <div class="card-content">
+                    <div class="card-subhead">HACKING ÉTICO</div>
+                    <div class="card-title">TalentScout: Defensa y Ofensiva Linux</div>
+                    <div class="card-desc">
+                        Bastionado integral de Debian 13. Implementación de políticas de seguridad, auditoría de vulnerabilidades y hardening avanzado.
+                    </div>
+                    <span class="cta-link">Ver Documentación <i class="fa-solid fa-chevron-right"></i></span>
+                </div>
+                <i class="fa-brands fa-linux card-icon"></i>
             </a>
 
-            <!-- Proyecto 1 -->
-            <a href="./proyecto1/index.html" class="project-card">
-                <div class="project-icon">📦</div>
-                <h2 class="project-title">Proyecto 1</h2>
-                <p class="project-description">
-                    Documentación y despliegue inicial. Fundamentos de administración y configuración de servicios.
-                </p>
-                <span class="project-link">
-                    Ver Proyecto
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </span>
-            </a>
-
-            <!-- Proyecto 2 -->
-            <a href="./proyecto2/index.html" class="project-card">
-                <div class="project-icon">🔧</div>
-                <h2 class="project-title">Proyecto 2</h2>
-                <p class="project-description">
-                    Implementación de servicios avanzados y configuración de red.
-                </p>
-                <span class="project-link">
-                    Ver Proyecto
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </span>
-            </a>
-
-            <!-- Bastionado G4 -->
-            <a href="./proyecto2BastionadoG4/enrutamiento-estatico-vlan-cisco/index.html" class="project-card">
-                <div class="project-icon">🔒</div>
-                <h2 class="project-title">Bastionado G4</h2>
-                <p class="project-description">
-                    Enrutamiento estático y configuración de VLANs en Cisco. Hardening de infraestructura de red.
-                </p>
-                <span class="project-link">
-                    Ver Guía
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </span>
-            </a>
-
-            <!-- Forense Project 2 -->
-            <a href="./proyecto2forense/1/index.html" class="project-card">
-                <div class="project-icon">🔍</div>
-                <h2 class="project-title">Informática Forense</h2>
-                <p class="project-description">
-                    Análisis forense digital, recuperación de evidencias y metodologías de investigación.
-                </p>
-                <span class="project-link">
-                    Ver Caso
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </span>
-            </a>
-
-            <!-- RAG LPI -->
-            <a href="./RAG sobre la LPI. Casos prácticos/1/index.html" class="project-card">
-                <div class="project-icon">⚖️</div>
-                <h2 class="project-title">RAG sobre LPI</h2>
-                <p class="project-description">
-                    Casos prácticos sobre la Ley de Propiedad Intelectual utilizando técnicas de RAG (Retrieval-Augmented Generation).
-                </p>
-                <span class="project-link">
-                    Ver Casos
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </span>
+            <!-- G4 Bastionado (Cisco) -->
+            <a href="./proyecto2BastionadoG4/enrutamiento-estatico-vlan-cisco/index.html" class="bento-card">
+                <div class="card-content">
+                    <div class="card-subhead">REDES CISCO</div>
+                    <div class="card-title">Infraestructura G4</div>
+                    <div class="card-desc">Configuración pro de VLANs, enrutamiento estático y segmentación de tráfico seguro.</div>
+                    <span class="cta-link">Ver Configuración <i class="fa-solid fa-chevron-right"></i></span>
+                </div>
+                <i class="fa-solid fa-network-wired card-icon"></i>
             </a>
 
             <!-- Forense Sector 17 -->
-            <a href="./17forense/10/index.html" class="project-card">
-                <div class="project-icon">🧬</div>
-                <h2 class="project-title">Forense: Sector 17</h2>
-                <p class="project-description">
-                    Investigación forense avanzada. Análisis de artefactos y reconstrucción de incidentes.
-                </p>
-                <span class="project-link">
-                    Ver Caso
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </span>
+            <a href="./17forense/10/index.html" class="bento-card">
+                <div class="card-content">
+                    <div class="card-subhead">FORENSE DIGITAL</div>
+                    <div class="card-title">Investigación Sector 17</div>
+                    <div class="card-desc">Análisis de evidencias digitales, cadena de custodia y reconstrucción de incidentes complejos.</div>
+                    <span class="cta-link">Ver Caso <i class="fa-solid fa-chevron-right"></i></span>
+                </div>
+                <i class="fa-solid fa-microscope card-icon"></i>
             </a>
 
-            <!-- RAG Normativa -->
-            <a href="./Uso de RAG para consultas sobre normativa/9/index.html" class="project-card">
-                <div class="project-icon">🤖</div>
-                <h2 class="project-title">RAG - Consultas Normativa</h2>
-                <p class="project-description">
-                    Aplicación de IA generativa para consultas eficientes sobre normativas y regulaciones.
-                </p>
-                <span class="project-link">
-                    Ver Proyecto
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </span>
+             <!-- RAG LPI -->
+            <a href="./RAG sobre la LPI. Casos prácticos/1/index.html" class="bento-card">
+                <div class="card-content">
+                    <div class="card-subhead">INTELIGENCIA ARTIFICIAL</div>
+                    <div class="card-title">RAG & Propiedad Intelectual</div>
+                    <div class="card-desc">Sistemas de recuperación aumentada (RAG) aplicados a la consultoría legal automatizada.</div>
+                    <span class="cta-link">Ver Análisis <i class="fa-solid fa-chevron-right"></i></span>
+                </div>
+                <i class="fa-solid fa-brain card-icon"></i>
             </a>
-        </main>
 
-        <!-- CV Section -->
-        <h2 class="section-title">Mi Perfil Profesional</h2>
-        
-        <div class="cv-container">
-            <!-- About -->
-            <div class="cv-block">
-                <h3 style="font-size: 1.4rem; margin-bottom: 15px; color: var(--accent-color);">Sobre Mí</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 15px;">
-                    Soy un profesional técnico apasionado por la tecnología, con formación especializada en telecomunicaciones e informática.
+            <!-- Proyecto 1 -->
+            <a href="./proyecto1/index.html" class="bento-card">
+                <div class="card-content">
+                    <div class="card-subhead">ADMINISTRACIÓN</div>
+                    <div class="card-title">Despliegue Inicial</div>
+                    <div class="card-desc">Fundamentos de arquitectura de servidores y configuración de servicios base.</div>
+                    <span class="cta-link">Explorar <i class="fa-solid fa-chevron-right"></i></span>
+                </div>
+                <i class="fa-solid fa-server card-icon"></i>
+            </a>
+
+            <!-- Forense General -->
+             <a href="./proyecto2forense/1/index.html" class="bento-card">
+                <div class="card-content">
+                    <div class="card-subhead">INVESTIGACIÓN</div>
+                    <div class="card-title">Metodologías Forenses</div>
+                    <div class="card-desc">Protocolos estándar de recuperación de datos y análisis de intrusiones.</div>
+                    <span class="cta-link">Ver Protocolos <i class="fa-solid fa-chevron-right"></i></span>
+                </div>
+                <i class="fa-solid fa-search card-icon"></i>
+            </a>
+
+        </section>
+
+        <!-- Profile Section -->
+        <h2 class="section-header">Perfil Profesional.</h2>
+
+        <section class="profile-section">
+            <div class="profile-intro">
+                <h3>Más allá del código.</h3>
+                <p>
+                    Soy un profesional técnico con una devoción por la precisión. Como persona autista, mi neurodivergencia es mi ventaja competitiva: ofrezco una atención al detalle inquebrantable, una lealtad profunda a los proyectos que emprendo y un pensamiento lógico altamente estructurado.
                 </p>
-                <p style="color: var(--text-secondary);">
-                    Como persona autista, aporto una perspectiva única al entorno laboral caracterizada por una alta atención al detalle, lealtad y pensamiento lógico estructurado. Busco ser valorado por mis competencias técnicas y mi dedicación profesional, en un entorno de respeto mutuo donde se priorice el talento y los resultados.
+                <p>
+                    Quiero ser tratado por quién soy y mis capacidades, sin condescendencia. Rechazo rotundamente que se me adapte el trabajo o se me trate diferente por el simple hecho de ser autista. Busco un entorno profesional exigente donde se valoren los resultados tangibles y la competencia técnica real.
                 </p>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
-                <!-- Experience -->
-                <div class="cv-block">
-                    <h3 style="font-size: 1.4rem; margin-bottom: 20px; color: var(--text-primary);">Experiencia Laboral</h3>
-                    
+            <div class="cv-grid">
+                <div class="cv-column">
+                    <h4>Experiencia</h4>
                     <div class="cv-item">
-                        <h3>Prácticas en Tienda de Informática</h3>
-                        <span class="meta">Durante el Grado Superior de Telecomunicaciones</span>
-                        <p style="font-size: 0.95rem; color: var(--text-secondary);">
-                            Diagnóstico y reparación de hardware, atención técnica a clientes en tienda, configuración de equipos y redes SOHO.
-                        </p>
+                        <h5>Prácticas en Tienda de Informática</h5>
+                        <span class="meta">Técnico de Soporte</span>
+                        <p>Resolución experta de incidencias de hardware y software. Atención directa y especializada al cliente, garantizando la satisfacción a través de soluciones técnicas precisas.</p>
                     </div>
-                    
                     <div class="cv-item">
-                        <h3>Técnico de Mantenimiento (Centros Educativos)</h3>
-                        <span class="meta">Durante el Grado Medio (SMR)</span>
-                        <p style="font-size: 0.95rem; color: var(--text-secondary);">
-                            Reparación y mantenimiento de equipos informáticos en colegios. Resolución de incidencias hardware/software y soporte a profesorado.
-                        </p>
+                        <h5>Técnico de Mantenimiento</h5>
+                        <span class="meta">Sector Educativo</span>
+                        <p>Responsable del mantenimiento integral de parques informáticos en centros escolares. Diagnóstico rápido y reparación in-situ para asegurar la continuidad educativa.</p>
                     </div>
                 </div>
 
-                <!-- Education -->
-                <div class="cv-block">
-                    <h3 style="font-size: 1.4rem; margin-bottom: 20px; color: var(--text-primary);">Formación Académica</h3>
-                    
+                <div class="cv-column">
+                    <h4>Formación</h4>
                     <div class="cv-item">
-                        <h3>Grado Superior en Telecomunicaciones e Informática</h3>
-                        <span class="meta">Título Oficial</span>
-                        <p style="font-size: 0.95rem; color: var(--text-secondary);">
-                            Infraestructuras de telecomunicación, redes de datos, sistemas de radiocomunicaciones y gestión de proyectos.
-                        </p>
+                        <h5>Grado Superior Telecomunicaciones e Informática</h5>
+                        <span class="meta">Especialización Técnica</span>
+                        <p>Dominio de infraestructuras de red, sistemas telemáticos y gestión de proyectos de telecomunicación.</p>
                     </div>
-                    
                     <div class="cv-item">
-                        <h3>Grado Medio en Sistemas Microinformáticos y Redes (SMR)</h3>
-                        <span class="meta">Título Oficial</span>
-                        <p style="font-size: 0.95rem; color: var(--text-secondary);">
-                            Montaje y mantenimiento de equipos, instalación de servicios en red, seguridad informática básica.
-                        </p>
+                        <h5>Grado Medio SMR</h5>
+                        <span class="meta">Sistemas Microinformáticos y Redes</span>
+                        <p>Base sólida en montaje, mantenimiento y seguridad de sistemas monousuario y en red.</p>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Contact Section -->
-        <div class="contact-section">
-            <h2 style="font-size: 1.8rem; margin-bottom: 15px;">Contacto</h2>
-            <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
-                ¿Estás interesado en mi perfil? Puedes contactarme directamente a través de mi correo electrónico.
+        <!-- Contact Footer -->
+        <section class="contact-footer">
+            <h2 style="font-size: 40px; font-weight: 700; margin-bottom: 20px;">Hablemos.</h2>
+            <p style="font-size: 21px; color: var(--text-secondary); margin-bottom: 30px;">
+                ¿Listo para colaborar? Envíame un correo.
             </p>
-            <a href="mailto:hugofloresmolina23@gmail.com" class="contact-button">
-                hugofloresmolina23@gmail.com
-            </a>
-        </div>
+            <a href="mailto:hugofloresmolina23@gmail.com" class="contact-btn">hugofloresmolina23@gmail.com</a>
+        </section>
 
         <footer>
-            <p>&copy; 2026 Karitsu2281. Todos los derechos reservados.</p>
-            <p style="margin-top: 10px; opacity: 0.7; font-size: 0.8rem;">
-                <a href="https://github.com/karitsu2281" target="_blank" rel="noopener noreferrer">GitHub Profile</a>
-            </p>
+            <p>Copyright © 2026 Karitsu2281. Todos los derechos reservados.</p>
+            <p><a href="https://github.com/karitsu2281">GitHub</a></p>
         </footer>
     </div>
 </body>
