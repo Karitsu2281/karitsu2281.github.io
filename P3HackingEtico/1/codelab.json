@@ -3,12 +3,12 @@
   "format": "html",
   "prefix": "https://storage.googleapis.com",
   "mainga": "UA-49880327-14",
-  "updated": "2026-01-14T14:22:21+01:00",
+  "updated": "2026-01-14T17:40:59+01:00",
   "id": "1",
   "duration": 0,
   "title": "Proyecto 3 Hacking Ético (TalentScout)",
   "summary": "Guía de bastionamiento de Debian 13",
-  "source": "codelab.md",
+  "source": ".\\codelab.md",
   "theme": "",
   "status": [
     "published"
