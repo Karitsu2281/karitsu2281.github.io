@@ -26,7 +26,7 @@ a) Ejemplo de combinación para la inyección SQL
 
    - http://talentscout.local/list_players.php (que incluye el formulario de inicio de sesión de auth.php)
 
-    ![img2](img/img2.png)
+   ![img2](img/img2.png)
 
   La consulta SQL que se ejecuta es
 
@@ -95,82 +95,15 @@ La aplicación permite la **suplantación de identidad** porque el ID de usuario
 ```php
 $query = "INSERT INTO comments (playerId, userId, body) VALUES ('" . $_GET['id'] . "', '" . $_COOKIE['userId'] . "', '$body')";
 ```
-
-### Ejecución del ataque
-
-Para explotar este fallo y publicar como otro usuario:
-
-1.  Iniciamos sesión normalmente.
-2.  Interceptamos la petición con las herramientas de desarrollo del navegador o un proxy, y cambiamos el valor de la cookie `userId` por el del usuario que queremos suplantar.
-3.  Al enviar la solicitud, el servidor guarda el comentario usando ese `userId` falso, creyendo que somos esa persona.
-
----
-### Soluciones de seguridad
-
-Hemos implementado varias medidas para evitar que esto ocurra:
-
-#### 1. Sesiones en el servidor
-Ya no confiamos en la cookie. Ahora el `userId` se obtiene de `$_SESSION['userId']`, que es un dato que el usuario no puede tocar.
-
-**Código seguro:**
-```php
-session_start();
-
-// Si no hay sesión, paramos
-if (!isset($_SESSION['userId'])) {
-    die("Acceso denegado. Debe iniciar sesión.");
-}
-
-$userId = $_SESSION['userId']; // Dato seguro
-
-$query = "INSERT INTO comments (playerId, userId, body) VALUES ('" . $_GET['id'] . "', '" . $userId . "', '$body')";
-```
-
-#### 2. Validación estricta
-Siempre comprobamos que el usuario tiene una sesión válida antes de dejarle hacer nada crítico.
-
-```php
-function isAuthenticated() {
-    return isset($_SESSION['userId']) && !empty($_SESSION['userId']);
-}
-
-if (!isAuthenticated()) {
-    header('Location: login.php');
-    exit;
-}
-```
-
-#### 3. Otras mejoras
-Además, hemos añadido declaraciones preparadas, regeneración de IDs de sesión, cookies con flags `HttpOnly` y `Secure`, y tokens CSRF.
-
-**Ejemplo final:**
-```php
-session_start();
-
-if (!isset($_SESSION['userId'])) {
-    die("Acceso denegado.");
-}
-
-$userId = $_SESSION['userId'];
-$playerId = $_GET['id'];
-$body = $_POST['body'];
-
-// Sentencia preparada para evitar también SQL Injection
-$stmt = $db->prepare("INSERT INTO comments (playerId, userId, body) VALUES (?, ?, ?)");
-$stmt->bind_param("iis", $playerId, $userId, $body);
-$stmt->execute();
-```
-
-Con esto, el `userId` es intocable y la consulta SQL es segura.
-
 ---
 
-### Parte 2: XSS
+
+## Parte 2: XSS
 
 a)
 Para ver si hay un problema de XSS, crearemos un comentario que muestre un alert de Javascript siempre que alguien consulte el/los comentarios de aquel jugador (show_comments.php). Dad un mensaje que genere un «alert»de Javascript al consultar el listado de mensajes.
 
-Introducimos el mensaje `<script>alert ('Esto es una prueba de XSS, muy peligroso')</script>` en el formulario de la página `talentscout.local/show_comments.php?id=2`
+Introducimos el mensaje `<scriptttt>alert ('Esto es una prueba de XSS, muy peligroso')</scriptttt>` en el formulario de la página `talentscout.local/show_comments.php?id=2`
 
 ![img3](img/img3.png)
 
@@ -218,7 +151,7 @@ Lo descubrimos al poner en el apartado "Team Name" al añadir un jugador nuevo.
 
 ---
 
-### Parte 3 - Control de acceso, autenticación y sesiones de usuarios
+## Parte 3 - Control de acceso, autenticación y sesiones de usuarios
 a) En el ejercicio 1, hemos visto cómo era inseguro el acceso de los usuarios a la aplicación. En la página de register.php tenemos el registro de usuario. ¿Qué medidas debemos implementar para evitar que el registro sea inseguro? Justifica esas medidas e implementa las medidas que sean factibles en este proyecto.
 
 Hemos modificado `register.php` y `auth.php` para mejorar la seguridad. En `register.php`, las contraseñas ahora se encriptan con `password_hash()` antes de almacenarse, protegiéndolas de brechas de datos. Ambas páginas utilizan sentencias preparadas para prevenir inyecciones SQL, separando el comando de la información del usuario. Finalmente, `auth.php` verifica las contraseñas con `password_verify()`, asegurando una autenticación segura sin exponer las claves. Estos cambios abordan vulnerabilidades críticas en el registro y autenticación.
@@ -281,7 +214,7 @@ e) Por último, comprobando el flujo de la sesión del usuario. Analiza si está
        ```
 ---
 
-### Parte 4 - Servidores web
+## Parte 4 - Servidores web
 ¿Qué medidas de seguridad se implementariaís en el servidor web para reducir el riesgo a ataques?
 
  1. Deshabilitar la Fuga de Información (Information Leakage)
@@ -317,7 +250,7 @@ e) Por último, comprobando el flujo de la sesión del usuario. Analiza si está
   4. Web Application Firewall (WAF)
   Instalar y configurar un WAF como ModSecurity.
    Un WAF analiza el tráfico HTTP entrante y bloquea patrones maliciosos conocidos antes de que lleguen a tu código PHP.
-   Hubiera bloqueado automáticamente los intentos de inyección SQL (' OR '1'='1) y XSS (<script>...) que probamos anteriormente, actuando como una red de seguridad extra.
+   Hubiera bloqueado automáticamente los intentos de inyección SQL (' OR '1'='1) y XSS
 
   5. Restricción de Métodos HTTP
   Si tu aplicación solo usa GET y POST, deshabilita el resto.
@@ -332,7 +265,7 @@ e) Por último, comprobando el flujo de la sesión del usuario. Analiza si está
    disable_functions = exec, passthru, shell_exec, system, proc_open, popen, curl_exec, parse_ini_file, show_source
 
 ---
-### Parte 5 - CSRF
+## Parte 5 - CSRF
 Ahora ya sabemos que podemos realizar un ataque XSS. Hemos preparado el siguiente enlace: http://web.pagos/donate.php?amount=100&receiver=attacker, mediante el cual, cualquiera que haga click hará una donación de 100€ al nuestro usuario (con nombre 'attacker') de la famosa plataforma de pagos online 'web.pagos' (Nota: como en realidad esta es una dirección inventada, vuestro navegador os devolverá un error 404).
 
 a) Editad un jugador para conseguir que, en el listado de jugadores list\_players.php aparezca, debajo del nombre de su equipo y antes de show/add comments un botón llamado Profile que corresponda a un formulario que envíe a cualquiera que haga clic sobre este botón a esta dirección que hemos preparado.

@@ -3,388 +3,502 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Karitsu2281 - Proyectos</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; img-src 'self'; script-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <title>Karitsu2281</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --color-white: rgba(255, 255, 255, 1);
-            --color-black: rgba(0, 0, 0, 1);
-            --color-olive-50: rgba(45, 48, 42, 1);
-            --color-olive-100: rgba(52, 56, 48, 1);
-            --color-olive-200: rgba(60, 64, 54, 1);
-            --color-olive-300: rgba(88, 94, 78, 1);
-            --color-olive-400: rgba(106, 113, 94, 1);
-            --color-olive-500: rgba(124, 132, 110, 1);
-            --color-tan-200: rgba(255, 245, 230, 1);
-            --color-tan-300: rgba(240, 220, 200, 1);
-            --color-tan-400: rgba(200, 180, 160, 1);
-            --color-orange-500: rgba(255, 140, 0, 1);
-            --color-orange-600: rgba(255, 120, 0, 1);
-            --color-orange-700: rgba(220, 100, 0, 1);
-            
-            --color-olive-rgb: 255, 140, 0;
-            --color-green-rgb: 255, 140, 0;
-            --color-tan-rgb: 255, 245, 230;
-            
-            --color-background: rgba(10, 10, 15, 1);
-            --color-surface: rgba(20, 15, 10, 0.85);
-            --color-text: var(--color-tan-200);
-            --color-text-secondary: var(--color-tan-300);
-            --color-primary: var(--color-orange-500);
-            --color-primary-hover: var(--color-orange-600);
-            --color-primary-active: var(--color-orange-700);
-            --color-secondary: rgba(var(--color-olive-rgb), 0.2);
-            --color-secondary-hover: rgba(var(--color-olive-rgb), 0.3);
-            --color-border: rgba(var(--color-olive-rgb), 0.4);
-            --color-card-border: rgba(var(--color-olive-rgb), 0.3);
-            --color-focus-ring: rgba(var(--color-green-rgb), 0.5);
-            
-            --font-family-base: "Courier New", Consolas, monospace;
-            --font-size-base: 14px;
-            --font-size-lg: 16px;
-            --font-size-xl: 18px;
-            --font-size-2xl: 20px;
-            --font-size-3xl: 24px;
-            --font-size-4xl: 30px;
-            --font-weight-medium: 500;
-            --font-weight-semibold: 550;
-            --font-weight-bold: 600;
-            --line-height-tight: 1.2;
-            --line-height-normal: 1.5;
-            --letter-spacing-tight: -0.01em;
-            
-            --space-8: 8px;
-            --space-12: 12px;
-            --space-16: 16px;
-            --space-20: 20px;
-            --space-24: 24px;
-            --space-32: 32px;
-            --space-48: 48px;
-            
-            --radius-base: 8px;
-            --radius-md: 10px;
-            --radius-lg: 12px;
-            
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
-            
-            --duration-normal: 250ms;
-            --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+            --bg-color: #000000;
+            --surface-color: #1c1c1e;
+            --surface-hover: #2c2c2e;
+            --text-primary: #f5f5f7;
+            --text-secondary: #86868b;
+            --accent-color: #ff9d00; /* Dying Light Orange */
+            --border-radius: 18px;
+            --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
-        
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --color-gray-400-rgb: 119, 124, 124;
-                --color-teal-300-rgb: 50, 184, 198;
-                --color-gray-300-rgb: 167, 169, 169;
-                --color-gray-200-rgb: 245, 245, 245;
-                
-                --color-background: var(--color-charcoal-700);
-                --color-surface: var(--color-charcoal-800);
-                --color-text: var(--color-gray-200);
-                --color-text-secondary: rgba(var(--color-gray-300-rgb), 0.7);
-                --color-primary: var(--color-teal-300);
-                --color-primary-hover: var(--color-teal-400);
-                --color-secondary: rgba(var(--color-gray-400-rgb), 0.15);
-                --color-secondary-hover: rgba(var(--color-gray-400-rgb), 0.25);
-                --color-border: rgba(var(--color-gray-400-rgb), 0.3);
-                --color-card-border: rgba(var(--color-gray-400-rgb), 0.2);
-                --color-focus-ring: rgba(var(--color-teal-300-rgb), 0.4);
-            }
-        }
-        
+
+        @import url('https://fonts.googleapis.com/css2?family=Teko:wght@400;600;700&display=swap');
+
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-        }
-        
-        body {
-            font-family: var(--font-family-base);
-            font-size: var(--font-size-base);
-            line-height: var(--line-height-normal);
-            color: var(--color-text);
-            background: linear-gradient(180deg, #0a0a0f 0%, #1a1520 30%, #2a1f30 60%, #1a1520 90%, #0a0a0f 100%);
-            background-attachment: fixed;
+            box-sizing: border-box;
             -webkit-font-smoothing: antialiased;
-            min-height: 100vh;
+        }
+
+        body {
+            font-family: var(--font-stack);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+
+        /* Navbar mimics Apple's sticky header */
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 157, 0, 0.2); /* Subtle orange border */
+        }
+
+        .nav-content {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 0 20px;
+            height: 48px;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: var(--space-20);
-            position: relative;
+            justify-content: space-between;
         }
-        
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 140, 0, 0.05) 2px, rgba(255, 140, 0, 0.05) 4px),
-                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255, 140, 0, 0.05) 2px, rgba(255, 140, 0, 0.05) 4px);
-            pointer-events: none;
-            z-index: 1;
-        }
-        
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% 30%, rgba(255, 140, 0, 0.08) 0%, transparent 40%, rgba(0, 0, 0, 0.5) 100%);
-            pointer-events: none;
-            z-index: 1;
-        }
-        
-        .container {
-            max-width: 800px;
-            width: 100%;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: var(--space-48);
-        }
-        
-        .header h1 {
-            font-size: var(--font-size-3xl);
-            font-weight: var(--font-weight-bold);
-            color: var(--color-text);
-            letter-spacing: 0.05em;
-            margin-bottom: var(--space-12);
-            text-transform: uppercase;
-        }
-        
-        .header p {
-            font-size: var(--font-size-lg);
-            color: var(--color-text-secondary);
-        }
-        
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--space-24);
-            margin-bottom: var(--space-32);
-        }
-        
-        .project-card {
-            background-color: rgba(15, 10, 10, 0.85);
-            border: 2px solid rgba(255, 140, 0, 0.3);
-            border-radius: 4px;
-            padding: var(--space-32);
-            transition: all var(--duration-normal) var(--ease-standard);
+
+        .nav-logo {
+            color: var(--text-primary);
             text-decoration: none;
-            display: block;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 140, 0, 0.1);
-            position: relative;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: -0.01em;
         }
-        
-        .project-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--color-primary);
-            opacity: 0;
-            transition: opacity var(--duration-normal) var(--ease-standard);
+
+        .nav-link {
+            font-size: 12px;
+            color: #d1d1d6;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s;
         }
-        
-        .project-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(255, 140, 0, 0.4), 0 0 30px rgba(255, 140, 0, 0.2), inset 0 1px 0 rgba(255, 140, 0, 0.2);
-            border-color: var(--color-primary);
-            background-color: rgba(25, 15, 10, 0.95);
-        }
-        
-        .project-card:hover::before {
+
+        .nav-link:hover {
             opacity: 1;
         }
-        
-        .project-card:focus-visible {
-            outline: 2px solid var(--color-primary);
-            outline-offset: 2px;
+
+        .container {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
-        
-        .project-icon {
-            width: 40px;
-            height: 40px;
-            background: transparent;
-            border: 2px solid var(--color-primary);
-            border-radius: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: var(--space-20);
-            font-size: var(--font-size-2xl);
-            font-family: var(--font-family-base);
-            color: var(--color-primary);
-            font-weight: var(--font-weight-bold);
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 100px 0 60px;
+            animation: fadeIn 1s ease-out;
         }
-        
-        .project-title {
-            font-size: var(--font-size-xl);
-            font-weight: var(--font-weight-bold);
-            color: var(--color-text);
-            margin-bottom: var(--space-8);
+
+        .hero h1 {
+            font-family: 'Teko', sans-serif; /* Dying Light style font */
+            font-size: 72px; /* Larger for impact */
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            line-height: 0.9;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 157, 0, 0.3); /* Subtle orange glow */
+            -webkit-text-fill-color: initial;
+            background: none;
+        }
+
+        .hero p {
+            font-size: 24px;
+            line-height: 1.25;
+            font-weight: 400;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            letter-spacing: 0.004em;
+            max-width: 750px;
+            margin-left: auto;
+            margin-right: auto;
+            font-family: 'Teko', sans-serif;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* Benton Grid Layout for Projects */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 columns like Apple feature blocks */
+            gap: 24px;
+            margin-bottom: 80px;
+        }
+
+        .bento-card {
+            background-color: var(--surface-color);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 400px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bento-card:hover {
+            transform: scale(1.02); /* Subtle scale effect */
+            background-color: var(--surface-hover);
         }
         
-        .project-description {
-            font-size: var(--font-size-base);
-            color: var(--color-text-secondary);
-            line-height: var(--line-height-normal);
-            margin-bottom: var(--space-16);
+        /* Specific card for featured item to span full width */
+        .bento-card.featured {
+            grid-column: span 2;
+            height: 500px;
+            background: linear-gradient(180deg, #1c1c1e 0%, #2c2c2e 100%);
         }
-        
-        .project-link {
-            color: var(--color-primary);
-            font-weight: var(--font-weight-medium);
-            font-size: var(--font-size-base);
+
+        .card-content {
+            z-index: 2;
+        }
+
+        .card-subhead {
+            color: var(--text-secondary);
+            font-size: 19px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .card-title {
+            font-size: 40px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 12px;
+            letter-spacing: -0.01em;
+        }
+
+        .card-desc {
+            font-size: 19px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            max-width: 80%;
+        }
+
+        .card-icon {
+            font-size: 60px;
+            color: var(--text-primary);
+            opacity: 0.1;
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .bento-card:hover .card-icon {
+            opacity: 0.3;
+            transform: scale(1.1);
+        }
+
+        /* "Button" link appearance inside card */
+        .cta-link {
+            margin-top: 20px;
+            color: var(--accent-color);
+            font-size: 17px;
+            font-weight: 400;
             display: inline-flex;
             align-items: center;
-            gap: var(--space-8);
         }
         
-        .arrow {
-            transition: transform var(--duration-normal) var(--ease-standard);
+        .cta-link i {
+            font-size: 12px;
+            margin-left: 6px;
+            margin-top: 2px;
         }
-        
-        .project-card:hover .arrow {
-            transform: translateX(4px);
-        }
-        
-        .footer {
+
+        /* Profile Section */
+        .section-header {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 50px;
             text-align: center;
-            padding-top: var(--space-32);
-            border-top: 1px solid var(--color-border);
         }
-        
-        .footer p {
-            color: var(--color-text-secondary);
-            font-size: var(--font-size-base);
+
+        .profile-section {
+            background-color: var(--surface-color);
+            border-radius: var(--border-radius);
+            padding: 60px;
+            margin-bottom: 24px;
         }
-        
-        .footer a {
-            color: var(--color-primary);
+
+        .profile-intro h3 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .profile-intro p {
+            font-size: 21px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .cv-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .cv-column h4 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 15px;
+        }
+
+        .cv-item {
+            margin-bottom: 30px;
+        }
+
+        .cv-item h5 {
+            font-size: 19px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .cv-item .meta {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .cv-item p {
+            font-size: 17px;
+            color: #d1d1d6;
+            line-height: 1.5;
+        }
+
+        /* Contact Section */
+        .contact-footer {
+            text-align: center;
+            padding: 80px 0;
+        }
+
+        .contact-btn {
+            background-color: var(--accent-color);
+            color: #fff;
+            padding: 12px 26px;
+            border-radius: 980px; /* Pill shape */
+            font-size: 17px;
+            font-weight: 400;
             text-decoration: none;
-            font-weight: var(--font-weight-medium);
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+
+        .contact-btn:hover {
+            background-color: #0077ed; /* Darker blue */
+        }
+
+        footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px 0;
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
         }
         
-        .footer a:hover {
-            color: var(--color-primary-hover);
+        footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
         }
-        
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: var(--font-size-3xl);
-            }
-            
-            .projects-grid {
-                grid-template-columns: 1fr;
-            }
+            .hero h1 { font-size: 40px; }
+            .hero p { font-size: 19px; }
+            .bento-grid { grid-template-columns: 1fr; }
+            .bento-card.featured { height: 450px; grid-column: span 1; }
+            .bento-card { height: 350px; }
+            .cv-grid { grid-template-columns: 1fr; }
+            .profile-section { padding: 30px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <h1>// SURVIVOR ARCHIVES</h1>
-            <p>UV SAFE ZONE - NIGHT APPROACHES</p>
-        </header>
-        
-        <div class="projects-grid">
-            <a href="./proyecto1/index.html" class="project-card">
-                <div class="project-icon">01</div>
-                <h2 class="project-title">SUPPLY RUN: PROYECTO 1</h2>
-                <p class="project-description">
-                    [SURVIVOR LOG] Mission data recovered. UV protection required for access.
-                </p>
-                <span class="project-link">
-                    ENTER SAFEZONE &gt;&gt; <span class="arrow">→</span>
-                </span>
-            </a>
-            
-            <a href="./proyecto2/index.html" class="project-card">
-                <div class="project-icon">02</div>
-                <h2 class="project-title">SUPPLY RUN: PROYECTO 2</h2>
-                <p class="project-description">
-                    [SURVIVOR LOG] Secondary mission cache located. Nightfall imminent.
-                </p>
-                <span class="project-link">
-                    ENTER SAFEZONE &gt;&gt; <span class="arrow">→</span>
-                </span>
-            </a>
-            
-            <a href="./proyecto2BastionadoG4/enrutamiento-estatico-vlan-cisco/index.html" class="project-card">
-                <div class="project-icon">03</div>
-                <h2 class="project-title">OUTPOST: BASTIONADO G4</h2>
-                <p class="project-description">
-                    [SURVIVOR LOG] Fortified shelter data. Network hardening protocols active.
-                </p>
-                <span class="project-link">
-                    ENTER SAFEZONE &gt;&gt; <span class="arrow">→</span>
-                </span>
-            </a>
-            
-            <a href="./proyecto2forense/1/index.html" class="project-card">
-                <div class="project-icon">04</div>
-                <h2 class="project-title">EVIDENCE: FORENSICS</h2>
-                <p class="project-description">
-                    [SURVIVOR LOG] Digital traces recovered from infected zone. Handle with care.
-                </p>
-                <span class="project-link">
-                    ENTER SAFEZONE &gt;&gt; <span class="arrow">→</span>
-                </span>
-            </a>
-            
-            <a href="./RAG sobre la LPI. Casos prácticos/1/index.html" class="project-card">
-                <div class="project-icon">05</div>
-                <h2 class="project-title">ARCHIVE: RAG-LPI</h2>
-                <p class="project-description">
-                    [SURVIVOR LOG] Pre-outbreak legal database. AI retrieval system operational.
-                </p>
-                <span class="project-link">
-                    ENTER SAFEZONE &gt;&gt; <span class="arrow">→</span>
-                </span>
-            </a>
-            
-            <a href="./17forense/10/index.html" class="project-card">
-                <div class="project-icon">06</div>
-                <h2 class="project-title">EVIDENCE: SECTOR 17</h2>
-                <p class="project-description">
-                    [SURVIVOR LOG] Advanced forensic traces from quarantine zone 17. Danger level: HIGH.
-                </p>
-                <span class="project-link">
-                    ENTER SAFEZONE &gt;&gt; <span class="arrow">→</span>
-                </span>
-            </a>
-            
-            <a href="./Uso de RAG para consultas sobre normativa/9/index.html" class="project-card">
-                <div class="project-icon">07</div>
-                <h2 class="project-title">ARCHIVE: NORMATIVA</h2>
-                <p class="project-description">
-                    [SURVIVOR LOG] Regulatory compliance AI system. Old world knowledge preserved.
-                </p>
-                <span class="project-link">
-                    ENTER SAFEZONE &gt;&gt; <span class="arrow">→</span>
-                </span>
-            </a>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="#" class="nav-logo"><i class="fa-solid fa-code"></i> Karitsu2281</a>
+            <a href="mailto:hugofloresmolina23@gmail.com" class="nav-link">Contacto</a>
         </div>
-        
-        <footer class="footer">
-            <p>
-                Creado por <a href="https://github.com/karitsu2281" target="_blank" rel="noopener noreferrer">Karitsu2281</a>
+    </nav>
+
+    <div class="container">
+        <!-- Hero -->
+        <header class="hero">
+            <h1>Good Night.<br>Good Luck.</h1>
+            <p>Especialista en Configuración, Reparación de Equipos y Redes.<br>Administrador de Sistemas en Formación.</p>
+        </header>
+
+        <!-- Projects Grid (Apple Bento Style) -->
+        <section class="bento-grid">
+            
+            <!-- 1. P3HackingEtico -->
+            <a href="./P3HackingEtico/index.html" class="bento-card featured">
+                <div class="card-content">
+                    <div class="card-subhead">HACKING ÉTICO</div>
+                    <div class="card-title">TalentScout: Proyecto 3</div>
+                    <div class="card-desc">
+                        Guía de bastionamiento de Debian 13 y prácticas de seguridad ofensiva y defensiva (TalentScout).
+                    </div>
+                    <span class="cta-link">Ver Documentación <i class="fa-solid fa-chevron-right"></i></span>
+                </div>
+                <i class="fa-brands fa-linux card-icon"></i>
+            </a>
+
+            <!-- 2. proyecto1 -->
+            <a href="./proyecto1/index.html" class="bento-card">
+                <div class="card-content">
+                    <div class="card-subhead">BASTIONAMIENTO HW</div>
+                    <div class="card-title">PC Aorus B550</div>
+                    <div class="card-desc">Guía de bastionamiento para PC de alto rendimiento con placa base Aorus B550 Elite AX V2.</div>
+                    <span class="cta-link">Ver Guía <i class="fa-solid fa-chevron-right"></i></span>
+                </div>
+                <i class="fa-solid fa-computer card-icon"></i>
+            </a>
+
+            <!-- 3. proyecto2 -->
+            <a href="./proyecto2/1/index.html" class="bento-card">
+                <div class="card-content">
+                    <div class="card-subhead">SEGURIDAD SO</div>
+                    <div class="card-title">Arranque Debian 13</div>
+                    <div class="card-desc">Guía técnica para el aseguramiento y bastionamiento del proceso de arranque en Debian 13.</div>
+                    <span class="cta-link">Ver Guía <i class="fa-solid fa-chevron-right"></i></span>
+                </div>
+                <i class="fa-brands fa-linux card-icon"></i>
+            </a>
+
+             <!-- 4. proyecto2BastionadoG4 -->
+             <a href="./proyecto2BastionadoG4/enrutamiento-estatico-vlan-cisco/index.html" class="bento-card">
+                <div class="card-content">
+                    <div class="card-subhead">REDES CISCO</div>
+                    <div class="card-title">Routing & VLANs</div>
+                    <div class="card-desc">Configuración de enrutamiento estático y segmentación VLAN en Cisco Packet Tracer.</div>
+                    <span class="cta-link">Ver Laboratorio <i class="fa-solid fa-chevron-right"></i></span>
+                </div>
+                <i class="fa-solid fa-network-wired card-icon"></i>
+            </a>
+
+            <!-- 5. proyecto2forense -->
+            <a href="./proyecto2forense/12/index.html" class="bento-card">
+                <div class="card-content">
+                    <div class="card-subhead">FORENSE DIGITAL</div>
+                    <div class="card-title">FTK Imager en Win7</div>
+                    <div class="card-desc">Procedimiento de adquisición de evidencia forense utilizando FTK Imager en entorno Windows 7.</div>
+                    <span class="cta-link">Ver Caso <i class="fa-solid fa-chevron-right"></i></span>
+                </div>
+                <i class="fa-solid fa-microscope card-icon"></i>
+            </a>
+
+            <!-- 6. 17forense -->
+            <a href="./17forense/10/index.html" class="bento-card">
+                <div class="card-content">
+                    <div class="card-subhead">ANÁLISIS DE TRÁFICO</div>
+                    <div class="card-title">Uso de Wireshark</div>
+                    <div class="card-desc">Investigación y análisis de paquetes de red mediante Wireshark para detección de anomalías.</div>
+                    <span class="cta-link">Ver Análisis <i class="fa-solid fa-chevron-right"></i></span>
+                </div>
+                <i class="fa-solid fa-magnifying-glass-chart card-icon"></i>
+            </a>
+
+             <!-- 7. RAG sobre la LPI -->
+            <a href="./RAG sobre la LPI. Casos prácticos/1/index.html" class="bento-card">
+                <div class="card-content">
+                    <div class="card-subhead">IA & LEGAL</div>
+                    <div class="card-title">RAG sobre la LPI</div>
+                    <div class="card-desc">Implementación de Retrieval-Augmented Generation con NotebookLM para casos de Propiedad Intelectual.</div>
+                    <span class="cta-link">Ver Estudio <i class="fa-solid fa-chevron-right"></i></span>
+                </div>
+                <i class="fa-solid fa-book-open card-icon"></i>
+            </a>
+
+            <!-- 8. Uso de RAG normativa -->
+            <a href="./Uso de RAG para consultas sobre normativa/9/index.html" class="bento-card">
+                <div class="card-content">
+                    <div class="card-subhead">IA & RGPD</div>
+                    <div class="card-title">Intrusión y Normativa</div>
+                    <div class="card-desc">Análisis de sanciones por intrusión en servidores con datos personales asistido por IA.</div>
+                    <span class="cta-link">Ver Caso <i class="fa-solid fa-chevron-right"></i></span>
+                </div>
+                <i class="fa-solid fa-scale-balanced card-icon"></i>
+            </a>
+
+        </section>
+
+        <!-- Profile Section -->
+        <h2 class="section-header">Perfil Profesional.</h2>
+
+        <section class="profile-section">
+            <div class="profile-intro">
+                <h3>Más allá del código.</h3>
+                <p>
+                    Soy un profesional técnico con una devoción por la precisión. Como persona autista, mi neurodivergencia es mi ventaja competitiva: ofrezco una atención al detalle inquebrantable, una lealtad profunda a los proyectos que emprendo y un pensamiento lógico altamente estructurado.
+                </p>
+                <p>
+                    Quiero ser tratado por quién soy y mis capacidades, sin condescendencia. Rechazo rotundamente que se me adapte el trabajo o se me trate diferente por el simple hecho de ser autista. Busco un entorno profesional exigente donde se valoren los resultados tangibles y la competencia técnica real.
+                </p>
+            </div>
+
+            <div class="cv-grid">
+                <div class="cv-column">
+                    <h4>Experiencia</h4>
+                    <div class="cv-item">
+                        <h5>Prácticas en Tienda de Informática</h5>
+                        <span class="meta">Técnico de Soporte</span>
+                        <p>Resolución experta de incidencias de hardware y software. Atención directa y especializada al cliente, garantizando la satisfacción a través de soluciones técnicas precisas.</p>
+                    </div>
+                    <div class="cv-item">
+                        <h5>Técnico de Mantenimiento</h5>
+                        <span class="meta">Sector Educativo</span>
+                        <p>Responsable del mantenimiento integral de parques informáticos en centros escolares. Diagnóstico rápido y reparación in-situ para asegurar la continuidad educativa.</p>
+                    </div>
+                </div>
+
+                <div class="cv-column">
+                    <h4>Formación</h4>
+                    <div class="cv-item">
+                        <h5>Grado Superior Telecomunicaciones e Informática</h5>
+                        <span class="meta">Especialización Técnica</span>
+                        <p>Dominio de infraestructuras de red, sistemas telemáticos y gestión de proyectos de telecomunicación.</p>
+                    </div>
+                    <div class="cv-item">
+                        <h5>Grado Medio SMR</h5>
+                        <span class="meta">Sistemas Microinformáticos y Redes</span>
+                        <p>Base sólida en montaje, mantenimiento y seguridad de sistemas monousuario y en red.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Footer -->
+        <section class="contact-footer">
+            <h2 style="font-size: 40px; font-weight: 700; margin-bottom: 20px;">Hablemos.</h2>
+            <p style="font-size: 21px; color: var(--text-secondary); margin-bottom: 30px;">
+                ¿Listo para colaborar? Envíame un correo.
             </p>
+            <a href="mailto:hugofloresmolina23@gmail.com" class="contact-btn">hugofloresmolina23@gmail.com</a>
+        </section>
+
+        <footer>
+            <p>Copyright © 2026 Karitsu2281. Todos los derechos reservados.</p>
+            <p><a href="https://github.com/karitsu2281" target="_blank" rel="noopener noreferrer">GitHub</a></p>
         </footer>
     </div>
 </body>
