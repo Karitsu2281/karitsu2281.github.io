@@ -3,387 +3,281 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Karitsu2281 - Proyectos</title>
+    <title>Karitsu2281 - Portafolio de Proyectos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --color-white: rgba(255, 255, 255, 1);
-            --color-black: rgba(0, 0, 0, 1);
-            --color-olive-50: rgba(45, 48, 42, 1);
-            --color-olive-100: rgba(52, 56, 48, 1);
-            --color-olive-200: rgba(60, 64, 54, 1);
-            --color-olive-300: rgba(88, 94, 78, 1);
-            --color-olive-400: rgba(106, 113, 94, 1);
-            --color-olive-500: rgba(124, 132, 110, 1);
-            --color-tan-200: rgba(255, 245, 230, 1);
-            --color-tan-300: rgba(240, 220, 200, 1);
-            --color-tan-400: rgba(200, 180, 160, 1);
-            --color-orange-500: rgba(255, 140, 0, 1);
-            --color-orange-600: rgba(255, 120, 0, 1);
-            --color-orange-700: rgba(220, 100, 0, 1);
-            
-            --color-olive-rgb: 255, 140, 0;
-            --color-green-rgb: 255, 140, 0;
-            --color-tan-rgb: 255, 245, 230;
-            
-            --color-background: rgba(10, 10, 15, 1);
-            --color-surface: rgba(20, 15, 10, 0.85);
-            --color-text: var(--color-tan-200);
-            --color-text-secondary: var(--color-tan-300);
-            --color-primary: var(--color-orange-500);
-            --color-primary-hover: var(--color-orange-600);
-            --color-primary-active: var(--color-orange-700);
-            --color-secondary: rgba(var(--color-olive-rgb), 0.2);
-            --color-secondary-hover: rgba(var(--color-olive-rgb), 0.3);
-            --color-border: rgba(var(--color-olive-rgb), 0.4);
-            --color-card-border: rgba(var(--color-olive-rgb), 0.3);
-            --color-focus-ring: rgba(var(--color-green-rgb), 0.5);
-            
-            --font-family-base: "Courier New", Consolas, monospace;
-            --font-size-base: 14px;
-            --font-size-lg: 16px;
-            --font-size-xl: 18px;
-            --font-size-2xl: 20px;
-            --font-size-3xl: 24px;
-            --font-size-4xl: 30px;
-            --font-weight-medium: 500;
-            --font-weight-semibold: 550;
-            --font-weight-bold: 600;
-            --line-height-tight: 1.2;
-            --line-height-normal: 1.5;
-            --letter-spacing-tight: -0.01em;
-            
-            --space-8: 8px;
-            --space-12: 12px;
-            --space-16: 16px;
-            --space-20: 20px;
-            --space-24: 24px;
-            --space-32: 32px;
-            --space-48: 48px;
-            
-            --radius-base: 8px;
-            --radius-md: 10px;
-            --radius-lg: 12px;
-            
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
-            
-            --duration-normal: 250ms;
-            --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-color: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --border-color: #334155;
+            --card-hover-border: #38bdf8;
         }
-        
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --color-gray-400-rgb: 119, 124, 124;
-                --color-teal-300-rgb: 50, 184, 198;
-                --color-gray-300-rgb: 167, 169, 169;
-                --color-gray-200-rgb: 245, 245, 245;
-                
-                --color-background: var(--color-charcoal-700);
-                --color-surface: var(--color-charcoal-800);
-                --color-text: var(--color-gray-200);
-                --color-text-secondary: rgba(var(--color-gray-300-rgb), 0.7);
-                --color-primary: var(--color-teal-300);
-                --color-primary-hover: var(--color-teal-400);
-                --color-secondary: rgba(var(--color-gray-400-rgb), 0.15);
-                --color-secondary-hover: rgba(var(--color-gray-400-rgb), 0.25);
-                --color-border: rgba(var(--color-gray-400-rgb), 0.3);
-                --color-card-border: rgba(var(--color-gray-400-rgb), 0.2);
-                --color-focus-ring: rgba(var(--color-teal-300-rgb), 0.4);
-            }
-        }
-        
+
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
-        
+
         body {
-            font-family: var(--font-family-base);
-            font-size: var(--font-size-base);
-            line-height: var(--line-height-normal);
-            color: var(--color-text);
-            background: linear-gradient(180deg, #0a0a0f 0%, #1a1520 30%, #2a1f30 60%, #1a1520 90%, #0a0a0f 100%);
-            background-attachment: fixed;
-            -webkit-font-smoothing: antialiased;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: var(--space-20);
-            position: relative;
         }
-        
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 140, 0, 0.05) 2px, rgba(255, 140, 0, 0.05) 4px),
-                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255, 140, 0, 0.05) 2px, rgba(255, 140, 0, 0.05) 4px);
-            pointer-events: none;
-            z-index: 1;
-        }
-        
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% 30%, rgba(255, 140, 0, 0.08) 0%, transparent 40%, rgba(0, 0, 0, 0.5) 100%);
-            pointer-events: none;
-            z-index: 1;
-        }
-        
+
         .container {
-            max-width: 800px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
             width: 100%;
-            position: relative;
-            z-index: 2;
         }
-        
-        .header {
+
+        header {
+            padding: 80px 0 60px;
             text-align: center;
-            margin-bottom: var(--space-48);
         }
-        
-        .header h1 {
-            font-size: var(--font-size-3xl);
-            font-weight: var(--font-weight-bold);
-            color: var(--color-text);
-            letter-spacing: 0.05em;
-            margin-bottom: var(--space-12);
-            text-transform: uppercase;
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
         }
-        
-        .header p {
-            font-size: var(--font-size-lg);
-            color: var(--color-text-secondary);
+
+        .subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
         }
-        
+
         .projects-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--space-24);
-            margin-bottom: var(--space-32);
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
         }
-        
+
         .project-card {
-            background-color: rgba(15, 10, 10, 0.85);
-            border: 2px solid rgba(255, 140, 0, 0.3);
-            border-radius: 4px;
-            padding: var(--space-32);
-            transition: all var(--duration-normal) var(--ease-standard);
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
             text-decoration: none;
-            display: block;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 140, 0, 0.1);
-            position: relative;
-        }
-        
-        .project-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
+            display: flex;
+            flex-direction: column;
             height: 100%;
-            background: var(--color-primary);
-            opacity: 0;
-            transition: opacity var(--duration-normal) var(--ease-standard);
         }
-        
+
         .project-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(255, 140, 0, 0.4), 0 0 30px rgba(255, 140, 0, 0.2), inset 0 1px 0 rgba(255, 140, 0, 0.2);
-            border-color: var(--color-primary);
-            background-color: rgba(25, 15, 10, 0.95);
+            transform: translateY(-4px);
+            border-color: var(--card-hover-border);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
         }
-        
-        .project-card:hover::before {
-            opacity: 1;
-        }
-        
-        .project-card:focus-visible {
-            outline: 2px solid var(--color-primary);
-            outline-offset: 2px;
-        }
-        
+
         .project-icon {
-            width: 40px;
-            height: 40px;
-            background: transparent;
-            border: 2px solid var(--color-primary);
-            border-radius: 0;
+            width: 48px;
+            height: 48px;
+            background-color: rgba(56, 189, 248, 0.1);
+            color: var(--accent-color);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: var(--space-20);
-            font-size: var(--font-size-2xl);
-            font-family: var(--font-family-base);
-            color: var(--color-primary);
-            font-weight: var(--font-weight-bold);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
         }
-        
+
         .project-title {
-            font-size: var(--font-size-xl);
-            font-weight: var(--font-weight-bold);
-            color: var(--color-text);
-            margin-bottom: var(--space-8);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
         }
-        
+
         .project-description {
-            font-size: var(--font-size-base);
-            color: var(--color-text-secondary);
-            line-height: var(--line-height-normal);
-            margin-bottom: var(--space-16);
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            flex-grow: 1;
         }
-        
+
         .project-link {
-            color: var(--color-primary);
-            font-weight: var(--font-weight-medium);
-            font-size: var(--font-size-base);
             display: inline-flex;
             align-items: center;
-            gap: var(--space-8);
+            color: var(--accent-color);
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-top: auto;
         }
-        
-        .arrow {
-            transition: transform var(--duration-normal) var(--ease-standard);
+
+        .project-link svg {
+            margin-left: 6px;
+            transition: transform 0.2s ease;
         }
-        
-        .project-card:hover .arrow {
+
+        .project-card:hover .project-link svg {
             transform: translateX(4px);
         }
-        
-        .footer {
+
+        footer {
+            margin-top: auto;
+            padding: 40px 0;
             text-align: center;
-            padding-top: var(--space-32);
-            border-top: 1px solid var(--color-border);
+            border-top: 1px solid var(--border-color);
         }
-        
-        .footer p {
-            color: var(--color-text-secondary);
-            font-size: var(--font-size-base);
+
+        footer p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
         }
-        
-        .footer a {
-            color: var(--color-primary);
+
+        footer a {
+            color: var(--text-secondary);
             text-decoration: none;
-            font-weight: var(--font-weight-medium);
+            transition: color 0.2s;
         }
-        
-        .footer a:hover {
-            color: var(--color-primary-hover);
+
+        footer a:hover {
+            color: var(--accent-color);
         }
-        
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: var(--font-size-3xl);
+
+        @media (max-width: 640px) {
+            h1 {
+                font-size: 2rem;
             }
-            
-            .projects-grid {
-                grid-template-columns: 1fr;
+            header {
+                padding: 60px 0 40px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header class="header">
-            <h1>// SURVIVOR ARCHIVES</h1>
-            <p>UV SAFE ZONE - NIGHT APPROACHES</p>
+        <header>
+            <h1>Portafolio de Karitsu2281</h1>
+            <p class="subtitle">Explora mi colección de proyectos de ciberseguridad, administración de sistemas y desarrollo.</p>
         </header>
-        
-        <div class="projects-grid">
+
+        <main class="projects-grid">
+            <!-- Proyecto 3 Hacking Ético (Nuevo) -->
+            <a href="./P3HackingEtico/index.html" class="project-card">
+                <div class="project-icon">🛡️</div>
+                <h2 class="project-title">Hacking Ético: Proyecto 3</h2>
+                <p class="project-description">
+                    Guía de bastionamiento de Debian 13 y prácticas de seguridad ofensiva y defensiva en entornos Linux. (TalentScout)
+                </p>
+                <span class="project-link">
+                    Ver Documentación
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </span>
+            </a>
+
+            <!-- Proyecto 1 -->
             <a href="./proyecto1/index.html" class="project-card">
-                <div class="project-icon">01</div>
-                <h2 class="project-title">SUPPLY RUN: PROYECTO 1</h2>
+                <div class="project-icon">📦</div>
+                <h2 class="project-title">Proyecto 1</h2>
                 <p class="project-description">
-                    [SURVIVOR LOG] Mission data recovered. UV protection required for access.
+                    Documentación y despliegue inicial. Fundamentos de administración y configuración de servicios.
                 </p>
                 <span class="project-link">
-                    ENTER SAFEZONE &gt;&gt; <span class="arrow">→</span>
+                    Ver Proyecto
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </span>
             </a>
-            
+
+            <!-- Proyecto 2 -->
             <a href="./proyecto2/index.html" class="project-card">
-                <div class="project-icon">02</div>
-                <h2 class="project-title">SUPPLY RUN: PROYECTO 2</h2>
+                <div class="project-icon">🔧</div>
+                <h2 class="project-title">Proyecto 2</h2>
                 <p class="project-description">
-                    [SURVIVOR LOG] Secondary mission cache located. Nightfall imminent.
+                    Implementación de servicios avanzados y configuración de red.
                 </p>
                 <span class="project-link">
-                    ENTER SAFEZONE &gt;&gt; <span class="arrow">→</span>
+                    Ver Proyecto
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </span>
             </a>
-            
+
+            <!-- Bastionado G4 -->
             <a href="./proyecto2BastionadoG4/enrutamiento-estatico-vlan-cisco/index.html" class="project-card">
-                <div class="project-icon">03</div>
-                <h2 class="project-title">OUTPOST: BASTIONADO G4</h2>
+                <div class="project-icon">🔒</div>
+                <h2 class="project-title">Bastionado G4</h2>
                 <p class="project-description">
-                    [SURVIVOR LOG] Fortified shelter data. Network hardening protocols active.
+                    Enrutamiento estático y configuración de VLANs en Cisco. Hardening de infraestructura de red.
                 </p>
                 <span class="project-link">
-                    ENTER SAFEZONE &gt;&gt; <span class="arrow">→</span>
+                    Ver Guía
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </span>
             </a>
-            
+
+            <!-- Forense Project 2 -->
             <a href="./proyecto2forense/1/index.html" class="project-card">
-                <div class="project-icon">04</div>
-                <h2 class="project-title">EVIDENCE: FORENSICS</h2>
+                <div class="project-icon">🔍</div>
+                <h2 class="project-title">Informática Forense</h2>
                 <p class="project-description">
-                    [SURVIVOR LOG] Digital traces recovered from infected zone. Handle with care.
+                    Análisis forense digital, recuperación de evidencias y metodologías de investigación.
                 </p>
                 <span class="project-link">
-                    ENTER SAFEZONE &gt;&gt; <span class="arrow">→</span>
+                    Ver Caso
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </span>
             </a>
-            
+
+            <!-- RAG LPI -->
             <a href="./RAG sobre la LPI. Casos prácticos/1/index.html" class="project-card">
-                <div class="project-icon">05</div>
-                <h2 class="project-title">ARCHIVE: RAG-LPI</h2>
+                <div class="project-icon">⚖️</div>
+                <h2 class="project-title">RAG sobre LPI</h2>
                 <p class="project-description">
-                    [SURVIVOR LOG] Pre-outbreak legal database. AI retrieval system operational.
+                    Casos prácticos sobre la Ley de Propiedad Intelectual utilizando técnicas de RAG (Retrieval-Augmented Generation).
                 </p>
                 <span class="project-link">
-                    ENTER SAFEZONE &gt;&gt; <span class="arrow">→</span>
+                    Ver Casos
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </span>
             </a>
-            
+
+            <!-- Forense Sector 17 -->
             <a href="./17forense/10/index.html" class="project-card">
-                <div class="project-icon">06</div>
-                <h2 class="project-title">EVIDENCE: SECTOR 17</h2>
+                <div class="project-icon">🧬</div>
+                <h2 class="project-title">Forense: Sector 17</h2>
                 <p class="project-description">
-                    [SURVIVOR LOG] Advanced forensic traces from quarantine zone 17. Danger level: HIGH.
+                    Investigación forense avanzada. Análisis de artefactos y reconstrucción de incidentes.
                 </p>
                 <span class="project-link">
-                    ENTER SAFEZONE &gt;&gt; <span class="arrow">→</span>
+                    Ver Caso
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </span>
             </a>
-            
+
+            <!-- RAG Normativa -->
             <a href="./Uso de RAG para consultas sobre normativa/9/index.html" class="project-card">
-                <div class="project-icon">07</div>
-                <h2 class="project-title">ARCHIVE: NORMATIVA</h2>
+                <div class="project-icon">🤖</div>
+                <h2 class="project-title">RAG - Consultas Normativa</h2>
                 <p class="project-description">
-                    [SURVIVOR LOG] Regulatory compliance AI system. Old world knowledge preserved.
+                    Aplicación de IA generativa para consultas eficientes sobre normativas y regulaciones.
                 </p>
                 <span class="project-link">
-                    ENTER SAFEZONE &gt;&gt; <span class="arrow">→</span>
+                    Ver Proyecto
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </span>
             </a>
-        </div>
-        
-        <footer class="footer">
-            <p>
-                Creado por <a href="https://github.com/karitsu2281" target="_blank" rel="noopener noreferrer">Karitsu2281</a>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Karitsu2281. Todos los derechos reservados.</p>
+            <p style="margin-top: 10px; opacity: 0.7; font-size: 0.8rem;">
+                <a href="https://github.com/karitsu2281" target="_blank" rel="noopener noreferrer">GitHub Profile</a>
             </p>
         </footer>
     </div>
