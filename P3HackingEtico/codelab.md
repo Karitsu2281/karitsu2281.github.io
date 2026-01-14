@@ -250,7 +250,7 @@ e) Por último, comprobando el flujo de la sesión del usuario. Analiza si está
   4. Web Application Firewall (WAF)
   Instalar y configurar un WAF como ModSecurity.
    Un WAF analiza el tráfico HTTP entrante y bloquea patrones maliciosos conocidos antes de que lleguen a tu código PHP.
-   Hubiera bloqueado automáticamente los intentos de inyección SQL (' OR '1'='1) y XSS (<script>...) que probamos anteriormente, actuando como una red de seguridad extra.
+   Hubiera bloqueado automáticamente los intentos de inyección SQL (' OR '1'='1) y XSS
 
   5. Restricción de Métodos HTTP
   Si tu aplicación solo usa GET y POST, deshabilita el resto.
