@@ -38,4 +38,5 @@ User-agent: PerplexityBot
 Disallow: /
 
 User-agent: *
+Disallow: /A08-DNS/
 Allow: /
