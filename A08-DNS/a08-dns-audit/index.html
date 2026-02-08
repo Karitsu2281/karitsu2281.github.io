@@ -1,0 +1,173 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Auditoría OSINT - El POZO</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="a08-dns-audit"
+                  title="Auditoría OSINT - El POZO"
+                  environment="web"
+                  feedback-link="https://github.com/karitsu2281/karitsu2281.github.io">
+    
+      <google-codelab-step label="1. Introducción" duration="2">
+        <h2 is-upgraded>Resumen Ejecutivo</h2>
+<p>El objetivo de este informe es documentar los hallazgos de la fase de reconocimiento pasivo sobre la infraestructura tecnológica de &#34;El POZO&#34; (ElPozo Alimentación S.A.). El análisis se ha centrado en la identificación de activos públicos y vectores de ataque potenciales mediante fuentes abiertas (OSINT).</p>
+<p>La infraestructura analizada presenta un modelo híbrido. Se combinan servicios modernos de correo en la nube (Microsoft 365) con un alojamiento web externo gestionado por Arsys.</p>
+<p>El hallazgo más significativo es la detección del servidor <code>scen15.elpozo.com</code>. Este activo se encuentra alojado en una red de Telefónica, distinta a la del sitio web principal. Su ubicación y nomenclatura sugieren que podría tratarse de un punto de acceso a infraestructura interna o heredada, lo que lo convierte en un objetivo prioritario para fases posteriores de la auditoría.</p>
+<h2 is-upgraded>Objeto y Alcance</h2>
+<p>El presente documento tiene por objeto recopilar y analizar información pública sobre el dominio <code>elpozo.com</code>. Estos datos servirán como base para la planificación de auditorías de seguridad más profundas.</p>
+<p>El alcance del trabajo se limita estrictamente a técnicas de reconocimiento pasivo. No se ha realizado ninguna interacción activa o intrusiva con los sistemas del objetivo, garantizando la no interferencia con sus operaciones habituales.</p>
+<h2 is-upgraded>Antecedentes</h2>
+<p>Esta auditoría forma parte de una evaluación de seguridad inicial. En esta etapa, es crítico identificar la superficie de ataque externa de la organización sin activar sus sistemas de defensa. La información obtenida permitirá diseñar escenarios de ataque realistas y dirigidos.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="2. Configuración del Entorno" duration="2">
+        <p>Para la realización de esta auditoría se ha seguido una metodología de reconocimiento pasivo, asegurando cero interacción directa intrusiva con la infraestructura del objetivo.</p>
+<h2 is-upgraded>Herramientas Utilizadas</h2>
+<ul>
+<li><strong>nslookup</strong>: Herramienta de línea de comandos para consultas DNS.</li>
+<li><strong>whois</strong>: Herramienta para consultar bases de datos de registro de dominios e IPs.</li>
+<li><strong>Google Dorks</strong>: Operadores de búsqueda avanzada para filtrar información en motores de búsqueda.</li>
+<li><strong>Navegador Web</strong>: Para verificación manual de hallazgos.</li>
+</ul>
+<p>A continuación se detallan los procedimientos técnicos ejecutados paso a paso para la obtención de la inteligencia, permitiendo la replicabilidad de los hallazgos.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="3. Identificación de Servicios de Correo (MX)" duration="5">
+        <p>Para determinar el proveedor de correo electrónico y evaluar la exposición a campañas de phishing dirigidas, se consultaron los registros MX del dominio.</p>
+<h2 is-upgraded>Procedimiento</h2>
+<p>Se ejecutó el siguiente comando para listar los intercambiadores de correo:</p>
+<pre><code language="language-bash" class="language-bash">nslookup -type=MX elpozo.com
+</code></pre>
+<h2 is-upgraded>Resultados y Análisis</h2>
+<p>El dominio utiliza Microsoft 365, evidenciado por el registro <code>elpozo-com.mail.protection.outlook.com</code>.</p>
+<p><strong>Evidencia Gráfica:</strong><img alt="Evidencia General" src="img\\724c2a67a1a7acd7.png"></p>
+<p>Esto indica una superficie de ataque vinculada a credenciales de Microsoft y permite enfocar las pruebas de ingeniería social hacia este entorno específico (por ejemplo, <em>user enumeration</em> en O365).</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="4. Análisis de Infraestructura Web y DNS" duration="5">
+        <p>Se analizó la infraestructura de nombres y el alojamiento del sitio web principal para comprender la topología de la red expuesta.</p>
+<h2 is-upgraded>Procedimiento</h2>
+<p>Se realizaron consultas para identificar los servidores de nombres (NS) y la dirección IP del servidor web principal (A):</p>
+<pre><code language="language-bash" class="language-bash">nslookup -type=NS elpozo.com
+nslookup elpozo.com
+</code></pre>
+<h2 is-upgraded>Resultados y Análisis</h2>
+<p>El sitio web corporativo <code>www.elpozo.com</code> resuelve a la dirección IP <code>217.76.132.16</code>, alojada en Arsys Internet S.L. La gestión DNS también está delegada en este proveedor.</p>
+<p><strong>Evidencia de Resolución:</strong><img alt="Resolución de Dominio" src="img\\57cbb7bbd472ab44.png"></p>
+<p>Al tratarse de un hosting comercial externo, es probable que cuente con medidas de seguridad gestionadas, reduciendo la probabilidad de éxito de ataques directos a la infraestructura base.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="5. Descubrimiento de Activos Anómalos" duration="10">
+        <p>Mediante técnicas de búsqueda pasiva (Google Dorks) y resolución de nombres, se buscó identificar subdominios que pudieran revelar sistemas olvidados o de administración.</p>
+<h2 is-upgraded>Procedimiento</h2>
+<p>Se emplearon operadores de búsqueda avanzada para filtrar el sitio principal y localizar otros subdominios indexados:</p>
+<pre><code language="language-text" class="language-text">site:elpozo.com -www
+</code></pre>
+<p><strong>Evidencia de Búsqueda:</strong><img alt="Búsqueda de Subdominios" src="img\\22a2f381f7bb3d0f.png"></p>
+<p>Posteriormente, se verificó la resolución de los hallazgos:</p>
+<pre><code language="language-bash" class="language-bash">nslookup scen15.elpozo.com
+</code></pre>
+<h2 is-upgraded>Resultados y Análisis</h2>
+<p>Se identificó el subdominio <code>scen15.elpozo.com</code>, que resuelve a la IP <code>195.57.134.74</code>.</p>
+<p><strong>Evidencia del Hallazgo de scen15:</strong><img alt="Hallazgo scen15" src="img\\b90afbb7000d08f5.png"></p>
+<p>A diferencia de la web principal, este activo reside en la red de <strong>Telefónica de España</strong>. Esta discrepancia es altamente relevante. Podría indicar una conexión a oficinas físicas (fibra óptica con IP fija), una VPN antigua o un servidor de desarrollo expuesto. Este activo debe ser considerado el punto más débil detectado en esta fase.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="6. Información de Registro (Whois)" duration="3">
+        <p>Se consultaron las bases de datos de registro para confirmar la titularidad de los activos y obtener puntos de contacto.</p>
+<h2 is-upgraded>Procedimiento</h2>
+<p>Se realizaron consultas Whois sobre el dominio y las direcciones IP identificadas:</p>
+<pre><code language="language-bash" class="language-bash">whois elpozo.com
+whois 195.57.134.74
+</code></pre>
+<h2 is-upgraded>Resultados y Análisis</h2>
+<p>Los registros públicos confirman que ElPozo Alimentación S.A. es el titular.</p>
+<p><strong>Evidencia Whois:</strong><img alt="Whois IP" src="img\\6b3f690d031a1a14.png"></p>
+<p>Se identificaron direcciones de contacto como <code>protecciondedatos@grupofuertes.com</code>, lo que revela la pertenencia al &#34;Grupo Fuertes&#34; y sugiere que la auditoría podría extenderse lateralmente a la entidad matriz.</p>
+<p><strong>Detalle Adicional:</strong><img alt="Detalle Whois" src="img\\b190262cda3fdc30.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="7. Conclusiones" duration="2">
+        <p>La organización &#34;El POZO&#34; expone una superficie de ataque heterogénea. La migración del correo a la nube reduce riesgos de infraestructura propia, pero introduce nuevos vectores de ataque social.</p>
+<p>La web corporativa parece estar bien aislada en un proveedor de hosting. Sin embargo, el servidor <code>scen15.elpozo.com</code> representa el punto más débil detectado. Al estar fuera del paraguas de seguridad del hosting principal, es el candidato ideal para pruebas de penetración más agresivas en el futuro.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="8. Anexo: Resumen de Comandos" duration="1">
+        <p>Para facilitar la replicación de los pasos, aquí se presenta un resumen de los comandos utilizados.</p>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Objetivo</p>
+</td><td colspan="1" rowspan="1"><p>Comando / Dork</p>
+</td><td colspan="1" rowspan="1"><p>Herramienta</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Registros MX</strong></p>
+</td><td colspan="1" rowspan="1"><p><code>nslookup -type=MX elpozo.com</code></p>
+</td><td colspan="1" rowspan="1"><p>nslookup</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Registros NS</strong></p>
+</td><td colspan="1" rowspan="1"><p><code>nslookup -type=NS elpozo.com</code></p>
+</td><td colspan="1" rowspan="1"><p>nslookup</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Resolución A</strong></p>
+</td><td colspan="1" rowspan="1"><p><code>nslookup elpozo.com</code></p>
+</td><td colspan="1" rowspan="1"><p>nslookup</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Subdominios</strong></p>
+</td><td colspan="1" rowspan="1"><p><code>site:elpozo.com -www</code></p>
+</td><td colspan="1" rowspan="1"><p>Google</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Whois IP</strong></p>
+</td><td colspan="1" rowspan="1"><p><code>whois <IP></code></p>
+</td><td colspan="1" rowspan="1"><p>whois (web/cli)</p>
+</td></tr>
+</table>
+<h2 is-upgraded>Capturas del Proceso</h2>
+<p>A continuación se muestran capturas adicionales del proceso de ejecución.</p>
+<p><strong>Proceso General (1):</strong><img alt="Captura Proceso 1" src="img\\c4d8c83b4dde46fa.png"></p>
+<p><strong>Proceso General (2):</strong><img alt="Captura Proceso 2" src="img\\13c083fa0d58f090.png"></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

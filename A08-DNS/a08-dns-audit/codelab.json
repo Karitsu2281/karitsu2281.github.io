@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2026-02-08T13:51:59+01:00",
+  "id": "a08-dns-audit",
+  "duration": 30,
+  "title": "Auditoría OSINT - El POZO",
+  "authors": "Karitsu",
+  "summary": "Auditoría OSINT - El POZO",
+  "source": "A08-DNS.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "osint",
+    "audit"
+  ],
+  "tags": [
+    "networking",
+    "security"
+  ],
+  "feedback": "https://github.com/karitsu2281/karitsu2281.github.io",
+  "url": "a08-dns-audit"
+}

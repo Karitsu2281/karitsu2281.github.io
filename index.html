@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; img-src 'self'; script-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; img-src 'self'; script-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta name="referrer" content="strict-origin-when-cross-origin">
-    
+
     <!-- Anti-Scraping / AI Bot Protection -->
     <meta name="robots" content="noai, noimageai">
     <meta name="gptbot" content="noindex">
-    <meta name="googlebot" content="nosnippet"> 
-    
+    <meta name="googlebot" content="nosnippet">
+
     <title>Karitsu2281</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -21,7 +23,8 @@
             --surface-hover: #2c2c2e;
             --text-primary: #f5f5f7;
             --text-secondary: #86868b;
-            --accent-color: #ff9d00; /* Dying Light Orange */
+            --accent-color: #ff9d00;
+            /* Dying Light Orange */
             --border-radius: 18px;
             --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
@@ -50,7 +53,8 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            border-bottom: 1px solid rgba(255, 157, 0, 0.2); /* Subtle orange border */
+            border-bottom: 1px solid rgba(255, 157, 0, 0.2);
+            /* Subtle orange border */
         }
 
         .nav-content {
@@ -97,15 +101,18 @@
         }
 
         .hero h1 {
-            font-family: 'Teko', sans-serif; /* Dying Light style font */
-            font-size: 72px; /* Larger for impact */
+            font-family: 'Teko', sans-serif;
+            /* Dying Light style font */
+            font-size: 72px;
+            /* Larger for impact */
             text-transform: uppercase;
             line-height: 0.9;
             font-weight: 600;
             letter-spacing: 0.02em;
             margin-bottom: 20px;
             color: #fff;
-            text-shadow: 0 0 10px rgba(255, 157, 0, 0.3); /* Subtle orange glow */
+            text-shadow: 0 0 10px rgba(255, 157, 0, 0.3);
+            /* Subtle orange glow */
             -webkit-text-fill-color: initial;
             background: none;
         }
@@ -128,7 +135,8 @@
         /* Benton Grid Layout for Projects */
         .bento-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2 columns like Apple feature blocks */
+            grid-template-columns: repeat(2, 1fr);
+            /* 2 columns like Apple feature blocks */
             gap: 24px;
             margin-bottom: 80px;
         }
@@ -149,10 +157,11 @@
         }
 
         .bento-card:hover {
-            transform: scale(1.02); /* Subtle scale effect */
+            transform: scale(1.02);
+            /* Subtle scale effect */
             background-color: var(--surface-hover);
         }
-        
+
         /* Specific card for featured item to span full width */
         .bento-card.featured {
             grid-column: span 2;
@@ -210,7 +219,7 @@
             display: inline-flex;
             align-items: center;
         }
-        
+
         .cta-link i {
             font-size: 12px;
             margin-left: 6px;
@@ -256,7 +265,7 @@
             font-size: 24px;
             font-weight: 600;
             margin-bottom: 25px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 15px;
         }
 
@@ -295,7 +304,8 @@
             background-color: var(--accent-color);
             color: #fff;
             padding: 12px 26px;
-            border-radius: 980px; /* Pill shape */
+            border-radius: 980px;
+            /* Pill shape */
             font-size: 17px;
             font-weight: 400;
             text-decoration: none;
@@ -304,7 +314,8 @@
         }
 
         .contact-btn:hover {
-            background-color: #0077ed; /* Darker blue */
+            background-color: #0077ed;
+            /* Darker blue */
         }
 
         footer {
@@ -315,25 +326,53 @@
             font-size: 12px;
             color: var(--text-secondary);
         }
-        
+
         footer a {
             color: var(--text-secondary);
             text-decoration: none;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @media (max-width: 768px) {
-            .hero h1 { font-size: 40px; }
-            .hero p { font-size: 19px; }
-            .bento-grid { grid-template-columns: 1fr; }
-            .bento-card.featured { height: 450px; grid-column: span 1; }
-            .bento-card { height: 350px; }
-            .cv-grid { grid-template-columns: 1fr; }
-            .profile-section { padding: 30px; }
+            .hero h1 {
+                font-size: 40px;
+            }
+
+            .hero p {
+                font-size: 19px;
+            }
+
+            .bento-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .bento-card.featured {
+                height: 450px;
+                grid-column: span 1;
+            }
+
+            .bento-card {
+                height: 350px;
+            }
+
+            .cv-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-section {
+                padding: 30px;
+            }
         }
 
         /* Category Headers */
@@ -359,6 +398,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <nav class="navbar">
@@ -372,7 +412,8 @@
         <!-- Hero -->
         <header class="hero">
             <h1>Good Night.<br>Good Luck.</h1>
-            <p>Especialista en Configuración, Reparación de Equipos y Redes.<br>Administrador de Sistemas en Formación.</p>
+            <p>Especialista en Configuración, Reparación de Equipos y Redes.<br>Administrador de Sistemas en Formación.
+            </p>
         </header>
 
         <!-- Projects Grid Grouped by Subject -->
@@ -380,7 +421,7 @@
         <!-- 1. Hacking & Bastionado -->
         <h3 class="category-header">Hacking Ético y Bastionado de Sistemas</h3>
         <section class="bento-grid">
-            
+
             <!-- 1. P3HackingEtico -->
             <a href="./P3HackingEtico/index.html" class="bento-card featured">
                 <div class="card-content">
@@ -399,7 +440,8 @@
                 <div class="card-content">
                     <div class="card-subhead">BASTIONAMIENTO HW</div>
                     <div class="card-title">PC Aorus B550</div>
-                    <div class="card-desc">Guía de bastionamiento para PC de alto rendimiento con placa base Aorus B550 Elite AX V2.</div>
+                    <div class="card-desc">Guía de bastionamiento para PC de alto rendimiento con placa base Aorus B550
+                        Elite AX V2.</div>
                     <span class="cta-link">Ver Guía <i class="fa-solid fa-chevron-right"></i></span>
                 </div>
                 <i class="fa-solid fa-computer card-icon"></i>
@@ -410,18 +452,20 @@
                 <div class="card-content">
                     <div class="card-subhead">SEGURIDAD SO</div>
                     <div class="card-title">Arranque Debian 13</div>
-                    <div class="card-desc">Guía técnica para el aseguramiento y bastionamiento del proceso de arranque en Debian 13.</div>
+                    <div class="card-desc">Guía técnica para el aseguramiento y bastionamiento del proceso de arranque
+                        en Debian 13.</div>
                     <span class="cta-link">Ver Guía <i class="fa-solid fa-chevron-right"></i></span>
                 </div>
                 <i class="fa-brands fa-linux card-icon"></i>
             </a>
 
-             <!-- 4. proyecto2BastionadoG4 -->
-             <a href="./proyecto2BastionadoG4/enrutamiento-estatico-vlan-cisco/index.html" class="bento-card">
+            <!-- 4. proyecto2BastionadoG4 -->
+            <a href="./proyecto2BastionadoG4/enrutamiento-estatico-vlan-cisco/index.html" class="bento-card">
                 <div class="card-content">
                     <div class="card-subhead">REDES CISCO</div>
                     <div class="card-title">Routing & VLANs</div>
-                    <div class="card-desc">Configuración de enrutamiento estático y segmentación VLAN en Cisco Packet Tracer.</div>
+                    <div class="card-desc">Configuración de enrutamiento estático y segmentación VLAN en Cisco Packet
+                        Tracer.</div>
                     <span class="cta-link">Ver Laboratorio <i class="fa-solid fa-chevron-right"></i></span>
                 </div>
                 <i class="fa-solid fa-network-wired card-icon"></i>
@@ -429,16 +473,31 @@
 
         </section>
 
+        <!-- 9. A08-DNS -->
+        <a href="./A08-DNS/a08-dns-audit/index.html" class="bento-card">
+            <div class="card-content">
+                <div class="card-subhead">OSINT & RECON</div>
+                <div class="card-title">Auditoría DNS El Pozo</div>
+                <div class="card-desc">Investigación de infraestructura pública mediante técnicas OSINT y análisis de
+                    registros DNS.</div>
+                <span class="cta-link">Ver Auditoría <i class="fa-solid fa-chevron-right"></i></span>
+            </div>
+            <i class="fa-solid fa-globe card-icon"></i>
+        </a>
+
+        </section>
+
         <!-- 2. Forense -->
         <h3 class="category-header">Análisis Forense</h3>
         <section class="bento-grid">
-            
+
             <!-- 5. proyecto2forense -->
             <a href="./proyecto2forense/12/index.html" class="bento-card">
                 <div class="card-content">
                     <div class="card-subhead">FORENSE DIGITAL</div>
                     <div class="card-title">FTK Imager en Win7</div>
-                    <div class="card-desc">Procedimiento de adquisición de evidencia forense utilizando FTK Imager en entorno Windows 7.</div>
+                    <div class="card-desc">Procedimiento de adquisición de evidencia forense utilizando FTK Imager en
+                        entorno Windows 7.</div>
                     <span class="cta-link">Ver Caso <i class="fa-solid fa-chevron-right"></i></span>
                 </div>
                 <i class="fa-solid fa-microscope card-icon"></i>
@@ -449,7 +508,8 @@
                 <div class="card-content">
                     <div class="card-subhead">ANÁLISIS DE TRÁFICO</div>
                     <div class="card-title">Uso de Wireshark</div>
-                    <div class="card-desc">Investigación y análisis de paquetes de red mediante Wireshark para detección de anomalías.</div>
+                    <div class="card-desc">Investigación y análisis de paquetes de red mediante Wireshark para detección
+                        de anomalías.</div>
                     <span class="cta-link">Ver Análisis <i class="fa-solid fa-chevron-right"></i></span>
                 </div>
                 <i class="fa-solid fa-magnifying-glass-chart card-icon"></i>
@@ -461,12 +521,13 @@
         <h3 class="category-header">Inteligencia Artificial y Normativa</h3>
         <section class="bento-grid">
 
-             <!-- 7. RAG sobre la LPI -->
+            <!-- 7. RAG sobre la LPI -->
             <a href="./RAG sobre la LPI. Casos prácticos/1/index.html" class="bento-card">
                 <div class="card-content">
                     <div class="card-subhead">IA & LEGAL</div>
                     <div class="card-title">RAG sobre la LPI</div>
-                    <div class="card-desc">Implementación de Retrieval-Augmented Generation con NotebookLM para casos de Propiedad Intelectual.</div>
+                    <div class="card-desc">Implementación de Retrieval-Augmented Generation con NotebookLM para casos de
+                        Propiedad Intelectual.</div>
                     <span class="cta-link">Ver Estudio <i class="fa-solid fa-chevron-right"></i></span>
                 </div>
                 <i class="fa-solid fa-book-open card-icon"></i>
@@ -477,7 +538,8 @@
                 <div class="card-content">
                     <div class="card-subhead">IA & RGPD</div>
                     <div class="card-title">Intrusión y Normativa</div>
-                    <div class="card-desc">Análisis de sanciones por intrusión en servidores con datos personales asistido por IA.</div>
+                    <div class="card-desc">Análisis de sanciones por intrusión en servidores con datos personales
+                        asistido por IA.</div>
                     <span class="cta-link">Ver Caso <i class="fa-solid fa-chevron-right"></i></span>
                 </div>
                 <i class="fa-solid fa-scale-balanced card-icon"></i>
@@ -492,10 +554,16 @@
             <div class="profile-intro">
                 <h3>Más allá del código.</h3>
                 <p>
-                    Soy un profesional técnico con una devoción por la precisión. Tengo la capacidad de mantener el foco en mi tarea asignada durante horas de manera ininterrumpida hasta que está completa. Como persona autista, mi neurodivergencia es mi ventaja competitiva: ofrezco una atención al detalle inquebrantable, una lealtad profunda a los proyectos que emprendo y un pensamiento lógico altamente estructurado.
+                    Soy un profesional técnico con una devoción por la precisión. Tengo la capacidad de mantener el foco
+                    en mi tarea asignada durante horas de manera ininterrumpida hasta que está completa. Como persona
+                    autista, mi neurodivergencia es mi ventaja competitiva: ofrezco una atención al detalle
+                    inquebrantable, una lealtad profunda a los proyectos que emprendo y un pensamiento lógico altamente
+                    estructurado.
                 </p>
                 <p>
-                    Quiero ser tratado por quién soy y mis capacidades, sin condescendencia. Rechazo rotundamente que se me adapte el trabajo o se me trate diferente por el simple hecho de ser autista. Busco un entorno profesional exigente donde se valoren los resultados tangibles y la competencia técnica real.
+                    Quiero ser tratado por quién soy y mis capacidades, sin condescendencia. Rechazo rotundamente que se
+                    me adapte el trabajo o se me trate diferente por el simple hecho de ser autista. Busco un entorno
+                    profesional exigente donde se valoren los resultados tangibles y la competencia técnica real.
                 </p>
             </div>
 
@@ -505,17 +573,20 @@
                     <div class="cv-item">
                         <h5>Prácticas en Tienda de Informática</h5>
                         <span class="meta">Técnico de Soporte</span>
-                        <p>Resolución experta de incidencias de hardware y software. Atención directa y especializada al cliente, garantizando la satisfacción a través de soluciones técnicas precisas.</p>
+                        <p>Resolución experta de incidencias de hardware y software. Atención directa y especializada al
+                            cliente, garantizando la satisfacción a través de soluciones técnicas precisas.</p>
                     </div>
                     <div class="cv-item">
                         <h5>Técnico de Mantenimiento</h5>
                         <span class="meta">Sector Educativo</span>
-                        <p>Responsable del mantenimiento integral de parques informáticos en centros escolares. Diagnóstico rápido y reparación in-situ para asegurar la continuidad educativa.</p>
+                        <p>Responsable del mantenimiento integral de parques informáticos en centros escolares.
+                            Diagnóstico rápido y reparación in-situ para asegurar la continuidad educativa.</p>
                     </div>
                     <div class="cv-item">
                         <h5>Montaje de Red</h5>
                         <span class="meta">Salón Manga de Cádiz</span>
-                        <p>Colaboración técnica en el despliegue físico y lógico de la infraestructura de red para el evento, asegurando la conectividad de los stands y zonas de juego.</p>
+                        <p>Colaboración técnica en el despliegue físico y lógico de la infraestructura de red para el
+                            evento, asegurando la conectividad de los stands y zonas de juego.</p>
                     </div>
                 </div>
 
@@ -524,12 +595,14 @@
                     <div class="cv-item">
                         <h5>Curso de Especialización en Ciberseguridad</h5>
                         <span class="meta">IES Rafael Alberti (Cursando Actualmente)</span>
-                        <p>Formación avanzada en auditoría de seguridad, bastionado de redes, análisis forense e investigación de incidentes de ciberseguridad.</p>
+                        <p>Formación avanzada en auditoría de seguridad, bastionado de redes, análisis forense e
+                            investigación de incidentes de ciberseguridad.</p>
                     </div>
                     <div class="cv-item">
                         <h5>Grado Superior Telecomunicaciones e Informática</h5>
                         <span class="meta">Especialización Técnica</span>
-                        <p>Dominio de infraestructuras de red, sistemas telemáticos y gestión de proyectos de telecomunicación.</p>
+                        <p>Dominio de infraestructuras de red, sistemas telemáticos y gestión de proyectos de
+                            telecomunicación.</p>
                     </div>
                     <div class="cv-item">
                         <h5>Grado Medio SMR</h5>
@@ -555,4 +628,5 @@
         </footer>
     </div>
 </body>
+
 </html>
