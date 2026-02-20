@@ -1,0 +1,27 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2026-02-20T22:07:12+01:00",
+  "id": "2-b-02-hfm",
+  "duration": 45,
+  "title": "Instalación y configuración de un SIEM (HFM)",
+  "summary": "Instalación y configuración de un SIEM (HFM)",
+  "source": "2.b.02-HFM.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "siem",
+    "ciberseguridad",
+    "elk",
+    "snort"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://github.com/karitsu2281",
+  "url": "2-b-02-hfm"
+}

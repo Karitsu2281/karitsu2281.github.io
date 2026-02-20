@@ -1,0 +1,177 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Instalación y configuración de un SIEM (HFM)</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="2-b-02-hfm"
+                  title="Instalación y configuración de un SIEM (HFM)"
+                  environment="web"
+                  feedback-link="https://github.com/karitsu2281">
+    
+      <google-codelab-step label="Caso de Uso y Objetivos" duration="5">
+        <p>El objetivo principal de este proyecto ha sido montar un entorno de laboratorio (o prueba de concepto) para poder simular, detectar y monitorizar ciberataques en tiempo real contra una infraestructura concreta.</p>
+<p>Este escenario práctico sirve para:</p>
+<ul>
+<li>Levantar un servidor víctima con servicios expuestos (SSH, Nginx).</li>
+<li>Meter un Sistema de Detección de Intrusos (Snort) configurado con reglas personalizadas para cazar escaneos de red (ICMP) y ataques de fuerza bruta (SSH).</li>
+<li>Recoger, ordenar y enviar todas estas alertas a un panel centralizado.</li>
+</ul>
+<p>Para montar todo esto, optamos por <strong>ELK</strong> (Elasticsearch, Logstash y Kibana). Principalmente porque trae los datos y los muestra en tiempo real y porque, además de ser una solución súper robusta que se usa a nivel corporativo, es gratuita y de código abierto.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Proceso de Instalación: SIEM (ELK) y Servidor Víctima" duration="10">
+        <p>Para asegurarnos de que el entorno sea fácil de replicar, tiramos de <strong>Docker Desktop</strong> para meter cada componente en su propio contenedor.</p>
+<h2 is-upgraded>Preparación y contenedores</h2>
+<p><strong>1. Creación de la red virtual:</strong></p>
+<pre><code language="language-bash" class="language-bash">docker network create elk-red
+</code></pre>
+<p class="image-container"><img alt="Creación de red virtual" src="img\\31bbf265d42b4432.png"></p>
+<p><strong>2. Lanzar el contenedor ELK con las redes y el límite de memoria:</strong></p>
+<p><strong>Advertencia:</strong> Mover la pila ELK en el equipo de pruebas se comió más del 90% de los 32 GB de RAM disponibles. Así que, antes de tocar nada, toca cerrar todo lo que no sea estrictamente necesario. Tuvimos que ponernos serios con los límites de memoria (2GB para Elasticsearch y 2GB para Filebeat) para evitar el colapso (<em>Out of Memory</em> - OOM).</p>
+<pre><code language="language-bash" class="language-bash">docker run -d --name elk --network elk-red -p 5601:5601 -p 9200:9200 -p 5044:5044 -e ES_JAVA_OPTS=&#34;-Xms2g -Xmx2g&#34; sebp/elk
+</code></pre>
+<p class="image-container"><img alt="Contenedor ELK" src="img\\ef512a1a8c6abbb7.png"></p>
+<p><strong>3. Despliegue del contenedor víctima (Filebeat):</strong></p>
+<pre><code language="language-bash" class="language-bash">docker run -d --name filebeat --network elk-red -p 8080:80 -p 2222:22 --memory 2g --memory-swap 2g nginx-filebeat
+</code></pre>
+<p class="image-container"><img alt="Contenedor víctima" src="img\\aa1b972247e55d4f.png"></p>
+<p><strong>4. Entrar en la máquina víctima:</strong></p>
+<pre><code language="language-bash" class="language-bash">docker exec -it filebeat bash
+</code></pre>
+<p class="image-container"><img alt="Acceso a contenedor" src="img\\f5622ef2f3c5b913.png"></p>
+<h2 is-upgraded>Instalación y configuración dentro del contenedor víctima</h2>
+<p><strong>5. Actualizar repositorios e instalar las herramientas necesarias:</strong></p>
+<pre><code language="language-bash" class="language-bash">apt update
+apt install openssh-server snort nano nginx -y
+</code></pre>
+<p class="image-container"><img alt="Instalación de herramientas" src="img\\af5d795078da55fa.png"></p>
+<p><strong>6. Iniciar servidor SSH:</strong></p>
+<pre><code language="language-bash" class="language-bash">service ssh start
+</code></pre>
+<p class="image-container"><img alt="Inicio SSH" src="img\\c0de1cd8ccaab7ab.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Configuración del IDS: Snort" duration="8">
+        <p>Snort es el encargado de vigilar la red. Es un Sistema de Detección de Intrusos (IDS) clásico que revisa todo el tráfico que pasa.</p>
+<ul>
+<li><strong>Cazando ataques SSH:</strong> Creamos una regla específica para pillar intentos de acceso no autorizados. Salta en cuanto detecta 10 o más intentos de conexión al puerto 22 en menos de 60 segundos (SID 3000003).</li>
+<li><strong>Vigilando los Pings (ICMP):</strong> Para enterarnos si alguien anda trasteando o escaneando la red, metimos una regla más general. Alerta cada vez que ve pasar un paquete ICMP (<code>msg:"Ping ICMP Detectado"; sid:3000003; rev:1;</code>).</li>
+</ul>
+<p><strong>7. Editar reglas locales de Snort:</strong></p>
+<pre><code language="language-bash" class="language-bash">nano /etc/snort/rules/local.rules
+</code></pre>
+<p><em>(Añadir las reglas correspondientes para SSH e ICMP)</em><img alt="Reglas de Snort" src="img\\203beb7126f03163.png"></p>
+<p><strong>8. Iniciar Snort en segundo plano:</strong></p>
+<pre><code language="language-bash" class="language-bash">snort -q -c /etc/snort/snort.conf -i eth0 -k none -l /var/log/snort -A fast -D
+</code></pre>
+<p class="image-container"><img alt="Ejecución Snort" src="img\\21e21750c783e0d0.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="El camino de los Logs: Filebeat a Logstash" duration="7">
+        <ul>
+<li><strong>Filebeat:</strong> Hace de chivato. Lee las alertas de Snort (<code>/var/log/snort/alert</code>) y se las pasa al puerto 5044 de Logstash.</li>
+<li><strong>Logstash:</strong> Es el filtro. Pilla los datos brutos, los clasifica, añade información y se lo deja mascado a Elasticsearch.</li>
+</ul>
+<p><strong>9. Editar configuración de Filebeat:</strong></p>
+<pre><code language="language-bash" class="language-bash">nano /etc/filebeat/filebeat.yml
+</code></pre>
+<p><em>Contenido de </em></p>
+<p><em><code>filebeat.yml</code></em></p>
+<p><em>:</em></p>
+<pre><code language="language-yaml" class="language-yaml">filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/nginx/*.log
+  - type: log
+    enabled: true
+    paths:
+      - /var/log/snort/alert
+
+output.logstash:
+  hosts: [&#39;elk:5044&#39;]
+</code></pre>
+<p class="image-container"><img alt="Configuración Filebeat" src="img\\d67e28fb4377dd9.png"></p>
+<p><strong>10. Iniciar Filebeat:</strong></p>
+<pre><code language="language-bash" class="language-bash">service filebeat start
+</code></pre>
+<p class="image-container"><img alt="Inicio Filebeat" src="img\\6cf95efef3574d7.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Visualización y Validación: Pruebas de Ataque" duration="10">
+        <p>La idea de todo esto no es coleccionar logs ilegibles, sino convertirlos en información útil de un vistazo en el dashboard de Kibana: contadores de alertas críticas (ICMP, SSH), lista negra de IPs atacantes.</p>
+<p>Lanzamos ataques simulados desde un Kali Linux corriendo en WSL para ver cómo reaccionaba.</p>
+<p><strong>Test 1: Mapeo de Red</strong></p>
+<ul>
+<li><strong>La Simulación:</strong> 4 típicos pings (ICMP) al servidor víctima (<code>docker exec -it filebeat ping -c 4 8.8.8.8</code>).</li>
+<li><strong>Lo que detectamos:</strong> 4 alertas cantando &#34;Escaneo ICMP&#34; (<code>SID 3000003;REV,2</code>).</li>
+<li><strong>En Kibana:</strong> Subida en el gráfico y el contador sumando 4.</li>
+</ul>
+<pre><code language="language-bash" class="language-bash">docker exec -it filebeat ping -c 4 8.8.8.8
+</code></pre>
+<p class="image-container"><img alt="Prueba de ping" src="img\\44ca3fb863c074d5.png"></p>
+<p><strong>Test 2: Aporreando la puerta (Fuerza Bruta SSH)</strong></p>
+<ul>
+<li><strong>La Simulación:</strong> Tirar de Hydra con diccionarios comunes.</li>
+<li><strong>Lo que detectamos:</strong> Lluvia de alertas críticas de SSH.</li>
+<li><strong>En Kibana:</strong> Los contadores se dispararon.</li>
+</ul>
+<pre><code language="language-bash" class="language-bash">hydra -L usuarios.txt -P claves.txt -s 2222 -o resultados.txt -t 4 ssh://127.0.0.1
+</code></pre>
+<p class="image-container"><img alt="Ataque con Hydra" src="img\\90626d0145c67e05.png"></p>
+<p class="image-container"><img alt="Resultado final Dashboards" src="img\\4432430fe765359b.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Tropezones, Soluciones y Conclusiones" duration="5">
+        <p>Implementar esto no fue fácil. Nos encontramos problemas, pero solucionarlos fue parte del proyecto.</p>
+<ul>
+<li><strong>Falta de RAM:</strong> Limitar memoria en Docker con <code>--memory</code> y <code>ES_JAVA_OPTS</code>.</li>
+<li><strong>Filebeat no preinstalado:</strong> Instalación manual con <code>apt update && apt install</code>.</li>
+<li><strong>Snort confuso en Docker:</strong> Engañarlo con <code>-k none</code> para ignorar chequeos (<em>Checksum Offloading</em>).</li>
+<li><strong>Fallo de puertos:</strong> Mapear puertos no habituales (2222 en vez de 22) en la red virtual.</li>
+</ul>
+<h2 is-upgraded>Logros y Aprendizajes</h2>
+<p>Conseguimos dejar fino un SIEM operativo con herramientas <em>open source</em>. Este laboratorio dio rodaje en cómo se mueve la info en un SIEM, gestionar redes Docker reales, y afinar un IDS para evitar el <em>ruido</em>.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
