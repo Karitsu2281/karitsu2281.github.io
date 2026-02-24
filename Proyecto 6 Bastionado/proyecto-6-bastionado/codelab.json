@@ -1,0 +1,28 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2026-02-24T19:30:34+01:00",
+  "id": "proyecto-6-bastionado",
+  "duration": 42,
+  "title": "Proyecto 6: Un dashboard imprescindible en el SOC",
+  "authors": "Karitsu2281",
+  "summary": "Proyecto 6 - Un dashboard imprescindible en el SOC",
+  "source": "codelab.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "bastionado",
+    "monitorización",
+    "zabbix",
+    "prometheus"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://github.com/karitsu2281",
+  "url": "proyecto-6-bastionado"
+}

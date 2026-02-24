@@ -1,0 +1,188 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Proyecto 6: Un dashboard imprescindible en el SOC</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  id="proyecto-6-bastionado"
+                  title="Proyecto 6: Un dashboard imprescindible en el SOC"
+                  environment="web"
+                  feedback-link="https://github.com/karitsu2281">
+    
+      <google-codelab-step label="Introducción y Objetivos" duration="2">
+        <p>A lo largo de las diferentes unidades se ha destacado una y otra vez la importancia de la monitorización en cualquier infraestructura de seguridad. Sin monitorización activa, no sabremos qué es lo que está pasando, no podremos actuar con la celeridad necesaria y, por lo tanto, estaremos ciegos ante cualquier problema. Un buen sistema de monitorización debe ser exhaustivo y mostrar las alertas que nos permitan solucionar cualquier incidencia antes incluso de que los usuarios se percaten de que existe.</p>
+<p><strong>Objetivo:</strong> Realizar una comparativa entre diferentes sistemas de monitorización (Zabbix y Prometheus) y documentar pruebas de concepto instalando y monitorizando dispositivos.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Comparativa de Sistemas de Monitorización" duration="5">
+        <table>
+<tr><td colspan="1" rowspan="1"><p>Característica</p>
+</td><td colspan="1" rowspan="1"><p>Zabbix</p>
+</td><td colspan="1" rowspan="1"><p>Prometheus</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Arquitectura</strong></p>
+</td><td colspan="1" rowspan="1"><p>Basado en un servidor central que recolecta datos (Pull o Push) usando agentes pesados o SNMP/JMX.</p>
+</td><td colspan="1" rowspan="1"><p>Basado en métricas temporales (Time-Series) con modelo principal &#34;Pull&#34; (scrapea métricas expuestas).</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Agentes</strong></p>
+</td><td colspan="1" rowspan="1"><p>Usa &#34;Zabbix Agent&#34; oficial instalado en los sistemas operativos a monitorizar.</p>
+</td><td colspan="1" rowspan="1"><p>Usa múltiples &#34;Exporters&#34; específicos (Node Exporter para Linux, Windows Exporter, etc).</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Curva de Aprendizaje</strong></p>
+</td><td colspan="1" rowspan="1"><p>Curva moderada-alta, tiene una interfaz web integrada completa pero compleja inicialmente.</p>
+</td><td colspan="1" rowspan="1"><p>Curva pronunciada para PromQL (lenguaje de consultas), requiere integrar Grafana para cuadros de mando.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Gestión de Alertas</strong></p>
+</td><td colspan="1" rowspan="1"><p>Integrado de forma nativa en la plataforma web, fácil configuración visual de <em>triggers</em>.</p>
+</td><td colspan="1" rowspan="1"><p>Requiere configuración de <em>Alertmanager</em> (componente separado) y reglas por código (YAML).</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Escalabilidad</strong></p>
+</td><td colspan="1" rowspan="1"><p>Escala muy bien usando &#34;Zabbix Proxies&#34; para entornos distribuidos y sucursales.</p>
+</td><td colspan="1" rowspan="1"><p>Diseñado nativamente de forma distribuida, permite federación y encaja perfecto con entornos efímeros (Kubernetes).</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Almacenamiento (BBDD)</strong></p>
+</td><td colspan="1" rowspan="1"><p>Requiere bases de datos relacionales tradicionales (MySQL, PostgreSQL).</p>
+</td><td colspan="1" rowspan="1"><p>Usa su propia base de datos de series temporales (TSDB) en disco local, altamente optimizada para métricas.</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><strong>Complejidad de instalación</strong></p>
+</td><td colspan="1" rowspan="1"><p>Instalación sencilla mediante paquetes APT. Los servicios systemd se crean automáticamente con el paquete.</p>
+</td><td colspan="1" rowspan="1"><p>Instalación manual compilando/descargando binarios, creando usuarios de sistema, copiando ficheros y <strong>escribiendo a mano los ficheros </strong><strong><code>.service</code></strong><strong> de systemd</strong> (demonios). Mayor complejidad operativa.</p>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Instalación de Zabbix Server en Ubuntu" duration="10">
+        <p>En esta demostración se instaló Zabbix Server 7.0 en una máquina virtual Linux (Ubuntu 24.04) y se configuraron agentes para monitorizar tanto el propio servidor Ubuntu como un portátil <strong>Dell Latitude 5490</strong> con Windows.</p>
+<h2 is-upgraded>Preparación del entorno: dependencias previas</h2>
+<p>El primer paso consistió en actualizar los repositorios del sistema e instalar las dependencias necesarias para que Zabbix funcione: el servidor web Apache, los módulos PHP requeridos y el motor de base de datos MySQL.</p>
+<p><img alt="Actualizando e instalando actualizaciones del sistema" src="img/Captura de pantalla 2026-02-24 164934.png"> <img alt="Instalando el servidor web Apache2" src="img/Captura de pantalla 2026-02-24 165027.png"> <img alt="Instalando módulos PHP necesarios" src="img/Captura de pantalla 2026-02-24 165104.png"> <img alt="Instalando el módulo libapache2-mod-php" src="img/Captura de pantalla 2026-02-24 165150.png"> <img alt="Instalando el servidor de base de datos MySQL" src="img/Captura de pantalla 2026-02-24 165219.png"></p>
+<h2 is-upgraded>Configuración de MySQL</h2>
+<p>Se inicia, habilita y verifica el servicio MySQL. Acto seguido se ejecuta el asistente de securización (<code>mysql_secure_installation</code>) para establecer la contraseña de root y eliminar defaults inseguros:</p>
+<p><img alt="Iniciando, habilitando y verificando el servicio MySQL" src="img/Captura de pantalla 2026-02-24 170942.png"> <img alt="Ejecutando mysql_secure_installation" src="img/Captura de pantalla 2026-02-24 171124.png"></p>
+<h2 is-upgraded>Instalación del repositorio y paquetes de Zabbix</h2>
+<p>Descargamos el paquete <code>.deb</code> del repositorio oficial de Zabbix 7.0 para Ubuntu (Noble) e instalamos los componentes del servidor:</p>
+<p><img alt="Descargando el paquete de repositorio Zabbix 7.0" src="img/Captura de pantalla 2026-02-24 171225.png"> <img alt="Instalando los paquetes zabbix-server-mysql y componentes" src="img/Captura de pantalla 2026-02-24 171313.png"></p>
+<h2 is-upgraded>Creación de la base de datos Zabbix en MySQL</h2>
+<p>Entramos en la consola de MySQL para crear la base de datos <code>zabbix</code>, el usuario asociado y otorgar los privilegios necesarios:</p>
+<p><img alt="Creando la base de datos zabbix y configurando privilegios" src="img/Captura de pantalla 2026-02-24 172556.png"></p>
+<h2 is-upgraded>Importación del esquema SQL inicial</h2>
+<p>Poblamos la BBDD recién creada importando el esquema inicial que proporciona Zabbix mediante <code>zcat</code>:</p>
+<p><img alt="Importando el esquema SQL inicial con zcat" src="img/Captura de pantalla 2026-02-24 172908.png"></p>
+<p>Tras la importación, se desactiva la variable <code>log_bin_trust_function_creators</code> que habíamos habilitado temporalmente:</p>
+<p><img alt="Desactivando log_bin_trust_function_creators" src="img/Captura de pantalla 2026-02-24 172936.png"></p>
+<h2 is-upgraded>Configuración del archivo zabbix_server.conf</h2>
+<p>Editamos el fichero de configuración principal de Zabbix Server para introducir las credenciales de conexión a la base de datos:</p>
+<p><img alt="Abriendo el fichero zabbix_server.conf" src="img/Captura de pantalla 2026-02-24 173103.png"> <img alt="Parámetros DBUser y DBPassword en zabbix_server.conf" src="img/Captura de pantalla 2026-02-24 173144.png"></p>
+<h2 is-upgraded>Reinicio y activación de servicios</h2>
+<p>Reiniciamos y habilitamos los servicios de Zabbix Server, Zabbix Agent y Apache2, y verificamos que todo arranca correctamente:</p>
+<p><img alt="Reiniciando e habilitando los servicios" src="img/Captura de pantalla 2026-02-24 173209.png"> <img alt="Verificando el estado del servicio zabbix-server: Active running" src="img/Captura de pantalla 2026-02-24 173213.png"></p>
+<h2 is-upgraded>Finalización mediante Interfaz Web</h2>
+<p>Cumplidos los prerrequisitos en la terminal de Ubuntu, accedemos a <code>http://localhost/zabbix/setup.php</code> y seguimos el asistente web oficial de Zabbix 7.0:</p>
+<p><img alt="Pantalla de bienvenida del instalador web de Zabbix 7.0" src="img/Captura de pantalla 2026-02-24 173252.png"> <img alt="Configurar la conexión de BD: MySQL, localhost" src="img/Captura de pantalla 2026-02-24 173324.png"> <img alt="Ajustes: nombre Monitoreo SOC, zona horaria Europe/Madrid" src="img/Captura de pantalla 2026-02-24 173407.png"> <img alt="Pantalla de inicio de sesión de Zabbix" src="img/Captura de pantalla 2026-02-24 173427.png"> <img alt="Dashboard Global View mostrando Zabbix Server v7.0.23" src="img/Captura de pantalla 2026-02-24 173444.png"></p>
+<h2 is-upgraded>Configuración del agente local</h2>
+<p>Una vez en el portal, configuramos el agente Linux local (<code>zabbix_agentd.conf</code>) apuntando a <code>Server=127.0.0.1</code>, <code>ServerActive=127.0.0.1</code> y <code>Hostname=Ubuntu-VM-SOC</code>:</p>
+<p><img alt="Fichero zabbix_agentd.conf con Server y ServerActive configurados" src="img/Captura de pantalla 2026-02-24 173558.png"> <img alt="Panel Equipos de Zabbix mostrando el host activo" src="img/Captura de pantalla 2026-02-24 173819.png"> <img alt="Dashboard Global View completo con CPU al 22.89%" src="img/Captura de pantalla 2026-02-24 173836.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Integración del Portátil Dell con Zabbix" duration="5">
+        <h2 is-upgraded>Instalación del agente en el portátil Dell</h2>
+<p>En la parte del portátil <strong>Dell-Latitude-5490</strong>, comprobamos que el <strong>Zabbix Agent 2</strong> esté instalado y corriendo correctamente:</p>
+<p><img alt="Buscando el Agente Zabbix en Windows del portátil Dell" src="img/WhatsApp Image 2026-02-24 at 5.59.14 PM.jpeg"> <img alt="Fichero zabbix_agent2.conf del equipo cliente Dell" src="img/WhatsApp Image 2026-02-24 at 5.59.15 PM.jpeg"></p>
+<p>Observamos los logs del agente corroborando el inicio del <em>listener</em> en el puerto 10050 y las comprobaciones activas:</p>
+<p><img alt="Logs del Zabbix Agent 2: listener en puerto 10050" src="img/WhatsApp Image 2026-02-24 at 5.59.15 PM (1">.jpeg) <img alt="Logs del Zabbix Agent 2: peticiones satisfactorias" src="img/WhatsApp Image 2026-02-24 at 5.59.15 PM (2">.jpeg)</p>
+<p>Hacemos validaciones de conectividad (ICMP) desde el portátil hacia redes externas:</p>
+<p><img alt="Ping desde CMD del Dell verificando respuesta de red" src="img/WhatsApp Image 2026-02-24 at 5.59.15 PM (3">.jpeg)</p>
+<h2 is-upgraded>Alta del host Dell en la interfaz web de Zabbix</h2>
+<p>Desde la web de Zabbix creamos el nuevo equipo rellenando nombre, IP del agente, plantilla y grupo de hosts:</p>
+<p><img alt="Botones Crear equipo e Importar en panel de Equipos" src="img/Captura de pantalla 2026-02-24 175329.png"> <img alt="Formulario Nuevo equipo vacío" src="img/Captura de pantalla 2026-02-24 175335.png"> <img alt="Equipo Dell-Latitude-5490 configurado con plantilla Windows" src="img/Captura de pantalla 2026-02-24 175346.png"></p>
+<h2 is-upgraded>Métricas recolectadas del portátil Dell</h2>
+<p>Una vez completada la integración, Zabbix comienza a recolectar métricas del portátil:</p>
+<p><img alt="Gráfica de utilización de memoria del Dell" src="img/Captura de pantalla 2026-02-24 175620.png"> <img alt="Gráfica de tiempos de espera de disco del Dell" src="img/Captura de pantalla 2026-02-24 175754.png"> <img alt="Gráfica de longitud de cola de disco del Dell" src="img/Captura de pantalla 2026-02-24 175805.png"> <img alt="Gráfica circular de espacio en disco C: del Dell" src="img/Captura de pantalla 2026-02-24 175818.png"> <img alt="Gráfica de tráfico de red Wi-Fi del Dell" src="img/Captura de pantalla 2026-02-24 175827.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Instalación del servidor Prometheus" duration="10">
+        <p>Para completar la experiencia, replicamos la monitorización usando <strong>Prometheus 2.48.0</strong>, instalado directamente desde binarios en la misma VM Ubuntu. A diferencia de Zabbix, Prometheus <strong>no provee paquetes </strong></p>
+<p><strong><code>.deb</code></strong> que creen los servicios de forma automática: fue necesario crear manualmente el usuario de sistema, las carpetas de datos, copiar binarios y <strong>escribir a mano el demonio systemd</strong> (<code>.service</code>), lo que supuso una complejidad de instalación notablemente mayor.</p>
+<h2 is-upgraded>Creación del usuario de sistema y directorios</h2>
+<p>El primer paso es crear un usuario de sistema sin shell ni directorio home, dedicado exclusivamente a ejecutar Prometheus. Después, creamos las carpetas de configuración y de datos:</p>
+<p><img alt="Creando el usuario de sistema prometheus" src="img/Captura de pantalla 2026-02-24 185324.png"> <img alt="Creando los directorios /etc/prometheus y /var/lib/prometheus" src="img/Captura de pantalla 2026-02-24 185338.png"></p>
+<h2 is-upgraded>Descarga y extracción de Prometheus</h2>
+<p>Descargamos el tarball oficial de Prometheus v2.48.0 desde GitHub y lo extraemos:</p>
+<p><img alt="Descargando prometheus-2.48.0.linux-amd64.tar.gz" src="img/Captura de pantalla 2026-02-24 185416.png"> <img alt="Extrayendo el tarball con tar" src="img/Captura de pantalla 2026-02-24 185433.png"> <img alt="Entrando en el directorio extraído" src="img/Captura de pantalla 2026-02-24 185442.png"></p>
+<h2 is-upgraded>Copiando binarios y ficheros de configuración</h2>
+<p>Copiamos los binarios (<code>prometheus</code> y <code>promtool</code>) a <code>/usr/local/bin/</code> y las consolas web a <code>/etc/prometheus/</code>. Después asignamos la propiedad al usuario <code>prometheus</code>:</p>
+<p><img alt="Copiando binarios y consoles" src="img/Captura de pantalla 2026-02-24 185524.png"> <img alt="Asignando ownership con chown -R" src="img/Captura de pantalla 2026-02-24 185539.png"></p>
+<h2 is-upgraded>Configuración de prometheus.yml</h2>
+<p>Editamos el fichero de configuración principal de Prometheus donde definimos los <em>scrape jobs</em> para cada target que queremos monitorizar:</p>
+<p><img alt="prometheus.yml con scrape_interval y tres jobs configurados" src="img/Captura de pantalla 2026-02-24 185647.png"></p>
+<h2 is-upgraded>Creación manual del demonio systemd</h2>
+<p>A diferencia de Zabbix (cuyo paquete <code>.deb</code> crea los servicios automáticamente), en Prometheus debemos <strong>escribir a mano</strong> el fichero <code>.service</code> de systemd:</p>
+<p><img alt="prometheus.service con secciones Unit, Service e Install" src="img/Captura de pantalla 2026-02-24 185706.png"></p>
+<h2 is-upgraded>Arranque y verificación del servicio</h2>
+<p>Recargamos los ficheros de systemd, iniciamos y habilitamos el servicio:</p>
+<p><img alt="systemctl daemon-reload, start, enable y status prometheus: Active running" src="img/Captura de pantalla 2026-02-24 185743.png"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Cliente Dell con Windows Exporter para Prometheus" duration="5">
+        <p>En el lado del portátil Dell, descargamos <strong>Windows Exporter v0.31.3</strong> desde la página oficial de GitHub Releases. Este exporter es el equivalente de <em>Node Exporter</em> pero para sistemas Windows, y expone las métricas del sistema en el puerto <code>:9182</code>:</p>
+<p><img alt="Página de GitHub Releases de windows_exporter v0.31.3" src="img/WhatsApp Image 2026-02-24 at 7.10.20 PM.jpeg"></p>
+<p>Tras instalar el <code>.msi</code>, abrimos una ventana de PowerShell como Administrador y creamos una regla de firewall para permitir el tráfico entrante en el puerto <code>9182</code>:</p>
+<p><img alt="PowerShell creando regla de firewall para Prometheus Exporter" src="img/WhatsApp Image 2026-02-24 at 7.10.21 PM.jpeg"></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Verificación de Targets y Consultas PromQL" duration="5">
+        <h2 is-upgraded>Interfaz web de Prometheus y verificación de Targets</h2>
+<p>Accedemos a <code>http://localhost:9090</code> y consultamos la página de Targets para verificar la conectividad con cada endpoint. Inicialmente, el target <code>dell-laptop</code> aparece en estado <strong>DOWN</strong> porque el puerto de scraping no era correcto (9100 en lugar de 9182 para Windows Exporter):</p>
+<p><img alt="Página Targets con dell-laptop DOWN" src="img/Captura de pantalla 2026-02-24 190425.png"></p>
+<h2 is-upgraded>Corrección del target Dell: cambio a Windows Exporter (puerto 9182)</h2>
+<p>El Portátil Dell ejecuta <strong>Windows Exporter</strong>, que expone métricas en el puerto <code>:9182</code> (no <code>:9100</code> como Node Exporter de Linux). Corregimos el <code>prometheus.yml</code> actualizando el job del Dell:</p>
+<p><img alt="Job dell-latitude-antijunko corregido con target 192.168.3.51:9182" src="img/Captura de pantalla 2026-02-24 190550.png"></p>
+<p>Tras reiniciar Prometheus, el target Dell aparece ahora en estado <strong>UP</strong>:</p>
+<p><img alt="Targets con dell-latitude-antijunko UP en puerto 9182" src="img/Captura de pantalla 2026-02-24 190720.png"></p>
+<h2 is-upgraded>Consultas PromQL y métricas recolectadas</h2>
+<p>Desde la interfaz web de Prometheus (<code>localhost:9090/graph</code>), ejecutamos consultas PromQL para verificar los datos recolectados:</p>
+<p><img alt="Métrica up mostrando 4 instancias activas" src="img/Captura de pantalla 2026-02-24 190830.png"> <img alt="Gráfica de windows_cpu_time_total del Dell" src="img/Captura de pantalla 2026-02-24 190902.png"> <img alt="Gráfica de la métrica up a lo largo del tiempo" src="img/Captura de pantalla 2026-02-24 190914.png"></p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>
