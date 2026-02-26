@@ -80,6 +80,53 @@ apt install openssh-server snort nano nginx -y
 <li><strong>Cazando ataques SSH:</strong> Creamos una regla específica para pillar intentos de acceso no autorizados. Salta en cuanto detecta 10 o más intentos de conexión al puerto 22 en menos de 60 segundos (SID 3000003).</li>
 <li><strong>Vigilando los Pings (ICMP):</strong> Para enterarnos si alguien anda trasteando o escaneando la red, metimos una regla más general. Alerta cada vez que ve pasar un paquete ICMP (<code>msg:"Ping ICMP Detectado"; sid:3000003; rev:1;</code>).</li>
 </ul>
+<p><strong>Advertencia:</strong> Mover la pila ELK en el equipo de pruebas se comió más del 90% de los 32 GB de RAM disponibles. Así que, antes de tocar nada, toca cerrar todo lo que no sea estrictamente necesario. Para esta práctica usamos dos contenedores principales:</p>
+<ul>
+<li><strong>siem-elk:</strong> Aquí viven Elasticsearch (el que busca y guarda todo), Logstash (el que procesa los datos) y Kibana (para visualizarlo y que podamos entenderlo).</li>
+<li><strong>Servidor Víctima:</strong> Un contenedor Ubuntu base al que le metimos Nginx, SSH, Snort (nuestro IDS) y Filebeat (para mandar los logs).</li>
+</ul>
+<p>Tuvimos que ponernos serios con los límites de memoria (2GB para Elasticsearch y 2GB para Filebeat) para evitar que el PC host se colapsara (<em>Out of Memory</em> - OOM), que es el clásico dolor de cabeza en estos tipos de prácticas.</p>
+<h2 is-upgraded>2.2. Configuración del IDS: Poniendo a Snort a escuchar</h2>
+<p>Snort es el encargado de vigilar la red. Es un Sistema de Detección de Intrusos (IDS) clásico que revisa todo el tráfico que pasa.</p>
+<ul>
+<li><strong>Cazando ataques SSH:</strong> Creamos una regla específica para pillar intentos de acceso no autorizados. <ul>
+<li><strong>La regla crítica (SSH):</strong> Salta en cuanto detecta 10 o más intentos de conexión al puerto 22 en menos de 60 segundos (SID 3000003).</li>
+</ul>
+</li>
+<li><strong>Vigilando los Pings (ICMP):</strong> Para enterarnos si alguien anda trasteando o escaneando la red, metimos una regla más general. <ul>
+<li><strong>La regla del mirón (ICMP):</strong> Alerta cada vez que ve pasar un paquete ICMP (<code>msg:"Ping ICMP Detectado"; sid:3000003; rev:1;</code>).</li>
+</ul>
+</li>
+</ul>
+<h2 is-upgraded>2.3. El camino de los Logs (Logstash)</h2>
+<ul>
+<li><strong>Filebeat:</strong> Hace de chivato. Lee las alertas que genera Snort (están en <code>/var/log/snort/alert</code>) y se las pasa al puerto 5044 de Logstash.</li>
+<li><strong>Logstash:</strong> Es el filtro. Pilla los datos brutos de Snort, los ordena (por ejemplo, &#34;Escaneo ICMP&#34; o &#34;Ataque SSH&#34;), les añade información extra si puede, y se lo deja todo mascadito a Elasticsearch.</li>
+</ul>
+<h2 is-upgraded>3. Visualización y Validación del Sistema</h2>
+<p>La idea de todo esto no es coleccionar logs ilegibles, sino convertirlos en información útil de un vistazo en el dashboard de Kibana.</p>
+<h3 is-upgraded>3.1. Qué vemos en Kibana</h3>
+<p>Montamos un dashboard enfocado a vigilar qué pasa en tiempo real. Aquí tenemos:</p>
+<ul>
+<li>El contador de alertas de vida o muerte (ICMP y SSH).</li>
+<li>Gráficos para ver cuándo nos están atacando de verdad.</li>
+<li>La lista negra de IPs atacantes.</li>
+</ul>
+<h3 is-upgraded>3.2. Dando cera: Pruebas de Ataque</h3>
+<p>Una vez montado, había que probar si aguantaba los golpes. Lanzamos ataques simulados desde un Kali Linux corriendo en WSL para ver cómo reaccionaba.</p>
+<p><strong>Test 1: Mapeo de Red</strong></p>
+<ul>
+<li><strong>La Simulación:</strong> 4 típicos pings (ICMP) al servidor víctima.</li>
+<li><strong>Lo que detectamos:</strong> 4 alertas cantando &#34;Escaneo ICMP&#34; (<code>SID 3000003;REV,2</code>).</li>
+<li><strong>Lo que vimos en Kibana:</strong> Exactamente lo esperado: subida en el gráfico y el contador sumando 4.</li>
+</ul>
+<p><strong>Test 2: Aporreando la puerta (Fuerza Bruta SSH)</strong></p>
+<ul>
+<li><strong>La Simulación:</strong> Tirar de Hydra con diccionarios de usuarios y claves comunes.</li>
+<li><strong>Lo que detectamos:</strong> Lluvia de alertas críticas (<code>SID 3000003</code>).</li>
+<li><strong>Lo que vimos en Kibana:</strong> Los contadores de SSH se dispararon, dejando el rastro evidente de los intentos fallidos.</li>
+</ul>
+<p>El dashboard cumplió. Nos dio justo lo que queríamos: una foto instantánea y clara de lo que estaba pasando, permitiéndonos ver rápido quién nos estaba tocando las narices y qué alertas requerían atención urgente.</p>
 <p><strong>7. Editar reglas locales de Snort:</strong></p>
 <pre><code language="language-bash" class="language-bash">nano /etc/snort/rules/local.rules
 </code></pre>
@@ -146,19 +193,32 @@ output.logstash:
 <pre><code language="language-bash" class="language-bash">hydra -L usuarios.txt -P claves.txt -s 2222 -o resultados.txt -t 4 ssh://127.0.0.1
 </code></pre>
 <p class="image-container"><img alt="Ataque con Hydra" src="img\\90626d0145c67e05.png"></p>
-<p class="image-container"><img alt="Resultado final Dashboards" src="img\\4432430fe765359b.png"></p>
 
 
       </google-codelab-step>
     
       <google-codelab-step label="Tropezones, Soluciones y Conclusiones" duration="5">
-        <p>Implementar esto no fue fácil. Nos encontramos problemas, pero solucionarlos fue parte del proyecto.</p>
-<ul>
-<li><strong>Falta de RAM:</strong> Limitar memoria en Docker con <code>--memory</code> y <code>ES_JAVA_OPTS</code>.</li>
-<li><strong>Filebeat no preinstalado:</strong> Instalación manual con <code>apt update && apt install</code>.</li>
-<li><strong>Snort confuso en Docker:</strong> Engañarlo con <code>-k none</code> para ignorar chequeos (<em>Checksum Offloading</em>).</li>
-<li><strong>Fallo de puertos:</strong> Mapear puertos no habituales (2222 en vez de 22) en la red virtual.</li>
-</ul>
+        <p>Implementar esto no fue fácil. Nos encontramos bastantes problemas por el camino, pero solucionarlos fue parte de la gracia del proyecto.</p>
+<p><strong>1. Se nos iba la RAM</strong> (Elasticsearch y Filebeat son muy tragones)</p>
+<p><strong>Cómo lo arreglamos:</strong> Tuvimos que ponerles límites de RAM a los contenedores al lanzarlos para no tumbar la máquina real:</p>
+<pre><code language="language-bash" class="language-bash">docker run -d --name elk --network elk-red -p 5601:5601 -p 9200:9200 -p 5044:5044 -e ES_JAVA_OPTS=&#34;-Xms2g -Xmx2g&#34; sebp/elk
+</code></pre>
+<p><strong>2. Sorpresa: Filebeat no venía preinstalado</strong></p>
+<p><strong>Cómo lo arreglamos:</strong> Hubo que entrar al contenedor víctima a mano e instalar/configurar Filebeat y Nginx a la antigua usanza, y luego cruzar los dedos para que mandara los logs a Logstash (puerto 5044):</p>
+<pre><code language="language-bash" class="language-bash">apt update &amp;&amp; apt install openssh-server snort nano nginx -y
+</code></pre>
+<p><strong>3. Snort se hacía el loco</strong> (Fallo de detección)</p>
+<p><strong>Cómo lo arreglamos:</strong> Resulta que Docker y sus chequeos de red (<em>Checksum Offloading</em>) confundían a Snort. Lo &#34;engañamos&#34; arrancando Snort con <code>-k none</code> y aligerando las reglas para que ignorara las conexiones raras de Docker:</p>
+<pre><code language="language-bash" class="language-bash">snort -q -c /etc/snort/snort.conf -i eth0 -k none -l /var/log/snort -A fast -D
+</code></pre>
+<p><strong>4. Filebeat no nos dejaba entrar por SSH ni HTTP</strong></p>
+<p><strong>Cómo lo arreglamos:</strong> Mítico fallo de puertos. El contenedor no dejaba sacar las cosas por los puertos por defecto. La solución fue mapear puertos menos habituales para evitar líos (el 2222 en vez del 22 para SSH y el 8080 por el 80 para HTTP):</p>
+<pre><code language="language-bash" class="language-bash">docker run -d --name filebeat --network elk-red -p 8080:80 -p 2222:22 --memory 2g --memory-swap 2g nginx-filebeat
+</code></pre>
+<p><strong>5. ELK crasheaba al intentar iniciarse</strong></p>
+<p><strong>Cómo lo arreglamos:</strong> Al parecer, revisando los logs del contenedor, se encontró que Elasticsearch crasheaba tan pronto como se intentó iniciar (se descubrió que era porque se asignó demasiada poca memoria al servidor), y se tuvo que rehacer desde cero el servidor, ya que era imposible arreglarlo. Se solucionó asignando desde cero la memoria para Elasticsearch.</p>
+<p><strong>6. Kibana no veía los logs de Snort</strong></p>
+<p><strong>Cómo lo arreglamos:</strong> A pesar de que la conectividad al puerto 5044 del contenedor ELK marcaba todo OK, en Kibana no mostraba absolutamente nada. Se tuvo que cambiar la configuración de Filebeat cambiando el puerto al de Elasticsearch para que Kibana pueda mostrarlo correctamente.</p>
 <h2 is-upgraded>Logros y Aprendizajes</h2>
 <p>Conseguimos dejar fino un SIEM operativo con herramientas <em>open source</em>. Este laboratorio dio rodaje en cómo se mueve la info en un SIEM, gestionar redes Docker reales, y afinar un IDS para evitar el <em>ruido</em>.</p>
 
