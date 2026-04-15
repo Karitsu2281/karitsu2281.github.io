@@ -1,0 +1,25 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2026-04-15T16:39:37+02:00",
+  "id": "proyecto-9-bastionado",
+  "duration": 0,
+  "title": "Parte 2 â€\" Servidor Web con HTTPS",
+  "authors": "Karitsu2281",
+  "summary": "",
+  "source": "temp.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "bastionado"
+  ],
+  "tags": [
+    "bastionado",
+    "hugo"
+  ],
+  "url": "proyecto-9-bastionado"
+}
