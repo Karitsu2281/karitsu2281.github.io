@@ -6,14 +6,13 @@
 
 ---
 
-## 1. Análisis del certificado propio (tu-dominio.com)
+## 1. Análisis del certificado propio karitsu2281.dev
 
 ### Captura del resultado en SSL Labs
 
-<!-- Inserta aquí captura del informe SSL Labs de tu dominio -->
-![SSL Labs - propio](./img/ssllabs_propio.png)
+![SSL Labs - propio](./img/image13.png)
 
-### Nota obtenida: X
+### Nota obtenida: A
 
 ### Motivos que lo validan como certificado correcto
 
@@ -32,14 +31,15 @@
 
 ### Certificado 1 — Certificado caducado
 
-**Sitio**: <!-- URL del sitio -->
+**Sitio**: protean.washco.co.uk
 
 **Tipo de error**: Certificado expirado (`NET::ERR_CERT_DATE_INVALID`)
 
 **Captura del análisis**:
 
-<!-- Inserta aquí captura del error o del análisis en el servicio utilizado -->
-![Certificado caducado](./img/cert_error_caducado.png)
+![CA no reconocida](./img/image14.png)
+
+![CA no reconocida](./img/image16.png)
 
 **Explicación**:
 
@@ -49,14 +49,15 @@ Los certificados tienen una fecha de expiración para limitar el tiempo durante 
 
 ### Certificado 2 — Certificado autofirmado / CA no reconocida
 
-**Sitio**: <!-- URL del sitio o entorno de laboratorio -->
+**Sitio**: wgcs.skyhigh.cloud
 
 **Tipo de error**: CA no reconocida (`NET::ERR_CERT_AUTHORITY_INVALID`)
 
 **Captura del análisis**:
 
-<!-- Inserta aquí captura -->
-![CA no reconocida](./img/cert_error_ca_invalida.png)
+![CA no reconocida](./img/image17.png)
+
+![CA no reconocida](./img/image18.png)
 
 **Explicación**:
 
@@ -64,20 +65,19 @@ El certificado no ha sido firmado por ninguna CA incluida en el trust store del 
 
 ---
 
-### Certificado 3 — Nombre del dominio no coincide
+### Certificado 3 — Criptografía debil
 
-**Sitio**: <!-- URL del sitio -->
+**Sitio**: n.jmpsa.or.jp
 
-**Tipo de error**: Nombre incorrecto (`NET::ERR_CERT_COMMON_NAME_INVALID`)
+**Tipo de error**: Criptografía debil (`NET::ERR_CERT_COMMON_NAME_INVALID`)
 
 **Captura del análisis**:
 
-<!-- Inserta aquí captura -->
-![Nombre no coincide](./img/cert_error_nombre.png)
+![Criptografía debil](./img/image15.png)
 
 **Explicación**:
 
-El campo CN (Common Name) o los SAN (Subject Alternative Names) del certificado no coinciden con el dominio al que se está accediendo. Esto puede indicar un certificado mal configurado, un certificado reutilizado de otro dominio, o en el peor caso un ataque de tipo man-in-the-middle donde un atacante presenta un certificado ajeno.
+El certificado tiene una vulnerabilidad de OpenSSL (CVE-2016-2107), de calificación 5,9, además de solo soportar TLS 1.0 y TLS 1.1, por lo que no tiene calificación alguna en criptografía (aunque en cifrado tiene bastante buena calificación).
 
 ---
 
