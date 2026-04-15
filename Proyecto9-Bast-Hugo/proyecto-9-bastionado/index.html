@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
   <meta name="theme-color" content="#4F7DC9">
   <meta charset="UTF-8">
-  <title>Parte 2 â€&#34; Servidor Web con HTTPS</title>
+  <title>Parte 2 — Servidor Web con HTTPS</title>
   <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
   <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
@@ -23,7 +23,7 @@
   <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
   <google-codelab codelab-gaid=""
                   id="proyecto-9-bastionado"
-                  title="Parte 2 â€&#34; Servidor Web con HTTPS"
+                  title="Parte 2 — Servidor Web con HTTPS"
                   environment="web"
                   feedback-link="">
     
@@ -35,49 +35,49 @@
     
       <google-codelab-step label="Entorno" duration="0">
         <ul>
-<li><strong>Servidor</strong>: AWS EC2 â€&#34; Ubuntu Server 24.04</li>
+<li><strong>Servidor</strong>: AWS EC2 — Ubuntu Server 24.04</li>
 <li><strong>Web server</strong>: Apache2</li>
 <li><strong>Dominio</strong>: karitsu2281.com</li>
-<li><strong>IP pÃºblica</strong>: 51.94.130.54</li>
+<li><strong>IP pública</strong>: 51.94.130.54</li>
 </ul>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="1. InstalaciÃ³n y configuraciÃ³n de Apache2" duration="0">
-        <p>Pasos realizados para instalar el servidor web y servir la pÃ¡gina de prueba.</p>
+      <google-codelab-step label="1. Instalación y configuración de Apache2" duration="0">
+        <p>Pasos realizados para instalar el servidor web y servir la página de prueba.</p>
 <pre><code language="language-bash" class="language-bash">sudo apt update
 sudo apt install apache2 -y
 sudo systemctl start apache2
 sudo systemctl enable apache2
 </code></pre>
 <p class="image-container"><img alt="Instlacion Apache" src="img\\4fcdd4467bc566e7.png"></p>
-<p>Ahora habrÃ­a que cambiar las reglas del firewall de AWS para permitir el trÃ¡fico en el puerto 80 y 443. De momento, como no tengo configurado HTTPS ni tengo certificado, no lo harÃ© hasta mÃ¡s adelante.</p>
+<p>Ahora habría que cambiar las reglas del firewall de AWS para permitir el tráfico en el puerto 80 y 443. De momento, como no tengo configurado HTTPS ni tengo certificado, no lo haré hasta más adelante.</p>
 <p class="image-container"><img alt="Firewall AWS" src="img\\1219c8273d575446.png"></p>
-<p>Dato importante: AdemÃ¡s del firewall que tiene la instancia de AWS por defecto, he puesto otro firewall en el propio servidor por seguridad (ufw). Por lo tanto, para que funcione el servidor, tengo que tener abiertos los puertos en ambos firewalls.</p>
+<p>Dato importante: Además del firewall que tiene la instancia de AWS por defecto, he puesto otro firewall en el propio servidor por seguridad (ufw). Por lo tanto, para que funcione el servidor, tengo que tener abiertos los puertos en ambos firewalls.</p>
 <p class="image-container"><img alt="Firewall UFW" src="img\\42e0b24cc37270b3.png"></p>
-<p>Como se puede ver en la imagen, tengo abiertos los puertos 22, 80 y 443. Pero hasta que no tenga configurado HTTPS ni el certificado, no lo abrirÃ© en el firewall de AWS.</p>
-<p>Al entrar por el puerto 80 desde un navegador a la IP, podemos ver que se muestra correctamente la pÃ¡gina de prueba de la instancia.</p>
-<p class="image-container"><img alt="PÃ¡gina de prueba Apache" src="img\\3fb62b8d8ea92603.png"></p>
+<p>Como se puede ver en la imagen, tengo abiertos los puertos 22, 80 y 443. Pero hasta que no tenga configurado HTTPS ni el certificado, no lo abriré en el firewall de AWS.</p>
+<p>Al entrar por el puerto 80 desde un navegador a la IP, podemos ver que se muestra correctamente la página de prueba de la instancia.</p>
+<p class="image-container"><img alt="Página de prueba Apache" src="img\\3fb62b8d8ea92603.png"></p>
 
 
       </google-codelab-step>
     
       <google-codelab-step label="2. Certificado autofirmado (Self-Signed)" duration="0">
-        <h2 is-upgraded>GeneraciÃ³n del certificado</h2>
-<p>Lo primero que vamos a hacer, es activar el mÃ³dulo SSL de Apache.</p>
+        <h2 is-upgraded>Generación del certificado</h2>
+<p>Lo primero que vamos a hacer, es activar el módulo SSL de Apache.</p>
 <pre><code language="language-bash" class="language-bash">sudo a2enmod ssl
 sudo systemctl restart apache2
 </code></pre>
-<p>DespuÃ©s, vamos a crear el certificado autofirmado de SSL en nuestra instancia con el comando &#34;openssl&#34;.</p>
+<p>Después, vamos a crear el certificado autofirmado de SSL en nuestra instancia con el comando &#34;openssl&#34;.</p>
 <pre><code language="language-bash" class="language-bash">sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
 </code></pre>
-<p>Nos pedirÃ¡ unos pequeÃ±os datos para rellenar. Esto es opcional, pero para este proyecto, he puesto unos cuantos datos falsos para ver cuando entremos al navegador con el certificado autofirmado.</p>
+<p>Nos pedirá unos pequeños datos para rellenar. Esto es opcional, pero para este proyecto, he puesto unos cuantos datos falsos para ver cuando entremos al navegador con el certificado autofirmado.</p>
 <p class="image-container"><img alt="Datos certificado autofirmado" src="img\\57d9dc5baefd0814.png"></p>
-<p>DespuÃ©s, vamos a crear un pequeÃ±o sitio web de pruebas para confirmar que el certificado autofirmado funciona. Como quiero hacer un pequeÃ±o sitio web un videojuego llamado &#34;Persona&#34;, vamos a hacer un nuevo sitio web virtual con Apache.</p>
+<p>Después, vamos a crear un pequeño sitio web de pruebas para confirmar que el certificado autofirmado funciona. Como quiero hacer un pequeño sitio web un videojuego llamado &#34;Persona&#34;, vamos a hacer un nuevo sitio web virtual con Apache.</p>
 <pre><code language="language-bash" class="language-bash">sudo nano /etc/apache2/sites-available/persona.conf
 </code></pre>
-<p>DespuÃ©s, en la configuraciÃ³n, ponemos el mÃ­nimo necesario para que funcione el sitio web.</p>
+<p>Después, en la configuración, ponemos el mínimo necesario para que funcione el sitio web.</p>
 <pre><code language="language-apache" class="language-apache">&lt;VirtualHost *:443&gt;
    ServerName persona
    DocumentRoot /var/www/persona
@@ -87,7 +87,7 @@ sudo systemctl restart apache2
    SSLCertificateKeyFile /etc/ssl/private/apache-selfsigned.key
 &lt;/VirtualHost&gt;
 </code></pre>
-<p>DespuÃ©s, vamos a crear la carpeta /var/www/persona y vamos a crear un archivo index.html con el siguiente contenido:</p>
+<p>Después, vamos a crear la carpeta /var/www/persona y vamos a crear un archivo index.html con el siguiente contenido:</p>
 <pre><code language="language-html" class="language-html">&lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
@@ -102,56 +102,56 @@ sudo systemctl restart apache2
 <pre><code language="language-bash" class="language-bash">sudo a2ensite persona.conf
 sudo systemctl reload apache2
 </code></pre>
-<p>DespuÃ©s, vamos a abrir el puerto 443 en el firewall de AWS, ya que en pasos anteriores no lo habilitamos al no tenerlo configurado.</p>
+<p>Después, vamos a abrir el puerto 443 en el firewall de AWS, ya que en pasos anteriores no lo habilitamos al no tenerlo configurado.</p>
 <p class="image-container"><img alt="Firewall AWS" src="img\\cabf7c530bbc1b5f.png"></p>
 <p>Perfecto, al abrir el puerto 443 en el firewall de AWS, ya podemos acceder al sitio web con el certificado autofirmado.</p>
-<h2 is-upgraded>Captura â€&#34; Error en el navegador</h2>
-<p>Al entrar al sitio web, obviamente, nos saldrÃ¡ un error de que el certificado no es vÃ¡lido al ser autofirmado. Pero como podemos ver, el sitio web funciona correctamente.</p>
+<h2 is-upgraded>Captura — Error en el navegador</h2>
+<p>Al entrar al sitio web, obviamente, nos saldrá un error de que el certificado no es válido al ser autofirmado. Pero como podemos ver, el sitio web funciona correctamente.</p>
 <p class="image-container"><img alt="Error certificado autofirmado" src="img\\95315f1c4a2f549f.png"></p>
-<p>Â¡Perfecto! Tenemos signos de vida del sitio web con HTTPS. Ahora vamos a ver los detalles del certificado autofirmado.</p>
-<h2 is-upgraded>Captura â€&#34; Datos del certificado autofirmado</h2>
-<p>Podemos ver que al entrar por los detalles del certificado autofirmado, podemos ver los datos introducidos en pasos anteriores,ademÃ¡s del propio emisor.</p>
+<p>¡Perfecto! Tenemos signos de vida del sitio web con HTTPS. Ahora vamos a ver los detalles del certificado autofirmado.</p>
+<h2 is-upgraded>Captura — Datos del certificado autofirmado</h2>
+<p>Podemos ver que al entrar por los detalles del certificado autofirmado, podemos ver los datos introducidos en pasos anteriores,además del propio emisor.</p>
 <p class="image-container"><img alt="Datos certificado autofirmado" src="img\\c87fdf5e43611676.png"></p>
 <p><strong>Observaciones:</strong></p>
 <ul>
 <li>Emisor (CA): Yo mismo / hostname del servidor</li>
-<li>Fecha de emisiÃ³n: 15/04/2026</li>
-<li>Fecha de expiraciÃ³n: 15/04/2027</li>
-<li>Firmado por entidad reconocida: âŒ No</li>
+<li>Fecha de emisión: 15/04/2026</li>
+<li>Fecha de expiración: 15/04/2027</li>
+<li>Firmado por entidad reconocida: ❌ No</li>
 </ul>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="3. Certificado vÃ¡lido â€&#34; Let&#39;s Encrypt" duration="0">
-        <h2 is-upgraded>Proceso de obtenciÃ³n</h2>
-<p>Ahora vamos a obtener un certificado vÃ¡lido para nuestro sitio web. Para ello, vamos a usar Certbot, una herramienta que nos permitirÃ¡ obtener certificados de Let&#39;s Encrypt de forma gratuita y automÃ¡tica.</p>
+      <google-codelab-step label="3. Certificado válido — Let&#39;s Encrypt" duration="0">
+        <h2 is-upgraded>Proceso de obtención</h2>
+<p>Ahora vamos a obtener un certificado válido para nuestro sitio web. Para ello, vamos a usar Certbot, una herramienta que nos permitirá obtener certificados de Let&#39;s Encrypt de forma gratuita y automática.</p>
 <pre><code language="language-bash" class="language-bash">sudo apt install certbot python3-certbot-apache -y
 </code></pre>
-<p>Antes de nada, debemos tener un dominio apuntando a nuestra IP pÃºblica. En mi caso, como tengo GitHub Pro, he podido usar name.com para obtener un dominio adecuadamente.</p>
+<p>Antes de nada, debemos tener un dominio apuntando a nuestra IP pública. En mi caso, como tengo GitHub Pro, he podido usar name.com para obtener un dominio adecuadamente.</p>
 <p class="image-container"><img alt="Dominio name.com" src="img\\d0e0140faa6aad21.png"></p>
-<p>Una vez que el dominio estÃ© apuntando a nuestro servidor, ejecutamos Certbot de manera automÃ¡tica para nuestro servidor web Apache:</p>
+<p>Una vez que el dominio esté apuntando a nuestro servidor, ejecutamos Certbot de manera automática para nuestro servidor web Apache:</p>
 <pre><code language="language-bash" class="language-bash">sudo certbot --apache -d karitsu2281.com
 </code></pre>
-<p>(Asumiendo que el dominio configurado sea <code>karitsu2281.com</code>. SÃ³lo hace falta seguir los pasos en pantalla.)</p>
-<p>Al entrar con el dominio en el navegador antes de hacer la validaciÃ³n de Let&#39;s Encrypt, podemos ver que reconoce el servidor, pero al usar un certificado autofirmado, nos da error de seguridad. Sin embargo, es suficiente para comprobar su correcto funcionamiento.</p>
+<p>(Asumiendo que el dominio configurado sea <code>karitsu2281.com</code>. Sólo hace falta seguir los pasos en pantalla.)</p>
+<p>Al entrar con el dominio en el navegador antes de hacer la validación de Let&#39;s Encrypt, podemos ver que reconoce el servidor, pero al usar un certificado autofirmado, nos da error de seguridad. Sin embargo, es suficiente para comprobar su correcto funcionamiento.</p>
 <p class="image-container"><img alt="Error certificado autofirmado" src="img\\2435eb030a882605.png"></p>
-<h2 is-upgraded>Captura â€&#34; Datos del certificado vÃ¡lido en el navegador</h2>
-<p>Al seguir los pasos de Certbot, nos pedirÃ¡ una serie de datos, como el correo electrÃ³nico y el dominio. Una vez introducidos los datos, nos pedirÃ¡ si queremos redirigir el trÃ¡fico de HTTP a HTTPS, a lo que le diremos que sÃ­. Y al entrar con el certificado reciÃ©n firmado de Certbot, ya podremos acceder al sitio web sin ningÃºn problema. (PD: He cambiado la estÃ©tica del sitio web para que se vea mÃ¡s profesional y no genÃ©rico.)</p>
+<h2 is-upgraded>Captura — Datos del certificado válido en el navegador</h2>
+<p>Al seguir los pasos de Certbot, nos pedirá una serie de datos, como el correo electrónico y el dominio. Una vez introducidos los datos, nos pedirá si queremos redirigir el tráfico de HTTP a HTTPS, a lo que le diremos que sí. Y al entrar con el certificado recién firmado de Certbot, ya podremos acceder al sitio web sin ningún problema. (PD: He cambiado la estética del sitio web para que se vea más profesional y no genérico.)</p>
 <p class="image-container"><img alt="Datos certificado Let&amp;rsquo;s Encrypt" src="img\\f2d0bbffc7a56f90.png"></p>
 <p class="image-container"><img alt="Datos certificado Let&amp;rsquo;s Encrypt" src="img\\41ad33d886559aec.png"></p>
 <p><strong>Observaciones:</strong></p>
 <ul>
 <li>Emisor (CA): Let&#39;s Encrypt / R11</li>
-<li>Fecha de emisiÃ³n: 15/04/2026</li>
-<li>Fecha de expiraciÃ³n: 14/07/2026</li>
-<li>Firmado por entidad reconocida: âœ... SÃ­</li>
+<li>Fecha de emisión: 15/04/2026</li>
+<li>Fecha de expiración: 14/07/2026</li>
+<li>Firmado por entidad reconocida: ✅ Sí</li>
 </ul>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="4. AnÃ¡lisis y comparaciÃ³n" duration="0">
+      <google-codelab-step label="4. Análisis y comparación" duration="0">
         <table>
 <tr><td colspan="1" rowspan="1"><p>Campo</p>
 </td><td colspan="1" rowspan="1"><p>Certificado autofirmado</p>
@@ -162,88 +162,88 @@ sudo systemctl reload apache2
 </td><td colspan="1" rowspan="1"><p>Let&#39;s Encrypt (R11)</p>
 </td></tr>
 <tr><td colspan="1" rowspan="1"><p>Reconocido por el navegador</p>
-</td><td colspan="1" rowspan="1"><p>âŒ No</p>
-</td><td colspan="1" rowspan="1"><p>âœ... SÃ­</p>
+</td><td colspan="1" rowspan="1"><p>❌ No</p>
+</td><td colspan="1" rowspan="1"><p>✅ Sí</p>
 </td></tr>
 <tr><td colspan="1" rowspan="1"><p>Confianza del navegador</p>
 </td><td colspan="1" rowspan="1"><p>Aviso de seguridad</p>
 </td><td colspan="1" rowspan="1"><p>Candado verde</p>
 </td></tr>
-<tr><td colspan="1" rowspan="1"><p>Cifrado del trÃ¡fico</p>
-</td><td colspan="1" rowspan="1"><p>âœ... SÃ­</p>
-</td><td colspan="1" rowspan="1"><p>âœ... SÃ­</p>
+<tr><td colspan="1" rowspan="1"><p>Cifrado del tráfico</p>
+</td><td colspan="1" rowspan="1"><p>✅ Sí</p>
+</td><td colspan="1" rowspan="1"><p>✅ Sí</p>
 </td></tr>
-<tr><td colspan="1" rowspan="1"><p>ValidaciÃ³n de identidad</p>
-</td><td colspan="1" rowspan="1"><p>âŒ No</p>
-</td><td colspan="1" rowspan="1"><p>âœ... SÃ­ (Domain Validation)</p>
+<tr><td colspan="1" rowspan="1"><p>Validación de identidad</p>
+</td><td colspan="1" rowspan="1"><p>❌ No</p>
+</td><td colspan="1" rowspan="1"><p>✅ Sí (Domain Validation)</p>
 </td></tr>
 <tr><td colspan="1" rowspan="1"><p>Coste</p>
 </td><td colspan="1" rowspan="1"><p>Gratuito</p>
 </td><td colspan="1" rowspan="1"><p>Gratuito</p>
 </td></tr>
-<tr><td colspan="1" rowspan="1"><p>RenovaciÃ³n</p>
+<tr><td colspan="1" rowspan="1"><p>Renovación</p>
 </td><td colspan="1" rowspan="1"><p>Manual</p>
-</td><td colspan="1" rowspan="1"><p>AutomÃ¡tica (certbot)</p>
+</td><td colspan="1" rowspan="1"><p>Automática (certbot)</p>
 </td></tr>
 <tr><td colspan="1" rowspan="1"><p>Uso recomendado</p>
 </td><td colspan="1" rowspan="1"><p>Entornos de prueba / internos</p>
-</td><td colspan="1" rowspan="1"><p>ProducciÃ³n / acceso pÃºblico</p>
+</td><td colspan="1" rowspan="1"><p>Producción / acceso público</p>
 </td></tr>
 </table>
-<h2 is-upgraded>ConclusiÃ³n</h2>
-<p>El cifrado funciona en ambos casos, pero la diferencia clave es la <strong>cadena de confianza</strong>: un certificado autofirmado lo firma el propio servidor, sin que ninguna CA reconocida lo avale, por lo que el navegador no puede verificar la identidad del servidor y lanza un aviso de seguridad. Let&#39;s Encrypt actÃºa como CA reconocida globalmente, lo que permite al navegador validar la identidad del servidor sin avisos.</p>
-<p>Parte 3 â€&#34; AnÃ¡lisis de Certificados SSL</p>
+<h2 is-upgraded>Conclusión</h2>
+<p>El cifrado funciona en ambos casos, pero la diferencia clave es la <strong>cadena de confianza</strong>: un certificado autofirmado lo firma el propio servidor, sin que ninguna CA reconocida lo avale, por lo que el navegador no puede verificar la identidad del servidor y lanza un aviso de seguridad. Let&#39;s Encrypt actúa como CA reconocida globalmente, lo que permite al navegador validar la identidad del servidor sin avisos.</p>
+<p>Parte 3 — Análisis de Certificados SSL</p>
 
 
       </google-codelab-step>
     
       <google-codelab-step label="Herramienta utilizada" duration="0">
-        <p><a href="https://www.ssllabs.com/ssltest/" target="_blank">SSL Labs â€&#34; Qualys SSL Test</a></p>
+        <p><a href="https://www.ssllabs.com/ssltest/" target="_blank">SSL Labs — Qualys SSL Test</a></p>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="1. AnÃ¡lisis del certificado propio karitsu2281.dev" duration="0">
+      <google-codelab-step label="1. Análisis del certificado propio karitsu2281.dev" duration="0">
         <h2 is-upgraded>Captura del resultado en SSL Labs</h2>
 <p class="image-container"><img alt="SSL Labs - propio" src="img\\c1ff8e61f0308273.png"></p>
 <h2 is-upgraded>Nota obtenida: A</h2>
 <h2 is-upgraded>Motivos que lo validan como certificado correcto</h2>
 <ul>
-<li><strong>Emisor reconocido</strong>: El certificado estÃ¡ firmado por Let&#39;s Encrypt, una CA incluida en los trust stores de todos los navegadores principales.</li>
-<li><strong>Cadena de confianza completa</strong>: SSL Labs verifica que la cadena de certificados (leaf â†&#39; intermedio â†&#39; root) estÃ¡ correctamente configurada.</li>
+<li><strong>Emisor reconocido</strong>: El certificado está firmado por Let&#39;s Encrypt, una CA incluida en los trust stores de todos los navegadores principales.</li>
+<li><strong>Cadena de confianza completa</strong>: SSL Labs verifica que la cadena de certificados (leaf → intermedio → root) está correctamente configurada.</li>
 <li><strong>Dominio validado</strong>: El CN y el SAN del certificado coinciden con el dominio solicitado.</li>
 <li><strong>Protocolo seguro</strong>: Se usa TLS 1.2 / TLS 1.3, sin SSLv3 ni TLS 1.0/1.1.</li>
 <li><strong>Sin vulnerabilidades conocidas</strong>: No presenta POODLE, BEAST, Heartbleed, etc.</li>
-<li><strong>Vigente</strong>: La fecha de expiraciÃ³n no ha sido alcanzada.</li>
+<li><strong>Vigente</strong>: La fecha de expiración no ha sido alcanzada.</li>
 </ul>
 
 
       </google-codelab-step>
     
-      <google-codelab-step label="2. Certificados errÃ³neos localizados" duration="0">
-        <h2 is-upgraded>Certificado 1 â€&#34; Certificado caducado</h2>
+      <google-codelab-step label="2. Certificados erróneos localizados" duration="0">
+        <h2 is-upgraded>Certificado 1 — Certificado caducado</h2>
 <p><strong>Sitio</strong>: protean.washco.co.uk</p>
 <p><strong>Tipo de error</strong>: Certificado expirado (<code>NET::ERR_CERT_DATE_INVALID</code>)</p>
-<p><strong>Captura del anÃ¡lisis</strong>:</p>
+<p><strong>Captura del análisis</strong>:</p>
 <p class="image-container"><img alt="CA no reconocida" src="img\\80c2124651da5b5d.png"></p>
 <p class="image-container"><img alt="CA no reconocida" src="img\\e6a0c436147c4a5b.png"></p>
-<p><strong>ExplicaciÃ³n</strong>:</p>
-<p>Los certificados tienen una fecha de expiraciÃ³n para limitar el tiempo durante el cual una clave comprometida podrÃ­a ser explotada. Cuando un certificado supera esa fecha, el navegador no puede garantizar que siga siendo vÃ¡lido ni que la clave privada no haya sido comprometida, por lo que bloquea la conexiÃ³n.</p>
-<h2 is-upgraded>Certificado 2 â€&#34; Certificado autofirmado / CA no reconocida</h2>
+<p><strong>Explicación</strong>:</p>
+<p>Los certificados tienen una fecha de expiración para limitar el tiempo durante el cual una clave comprometida podría ser explotada. Cuando un certificado supera esa fecha, el navegador no puede garantizar que siga siendo válido ni que la clave privada no haya sido comprometida, por lo que bloquea la conexión.</p>
+<h2 is-upgraded>Certificado 2 — Certificado autofirmado / CA no reconocida</h2>
 <p><strong>Sitio</strong>: wgcs.skyhigh.cloud</p>
 <p><strong>Tipo de error</strong>: CA no reconocida (<code>NET::ERR_CERT_AUTHORITY_INVALID</code>)</p>
-<p><strong>Captura del anÃ¡lisis</strong>:</p>
+<p><strong>Captura del análisis</strong>:</p>
 <p class="image-container"><img alt="CA no reconocida" src="img\\7c95978618b87644.png"></p>
 <p class="image-container"><img alt="CA no reconocida" src="img\\e188aeaf5abca0a.png"></p>
-<p><strong>ExplicaciÃ³n</strong>:</p>
-<p>El certificado no ha sido firmado por ninguna CA incluida en el trust store del sistema operativo o el navegador. Sin ese aval de tercero de confianza, el navegador no puede verificar la identidad del servidor y considera la conexiÃ³n potencialmente peligrosa.</p>
-<h2 is-upgraded>Certificado 3 â€&#34; CriptografÃ­a debil</h2>
+<p><strong>Explicación</strong>:</p>
+<p>El certificado no ha sido firmado por ninguna CA incluida en el trust store del sistema operativo o el navegador. Sin ese aval de tercero de confianza, el navegador no puede verificar la identidad del servidor y considera la conexión potencialmente peligrosa.</p>
+<h2 is-upgraded>Certificado 3 — Criptografía debil</h2>
 <p><strong>Sitio</strong>: n.jmpsa.or.jp</p>
-<p><strong>Tipo de error</strong>: CriptografÃ­a debil (<code>NET::ERR_CERT_COMMON_NAME_INVALID</code>)</p>
-<p><strong>Captura del anÃ¡lisis</strong>:</p>
-<p class="image-container"><img alt="CriptografÃ\u00ada debil" src="img\\ecc8f71f73da9aa0.png"></p>
-<p><strong>ExplicaciÃ³n</strong>:</p>
-<p>El certificado tiene una vulnerabilidad de OpenSSL (CVE-2016-2107), de calificaciÃ³n 5,9, ademÃ¡s de solo soportar TLS 1.0 y TLS 1.1, por lo que no tiene calificaciÃ³n alguna en criptografÃ­a (aunque en cifrado tiene bastante buena calificaciÃ³n).</p>
+<p><strong>Tipo de error</strong>: Criptografía debil (<code>NET::ERR_CERT_COMMON_NAME_INVALID</code>)</p>
+<p><strong>Captura del análisis</strong>:</p>
+<p class="image-container"><img alt="Criptografía debil" src="img\\ecc8f71f73da9aa0.png"></p>
+<p><strong>Explicación</strong>:</p>
+<p>El certificado tiene una vulnerabilidad de OpenSSL (CVE-2016-2107), de calificación 5,9, además de solo soportar TLS 1.0 y TLS 1.1, por lo que no tiene calificación alguna en criptografía (aunque en cifrado tiene bastante buena calificación).</p>
 
 
       </google-codelab-step>
@@ -257,7 +257,7 @@ sudo systemctl reload apache2
 </td></tr>
 <tr><td colspan="1" rowspan="1"><p>1</p>
 </td><td colspan="1" rowspan="1"><p>Caducado</p>
-</td><td colspan="1" rowspan="1"><p>Fecha de expiraciÃ³n superada</p>
+</td><td colspan="1" rowspan="1"><p>Fecha de expiración superada</p>
 </td><td colspan="1" rowspan="1"><p>Clave posiblemente comprometida</p>
 </td></tr>
 <tr><td colspan="1" rowspan="1"><p>2</p>
