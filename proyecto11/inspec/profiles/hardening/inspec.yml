@@ -1,0 +1,11 @@
+name: hardening-profile
+title: Proyecto 11 - Hardening InSpec Profile
+maintainer: Hugo Flores Molina
+copyright: Hugo Flores Molina
+copyright_email: karitsu2281@example.com
+license: MIT
+summary: Perfil de verificacion de hardening para el Proyecto 11
+version: 1.0.0
+supports:
+  - os-family: linux
+depends: []

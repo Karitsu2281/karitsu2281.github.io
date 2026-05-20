@@ -1,0 +1,72 @@
+# Custom Suricata Rules - Proyecto 11
+# Targeted at Infection Monkey behaviors
+
+# === SSH BRUTE FORCE DETECTION ===
+# Alert on rapid SSH connection attempts (potential brute force)
+alert tcp $EXTERNAL_NET any -> $HOME_NET 22 (msg:"PROYECTO11 - Posible fuerza bruta SSH (5+ intentos en 60s)"; flow:to_server,established; threshold:type threshold, track by_src, count 5, seconds 60; classtype:attempted-admin; sid:1000001; rev:1;)
+
+# Alert on SSH root login attempts
+alert tcp $EXTERNAL_NET any -> $HOME_NET 22 (msg:"PROYECTO11 - Intento de login SSH como root"; flow:to_server,established; content:"root"; nocase; classtype:attempted-admin; sid:1000002; rev:1;)
+
+# === PORT SCANNING DETECTION ===
+# Horizontal port scan (same port, many hosts)
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"PROYECTO11 - Escaneo horizontal de puertos"; flags:S,12; threshold:type both, track by_src, count 10, seconds 30; classtype:attempted-recon; sid:1000003; rev:1;)
+
+# Vertical port scan (many ports, one host)
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"PROYECTO11 - Escaneo vertical de puertos"; flags:S,12; threshold:type threshold, track by_dst, count 15, seconds 30; classtype:attempted-recon; sid:1000004; rev:1;)
+
+# === SMB EXPLOITATION ===
+# EternalBlue / MS17-010 detection
+alert tcp $EXTERNAL_NET any -> $HOME_NET 445 (msg:"PROYECTO11 - Posible explotacion SMB (EternalBlue/MS17-010)"; flow:to_server,established; content:"|ff 53 4d 42|"; depth:4; offset:4; content:"|00 00 00 00|"; within:4; classtype:attempted-admin; sid:1000005; rev:1;)
+
+# SMB anonymous login attempt
+alert tcp $EXTERNAL_NET any -> $HOME_NET 445 (msg:"PROYECTO11 - Intento de conexion SMB anonima"; flow:to_server,established; content:"|ff 53 4d 42 72 00 00 00 00|"; classtype:attempted-recon; sid:1000006; rev:1;)
+
+# === RDP BRUTE FORCE ===
+alert tcp $EXTERNAL_NET any -> $HOME_NET 3389 (msg:"PROYECTO11 - Posible fuerza bruta RDP"; flow:to_server,established; threshold:type threshold, track by_src, count 5, seconds 60; classtype:attempted-admin; sid:1000007; rev:1;)
+
+# === WEB ATTACKS ===
+# SQL Injection attempt in HTTP
+alert http $EXTERNAL_NET any -> $HTTP_SERVERS any (msg:"PROYECTO11 - Posible inyeccion SQL en HTTP"; flow:to_server,established; content:"SELECT"; nocase; http_uri; classtype:web-application-attack; sid:1000008; rev:1;)
+
+# Path traversal attempt
+alert http $EXTERNAL_NET any -> $HTTP_SERVERS any (msg:"PROYECTO11 - Intento de path traversal"; flow:to_server,established; content:"../"; http_uri; classtype:web-application-attack; sid:1000009; rev:1;)
+
+# Suspicious User-Agent (common scanner/automation tools)
+alert http $EXTERNAL_NET any -> $HTTP_SERVERS any (msg:"PROYECTO11 - User-Agent sospechoso detectado"; flow:to_server,established; content:"python-requests"; nocase; http_user_agent; classtype:attempted-recon; sid:1000010; rev:1;)
+
+# === DNS TUNNELING / C2 ===
+# Unusually long DNS queries (potential DNS tunneling for C2)
+alert dns $HOME_NET any -> any 53 (msg:"PROYECTO11 - Posible tunelizacion DNS (C2)"; dns_query; content:"."; pcre:"/^[a-zA-Z0-9\-_]{52,}\./R"; classtype:trojan-activity; sid:1000011; rev:1;)
+
+# === LATERAL MOVEMENT ===
+# WMI / DCOM lateral movement detection
+alert tcp $HOME_NET any -> $HOME_NET 135 (msg:"PROYECTO11 - Posible movimiento lateral (MSRPC)"; flow:to_server,established; content:"|05 00 00|"; depth:3; offset:0; classtype:attempted-admin; sid:1000012; rev:1;)
+
+# PsExec lateral movement
+alert tcp $HOME_NET any -> $HOME_NET 445 (msg:"PROYECTO11 - Posible PsExec (movimiento lateral)"; flow:to_server,established; content:"|ff 53 4d 42|"; depth:4; offset:4; content:"svcctl"; distance:0; nocase; classtype:attempted-admin; sid:1000013; rev:1;)
+
+# === CREDENTIAL DUMPING ===
+# LSASS access attempt
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"PROYECTO11 - Posible intento de dumpeo de credenciales (LSASS)"; flow:to_server,established; content:"lsass"; nocase; classtype:credential-theft; sid:1000014; rev:1;)
+
+# === INFECTION MONKEY SPECIFIC ===
+# Monkey Island agent beaconing (periodic HTTPS connections to island)
+alert http $HOME_NET any -> $EXTERNAL_NET 5000 (msg:"PROYECTO11 - Infection Monkey agent beaconing detectado"; flow:to_server,established; content:"api"; http_uri; classtype:trojan-activity; sid:1000015; rev:1;)
+
+# Monkey agent SSH propagation (multiple SSH connections in burst)
+alert tcp $HOME_NET any -> $HOME_NET 22 (msg:"PROYECTO11 - Propagacion SSH de Monkey detectada (burst)"; flow:to_server,established; threshold:type both, track by_src, count 3, seconds 10; classtype:attempted-admin; sid:1000016; rev:1;)
+
+# === METERPRETER / REVERSE SHELL ===
+# Common reverse shell patterns in HTTP
+alert http $HOME_NET any -> $EXTERNAL_NET any (msg:"PROYECTO11 - Posible reverse shell en HTTP"; flow:to_server,established; content:"/bin/bash"; http_uri; nocase; classtype:trojan-activity; sid:1000017; rev:1;)
+
+alert http $HOME_NET any -> $EXTERNAL_NET any (msg:"PROYECTO11 - Comunicacion C2 sospechosa"; flow:to_server,established; content:"/submit"; http_uri; pcre:"/\/[a-zA-Z0-9]{20,}/U"; classtype:trojan-activity; sid:1000018; rev:1;)
+
+# === COMMAND AND CONTROL (general) ===
+# Unusual outbound traffic on non-standard ports
+alert tcp $HOME_NET any -> $EXTERNAL_NET ![80,443,53,22] (msg:"PROYECTO11 - Trafico saliente sospechoso en puerto no estandar"; flow:to_server,established; threshold:type threshold, track by_src, count 3, seconds 30; classtype:trojan-activity; sid:1000019; rev:1;)
+
+# === PERSISTENCE ===
+# Cron job modification detected via HTTP
+alert http $HOME_NET any -> $EXTERNAL_NET any (msg:"PROYECTO11 - Posible exfiltracion de datos"; flow:to_server,established; content:"/etc/passwd"; http_uri; classtype:data-loss; sid:1000020; rev:1;)

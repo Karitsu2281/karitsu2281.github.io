@@ -1,0 +1,128 @@
+- name: Hardening de sistemas victimas para Proyecto 11
+  hosts: victims
+  become: yes
+  vars_files:
+    - roles/hardening/vars/main.yml
+  roles:
+    - hardening
+
+- name: Configuracion del firewall (iptables + Suricata)
+  hosts: firewall
+  become: yes
+  vars:
+    internal_net: "10.0.0.0/24"
+    external_net: "192.168.100.0/24"
+    allowed_ports:
+      - 22
+      - 80
+      - 443
+  tasks:
+    - name: Asegurar que iptables-persistent esta instalado
+      apt:
+        name:
+          - iptables
+          - iptables-persistent
+          - suricata
+          - rsyslog
+        state: present
+        update_cache: yes
+
+    - name: Configurar politica por defecto DROP
+      iptables:
+        chain: "{{ item.chain }}"
+        policy: "{{ item.policy }}"
+      loop:
+        - { chain: INPUT, policy: DROP }
+        - { chain: FORWARD, policy: DROP }
+        - { chain: OUTPUT, policy: ACCEPT }
+
+    - name: Permitir trafico loopback
+      iptables:
+        chain: INPUT
+        in_interface: lo
+        jump: ACCEPT
+
+    - name: Permitir conexiones establecidas
+      iptables:
+        chain: INPUT
+        ctstate: ESTABLISHED,RELATED
+        jump: ACCEPT
+
+    - name: Permitir puertos autorizados en INPUT
+      iptables:
+        chain: INPUT
+        protocol: tcp
+        destination_port: "{{ item }}"
+        jump: ACCEPT
+      loop: "{{ allowed_ports }}"
+
+    - name: Permitir forwarding entre redes
+      iptables:
+        chain: FORWARD
+        ctstate: ESTABLISHED,RELATED
+        jump: ACCEPT
+
+    - name: Permitir forwarding de internal a external
+      iptables:
+        chain: FORWARD
+        in_interface: "{{ item.in }}"
+        out_interface: "{{ item.out }}"
+        jump: ACCEPT
+      loop:
+        - { in: "eth1", out: "eth0" }
+
+    - name: Aplicar reglas de limitacion de tasa para SSH (anti-brute force)
+      iptables:
+        chain: INPUT
+        protocol: tcp
+        destination_port: 22
+        match: recent
+        set: true
+        rcheck: false
+      register: ssh_rate_limit
+
+    - name: Bloquear IPs con demasiadas conexiones SSH
+      iptables:
+        chain: INPUT
+        protocol: tcp
+        destination_port: 22
+        match: recent
+        rcheck: true
+        seconds: 60
+        hitcount: 4
+        jump: DROP
+
+    - name: Guardar reglas de iptables
+      command: iptables-save > /etc/iptables/rules.v4
+
+    - name: Habilitar forwarding en el kernel
+      sysctl:
+        name: "{{ item }}"
+        value: "1"
+        sysctl_set: yes
+        reload: yes
+      loop:
+        - net.ipv4.ip_forward
+        - net.ipv4.conf.all.forwarding
+
+    - name: Configurar envio de logs a ELK via rsyslog
+      copy:
+        dest: /etc/rsyslog.d/50-elk.conf
+        content: |
+          *.* @192.168.100.30:5515
+        owner: root
+        group: root
+        mode: '0644'
+      notify: restart rsyslog
+
+    - name: Habilitar y arrancar Suricata
+      service:
+        name: suricata
+        state: started
+        enabled: yes
+
+  handlers:
+    - name: restart rsyslog
+      service:
+        name: rsyslog
+        state: restarted

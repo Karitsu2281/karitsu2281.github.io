@@ -1,0 +1,33 @@
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /var/log/suricata/eve.json
+  json.keys_under_root: true
+  json.add_error_key: true
+  json.overwrite_keys: true
+  fields:
+    log_type: suricata_eve
+  fields_under_root: true
+
+- type: log
+  enabled: true
+  paths:
+    - /var/log/syslog
+  fields:
+    log_type: syslog
+  fields_under_root: true
+  multiline.pattern: '^[A-Z][a-z]{2} [ 0-9]{2}'
+  multiline.negate: true
+  multiline.match: after
+
+- type: log
+  enabled: true
+  paths:
+    - /var/log/kern.log
+  fields:
+    log_type: kernel
+  fields_under_root: true
+
+output.logstash:
+  hosts: ["logstash:5044"]

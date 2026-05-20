@@ -1,0 +1,24 @@
+$ModLoad imuxsock
+$ModLoad imklog
+
+$ActionFileDefaultTemplate RSYSLOG_TraditionalFileFormat
+
+$FileOwner root
+$FileGroup adm
+$FileCreateMode 0640
+$DirCreateMode 0755
+$Umask 0022
+
+auth,authpriv.*                 /var/log/auth.log
+*.*;auth,authpriv.none          -/var/log/syslog
+kern.*                          -/var/log/kern.log
+mail.*                          -/var/log/mail.log
+daemon.*                        -/var/log/daemon.log
+
+user.*                          -/var/log/user.log
+*.emerg                         :omusrmsg:*
+*.alert                         :omusrmsg:*
+
+*.* @192.168.100.31:5515
+
+$IncludeConfig /etc/rsyslog.d/*.conf

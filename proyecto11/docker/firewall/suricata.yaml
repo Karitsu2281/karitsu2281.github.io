@@ -1,0 +1,179 @@
+%YAML 1.1
+---
+vars:
+  address-groups:
+    HOME_NET: "[10.0.0.0/24]"
+    EXTERNAL_NET: "!$HOME_NET"
+    HTTP_SERVERS: "$HOME_NET"
+    SMTP_SERVERS: "$HOME_NET"
+    SQL_SERVERS: "$HOME_NET"
+    DNS_SERVERS: "$HOME_NET"
+    TELNET_SERVERS: "$HOME_NET"
+    AIM_SERVERS: "$EXTERNAL_NET"
+    DNP3_SERVER: "$HOME_NET"
+    DNP3_CLIENT: "$HOME_NET"
+    MODBUS_CLIENT: "$HOME_NET"
+    MODBUS_SERVER: "$HOME_NET"
+    ENIP_CLIENT: "$HOME_NET"
+    ENIP_SERVER: "$HOME_NET"
+
+default-log-dir: /var/log/suricata
+
+outputs:
+  - fast:
+      enabled: yes
+      filename: fast.log
+      append: yes
+  - eve-log:
+      enabled: yes
+      filetype: regular
+      filename: eve.json
+      types:
+        - alert:
+            payload: yes
+            payload-buffer-size: 4kb
+            payload-printable: yes
+            packet: yes
+            metadata: yes
+        - http:
+            extended: yes
+        - dns:
+            version: 2
+        - tls:
+            extended: yes
+        - files:
+            force-magic: no
+        - smtp:
+            extended: yes
+        - ssh
+        - ftp
+        - flow
+        - netflow
+        - anomaly
+        - stats:
+            totals: yes
+            threads: yes
+            deltas: no
+        - dhcp:
+            enabled: yes
+            extended: yes
+        - drop:
+            alerts: yes
+            flows: all
+  - unified2-alert:
+      enabled: no
+  - syslog:
+      enabled: yes
+      facility: local5
+      format: "[%i] %(timestamp): %(alert): %(classification)"
+
+logging:
+  default-log-level: notice
+  outputs:
+    - console:
+        enabled: yes
+    - file:
+        enabled: yes
+        level: info
+        filename: suricata.log
+    - syslog:
+        enabled: yes
+        facility: local5
+        format: "[%i] <%-pri> %(timestamp): %@"
+
+af-packet:
+  - interface: eth1
+    cluster-id: 99
+    cluster-type: cluster_flow
+    defrag: yes
+    use-mmap: yes
+    tpacket-v3: yes
+
+pcap:
+  - interface: eth1
+    checksum-checks: auto
+
+app-layer:
+  protocols:
+    tls:
+      enabled: yes
+      detection-ports:
+        dp: 443
+      ja3-fingerprints: yes
+    dcerpc:
+      enabled: yes
+    ftp:
+      enabled: yes
+    ssh:
+      enabled: yes
+    smtp:
+      enabled: yes
+      raw-extraction: yes
+    imap:
+      enabled: detection-only
+    msn:
+      enabled: detection-only
+    smb:
+      enabled: yes
+      detection-ports:
+        dp: 139, 445
+    dns:
+      global-memcap: 16mb
+      state-memcap: 512kb
+      tcp:
+        enabled: yes
+        detection-ports:
+          dp: 53
+      udp:
+        enabled: yes
+        detection-ports:
+          dp: 53
+    http:
+      enabled: yes
+      memcap: 64mb
+    ftp:
+      enabled: yes
+    websocket:
+      enabled: yes
+    http2:
+      enabled: yes
+
+asn1-max-frames: 256
+
+run-as:
+  user: root
+  group: root
+
+default-packet-size: 1514
+
+engine-analysis:
+  rules-fast-pattern: yes
+  rules: yes
+
+classification-file: /etc/suricata/classification.config
+reference-config-file: /etc/suricata/reference.config
+
+threshold-file: /etc/suricata/threshold.config
+
+default-rule-path: /var/lib/suricata/rules
+rule-files:
+  - suricata.rules
+  - custom.rules
+
+detect-engine:
+  - profile: medium
+  - custom-values:
+      toclient-groups: 2
+      toserver-groups: 25
+  - sgh-mpm-context: auto
+  - inspection-recursion-limit: 3000
+
+threading:
+  set-cpu-affinity: no
+  detect-thread-ratio: 1.5
+
+host-mode: auto
+
+unix-command:
+  enabled: yes
+  filename: /var/run/suricata/suricata-command.socket

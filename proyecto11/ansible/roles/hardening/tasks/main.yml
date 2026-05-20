@@ -1,0 +1,125 @@
+- name: Actualizar cache de paquetes
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Instalar paquetes esenciales de hardening
+  apt:
+    name: "{{ hardening_packages }}"
+    state: present
+
+- name: Deshabilitar servicios innecesarios
+  service:
+    name: "{{ item }}"
+    state: stopped
+    enabled: no
+  loop: "{{ disabled_services }}"
+  ignore_errors: yes
+
+- name: Aplicar configuracion hardening de SSH
+  template:
+    src: sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: '0600'
+    validate: '/usr/sbin/sshd -t -f %s'
+  notify: restart ssh
+
+- name: Aplicar reglas de iptables locales
+  template:
+    src: iptables.rules.j2
+    dest: /etc/iptables/rules.v4
+    owner: root
+    group: root
+    mode: '0600'
+  notify: restore iptables
+
+- name: Configurar parametros seguros del kernel
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_set: yes
+    state: present
+    reload: yes
+  loop: "{{ kernel_params | dict2items }}"
+
+- name: Deshabilitar sistemas de archivos no utilizados
+  lineinfile:
+    path: /etc/modprobe.d/blacklist.conf
+    line: "install {{ item }} /bin/true"
+    create: yes
+  loop: "{{ blacklist_modules }}"
+
+- name: Configurar rsyslog para enviar logs al ELK
+  template:
+    src: rsyslog.conf.j2
+    dest: /etc/rsyslog.d/50-elk.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart rsyslog
+
+- name: Instalar y configurar auditd
+  apt:
+    name: auditd
+    state: present
+  notify: restart auditd
+
+- name: Agregar reglas de auditoria para eventos clave
+  copy:
+    dest: /etc/audit/rules.d/hardening.rules
+    content: |
+      -w /etc/passwd -p wa -k identity
+      -w /etc/shadow -p wa -k identity
+      -w /etc/group -p wa -k identity
+      -w /etc/sudoers -p wa -k sudo_changes
+      -w /etc/ssh/sshd_config -p wa -k ssh_config
+      -w /var/log/auth.log -p wa -k auth_log
+      -w /tmp -p wa -k temp_activity
+      -a always,exit -F arch=b64 -S execve -k command_execution
+    owner: root
+    group: root
+    mode: '0640'
+  notify: restart auditd
+
+- name: Configurar forwarding de logs auditd a ELK via rsyslog
+  copy:
+    dest: /etc/rsyslog.d/60-auditd.conf
+    content: |
+      module(load="imfile")
+      input(type="imfile" File="/var/log/audit/audit.log" Tag="auditd" Severity="info" Facility="local6")
+      local6.* @192.168.100.31:5515
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart rsyslog
+
+- name: Restringir acceso a crontab
+  copy:
+    dest: /etc/cron.allow
+    content: "root\n"
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: Eliminar cron.deny
+  file:
+    path: /etc/cron.deny
+    state: absent
+
+- name: Configurar permisos seguros en archivos sensibles
+  file:
+    path: "{{ item.path }}"
+    owner: root
+    group: root
+    mode: "{{ item.mode }}"
+  loop:
+    - { path: /etc/passwd, mode: '0644' }
+    - { path: /etc/shadow, mode: '0600' }
+    - { path: /etc/group, mode: '0644' }
+    - { path: /etc/gshadow, mode: '0600' }
+
+- name: Mensaje de hardening completado
+  debug:
+    msg: "Hardening completado en {{ ansible_hostname }} - {{ ansible_default_ipv4.address }}"

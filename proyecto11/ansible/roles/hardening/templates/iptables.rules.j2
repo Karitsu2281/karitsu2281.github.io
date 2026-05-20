@@ -1,0 +1,28 @@
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+
+-A INPUT -i lo -j ACCEPT
+-A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+-A INPUT -p tcp --dport 22 -m state --state NEW -m recent --set
+-A INPUT -p tcp --dport 22 -m state --state NEW -m recent --update --seconds 60 --hitcount 4 -j DROP
+
+-A INPUT -p icmp --icmp-type echo-request -m limit --limit 1/s --limit-burst 5 -j ACCEPT
+-A INPUT -p icmp --icmp-type echo-request -j DROP
+
+-A INPUT -p tcp --dport 80 -j ACCEPT
+-A INPUT -p tcp --dport 443 -j ACCEPT
+
+-A INPUT -p tcp --dport 3306 -s 10.0.0.0/24 -j ACCEPT
+
+-A INPUT -j LOG --log-prefix "IPTABLES-DROP: " --log-level 4
+-A INPUT -j DROP
+
+-A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+-A FORWARD -j LOG --log-prefix "IPTABLES-FWD-DROP: " --log-level 4
+-A FORWARD -j DROP
+
+COMMIT
