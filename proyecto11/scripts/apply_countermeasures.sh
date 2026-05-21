@@ -13,7 +13,7 @@ FIREWALL="${1:-firewall}"
 VICTIM="${2:-victim-1}"
 
 BLOCK_IPS=(
-  "192.168.100.20"
+  "10.0.0.50"
 )
 
 BLOCK_PORTS=(
@@ -23,34 +23,33 @@ BLOCK_PORTS=(
   "3389"
 )
 
-echo "[*] Aplicando contramedidas en el firewall..."
+echo "[*] Aplicando contramedidas de red (iptables) en las victimas..."
 
-# 1. Bloquear IPs maliciosas
-for ip in "${BLOCK_IPS[@]}"; do
-  echo "  [+] Bloqueando IP: ${ip}"
-  docker exec "${FIREWALL}" iptables -I INPUT 1 -s "${ip}" -j DROP
+for victim in victim-1 victim-2; do
+  echo "--- Configuracion de red para ${victim} ---"
+  
+  # 1. Bloquear IPs maliciosas
+  for ip in "${BLOCK_IPS[@]}"; do
+    echo "  [+] Bloqueando IP: ${ip}"
+    docker exec "${victim}" iptables -I INPUT 1 -s "${ip}" -j DROP
+  done
+
+  # 2. Limitar SSH a solo IPs autorizadas (admin o docker network)
+  echo "  [+] Restringiendo SSH"
+  docker exec "${victim}" iptables -D INPUT -p tcp --dport 22 -j ACCEPT 2>/dev/null || true
+  docker exec "${victim}" iptables -I INPUT -p tcp --dport 22 -s 10.0.0.0/24 -j ACCEPT
+  
+  # 3. Aplicar rate limiting mas agresivo
+  echo "  [+] Aplicando rate limiting agresivo en SSH"
+  docker exec "${victim}" iptables -I INPUT -p tcp --dport 22 -m state --state NEW -m recent --set
+  docker exec "${victim}" iptables -I INPUT -p tcp --dport 22 -m state --state NEW -m recent --update --seconds 120 --hitcount 3 -j DROP
+
+  # 4. Bloquear puertos SMB/RPC comunes en ataques de propagacion
+  echo "  [+] Bloqueando puertos de propagacion lateral"
+  for port in 135 139 445 3389 5985 5986; do
+    docker exec "${victim}" iptables -A INPUT -p tcp --dport ${port} -j DROP
+  done
 done
-
-# 2. Limitar SSH a solo IPs autorizadas
-echo "  [+] Restringiendo SSH a red interna unicamente"
-docker exec "${FIREWALL}" iptables -D INPUT -p tcp --dport 22 -j ACCEPT 2>/dev/null || true
-docker exec "${FIREWALL}" iptables -I INPUT -p tcp --dport 22 -s 10.0.0.0/24 -j ACCEPT
-docker exec "${FIREWALL}" iptables -A INPUT -p tcp --dport 22 -j DROP
-
-# 3. Aplicar rate limiting mas agresivo
-echo "  [+] Aplicando rate limiting agresivo en SSH"
-docker exec "${FIREWALL}" iptables -I INPUT -p tcp --dport 22 -m state --state NEW -m recent --set
-docker exec "${FIREWALL}" iptables -I INPUT -p tcp --dport 22 -m state --state NEW -m recent --update --seconds 120 --hitcount 3 -j DROP
-
-# 4. Bloquear puertos SMB/RPC comunes en ataques de propagacion
-echo "  [+] Bloqueando puertos de propagacion lateral"
-for port in 135 139 445 3389 5985 5986; do
-  docker exec "${FIREWALL}" iptables -A INPUT -p tcp --dport ${port} -j DROP
-done
-
-# 5. Guardar reglas persistentes
-echo "  [+] Guardando reglas persistentes (sobreviven reinicio)"
-docker exec "${FIREWALL}" bash -c 'iptables-save > /etc/iptables/rules.v4'
 
 echo ""
 echo "[*] Aplicando medidas de hardening adicionales en victimas..."

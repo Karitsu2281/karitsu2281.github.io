@@ -28,7 +28,7 @@ RUN mkdir /var/run/sshd \
 
 RUN echo '<html><body><h1>Victim Web Server</h1><p>Servidor vulnerable para pruebas de emulacion de adversarios - Proyecto 11</p></body></html>' > /var/www/html/index.html
 
-RUN echo '#!/bin/bash\nservice mysql start\nservice nginx start\nservice ssh start\nservice rsyslog start\ntail -f /dev/null' > /start.sh \
+RUN echo '#!/bin/bash\necho "*.* @10.0.0.32:5515" > /etc/rsyslog.d/50-logstash.conf\nservice mysql start\nservice nginx start\nservice ssh start\nservice rsyslog start\ntail -f /dev/null' > /start.sh \
     && chmod +x /start.sh
 
 EXPOSE 22 80 443 3306

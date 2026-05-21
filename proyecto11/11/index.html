@@ -1,0 +1,342 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Proyecto 11 — Informe Final: Emulación de Adversarios, Monitorización y Bastionado</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14"></google-codelab-analytics>
+  <google-codelab codelab-gaid="ID de Google Analytics"
+                  id="11"
+                  title="Proyecto 11 — Informe Final: Emulación de Adversarios, Monitorización y Bastionado"
+                  environment="web"
+                  feedback-link="https://github.com/karitsu2281/karitsu2281.github.io/issues">
+    
+      <google-codelab-step label="1. Arquitectura del Laboratorio" duration="0">
+        <p>La infraestructura se despliega completamente en Docker con 8 contenedores:</p>
+<pre><code>┌─────────────────────────────────────────────────────────────────────┐
+│                         DOCKER HOST                                 │
+│  ┌───────────────────┐          ┌──────────────────────────────┐   │
+│  │ Infection Monkey  │          │        ELK STACK             │   │
+│  │ Island (C2)       │          │ - Elasticsearch :9200        │   │
+│  │ :5000             │          │ - Kibana        :5601        │   │
+│  └────────┬──────────┘          └───────────────┬──────────────┘   │
+│           │                                     │                  │
+│  ┌────────▼─────────────────────────────────────▼──────────────┐  │
+│  │           Red Externa (192.168.100.0/24)                     │  │
+│  └───────────────────────────────┬──────────────────────────────┘  │
+│                                  │                                 │
+│  ┌───────────────────────────────▼──────────────────────────────┐  │
+│  │     FIREWALL (iptables + Suricata)                           │  │
+│  │     - Ext: 192.168.100.10  - Int: 10.0.0.2                  │  │
+│  │     - Políticas: INPUT DROP, FORWARD DROP                    │  │
+│  └───────────────────────────────┬──────────────────────────────┘  │
+│                                  │                                 │
+│  ┌───────────────────────────────▼──────────────────────────────┐  │
+│  │           Red Interna (10.0.0.0/24)                           │  │
+│  │                                                               │  │
+│  │   victim-1 (Web)           victim-2 (BD)                      │  │
+│  │   10.0.0.10                10.0.0.11                          │  │
+│  │   SSH:22 | Nginx:80        SSH:22 | MySQL:3306               │  │
+│  └───────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h2 is-upgraded>Contenedores y servicios</h2>
+<pre><code language="language-bash" class="language-bash">$ docker ps --format &#34;table &#123;&#123;.Names}}\t&#123;&#123;.Status}}\t&#123;&#123;.Ports}}&#34;
+</code></pre>
+<pre><code>NAMES           STATUS              PORTS
+monkey_island   Up                  :5000
+monkey_mongo    Up
+firewall        Up
+logstash        Up                  :5044, :5515
+kibana          Up                  :5601
+elasticsearch   Up                  :9200
+victim-1        Up                  22/tcp, 80/tcp, 3306/tcp
+victim-2        Up                  22/tcp, 80/tcp, 3306/tcp
+</code></pre>
+<h2 is-upgraded>Reglas iniciales del firewall</h2>
+<p>El firewall se inicializa con política DROP en INPUT y FORWARD:</p>
+<pre><code language="language-bash" class="language-bash">$ docker exec firewall iptables -L -n -v --line-numbers
+</code></pre>
+<pre><code>Chain INPUT (policy DROP)
+num   pkts bytes target     prot opt in     out     source     destination
+1      138 10316 ACCEPT     all  --  lo     *       0.0.0.0/0  0.0.0.0/0
+2        0     0 ACCEPT     all  --  *      *       0.0.0.0/0  0.0.0.0/0  ctstate RELATED,ESTABLISHED
+3        2   168 LOG        all  --  *      *       0.0.0.0/0  0.0.0.0/0  prefix &#34;FW-INPUT-DROP: &#34;
+
+Chain FORWARD (policy DROP)
+num   pkts bytes target     prot opt in     out     source     destination
+1        0     0 ACCEPT     all  --  *      *       0.0.0.0/0  0.0.0.0/0  ctstate RELATED,ESTABLISHED
+2        0     0 ACCEPT     all  --  eth1   eth0    0.0.0.0/0  0.0.0.0/0
+3        0     0 LOG        all  --  *      *       0.0.0.0/0  0.0.0.0/0  prefix &#34;FW-FORWARD-DROP: &#34;
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="2. Configuración y Lanzamiento del Ataque" duration="0">
+        <p>Configuramos Infection Monkey para escanear la red interna <code>10.0.0.0/24</code> con los siguientes parámetros:</p>
+<ul>
+<li><strong>Server IP</strong>: <code>10.0.0.1</code> (Gateway interno Docker)</li>
+<li><strong>Network Scan</strong>: Ping sweep + TCP scan activados</li>
+<li><strong>Puertos</strong>: <code>22, 80, 135, 139, 443, 445, 3306, 5000, 8080</code></li>
+<li><strong>Exploits</strong>: SSH Exploiter, SMB Exploiter, WMI Exploiter</li>
+<li><strong>Post-Breach</strong>: Recolección de credenciales, persistencia</li>
+</ul>
+<p><img alt="Configuración de subred en Infection Monkey" src="img\\4af925afa30e1a9c.png"><em>Figura 1: Configuración del escaneo de red en Infection Monkey apuntando a 10.0.0.0/24.</em></p>
+<h2 is-upgraded>Generación del payload</h2>
+<p>Desde la interfaz &#34;Run Monkey&#34;, generamos el payload malicioso de despliegue manual para sistemas Linux.</p>
+<p><img alt="Generación del Payload" src="img\\d4644e603185a3b6.png"><em>Figura 2: Interfaz de Infection Monkey generando el comando curl para la inyección manual del agente.</em></p>
+<h2 is-upgraded>Inyección en víctimas</h2>
+<p>Inyectamos el malware en las víctimas usando las credenciales por defecto <code>root</code>/<code>toor</code>:</p>
+<ul>
+<li><strong>victim-1</strong> (10.0.0.10) — Servidor Web</li>
+<li><strong>victim-2</strong> (10.0.0.11) — Servidor Base de Datos</li>
+</ul>
+<p><img alt="Inyección Exitosa en Victim-1" src="img\\373cb04955497c1d.png"><em>Figura 3: Ejecución y despliegue exitoso del agente malicioso en victim-1.</em></p>
+<p><img alt="Inyección Exitosa en Victim-2" src="img\\719f4cc652968aaa.png"><em>Figura 4: Ejecución y despliegue exitoso del agente malicioso en victim-2.</em></p>
+<p>Ambos agentes se descargaron, instalaron y establecieron comunicación con la isla de comando y control (C2), demostrando la vulnerabilidad de una red sin bastionar.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="3. Monitorización y Análisis de Logs en Kibana" duration="0">
+        <p>Mientras los ataques se ejecutaban, toda la actividad de red era registrada por el firewall y enviada al stack ELK (Logstash → Elasticsearch → Kibana).</p>
+<h2 is-upgraded>Configuración del Data View</h2>
+<ol type="1">
+<li>Acceder a <code>http://localhost:5601</code></li>
+<li>Management → Stack Management → Data Views</li>
+<li>Crear data view: <code>proyecto11-logs-*</code> con campo temporal <code>@timestamp</code></li>
+</ol>
+<h2 is-upgraded>Visualización en Discover</h2>
+<p><img alt="Visualización en Kibana" src="img\\95171173054364a1.png"><em>Figura 5: Interfaz Discover de Kibana mostrando los logs de sistema en tiempo real.</em></p>
+<h2 is-upgraded>Queries de detección</h2>
+<table>
+<tr><td colspan="1" rowspan="1"><p>Query Tag</p>
+</td><td colspan="1" rowspan="1"><p>Qué detecta</p>
+</td><td colspan="1" rowspan="1"><p>Evidencia</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>tags: firewall_drop</code></p>
+</td><td colspan="1" rowspan="1"><p>Escaneo de puertos bloqueados por iptables</p>
+</td><td colspan="1" rowspan="1"><p>IPs atacantes y puertos destino</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>tags: ssh_failed_attempt</code></p>
+</td><td colspan="1" rowspan="1"><p>Fuerza bruta SSH (miles de intentos)</p>
+</td><td colspan="1" rowspan="1"><p>Múltiples fallos para usuario <code>root</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>tags: ssh_login_success</code></p>
+</td><td colspan="1" rowspan="1"><p>Compromiso exitoso vía SSH</p>
+</td><td colspan="1" rowspan="1"><p><code>Accepted password for root</code></p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p><code>tags: suricata_alert</code></p>
+</td><td colspan="1" rowspan="1"><p>Alertas del IDS Suricata</p>
+</td><td colspan="1" rowspan="1"><p>Firmas de escaneo y exploits</p>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="4. Bastionado y Contramedidas" duration="0">
+        <h2 is-upgraded>Ejecución del script de hardening</h2>
+<p>Aplicamos el script <code>apply_countermeasures.sh</code> que implementa múltiples capas de defensa:</p>
+<p><img alt="Script de Hardening" src="img\\4a7e7a749e38c378.png"><em>Figura 6: Ejecución del script de contramedidas.</em></p>
+<h2 is-upgraded>Reglas iptables aplicadas</h2>
+<pre><code language="language-bash" class="language-bash">$ docker exec victim-1 iptables -L INPUT -n -v --line-numbers
+</code></pre>
+<pre><code>Chain INPUT (policy ACCEPT)
+num   pkts bytes target     prot opt in     out     source     destination
+1        0     0 DROP       tcp  --  *      *       0.0.0.0/0  0.0.0.0/0  tcp dpt:22 state NEW recent: UPDATE seconds: 120 hit_count: 3
+2        0     0            tcp  --  *      *       0.0.0.0/0  0.0.0.0/0  tcp dpt:22 state NEW recent: SET
+3        0     0 ACCEPT     tcp  --  *      *       10.0.0.0/24 0.0.0.0/0 tcp dpt:22
+4        0     0 DROP       all  --  *      *       10.0.0.50  0.0.0.0/0
+5        0     0 DROP       tcp  --  *      *       0.0.0.0/0  0.0.0.0/0  tcp dpt:135
+6        0     0 DROP       tcp  --  *      *       0.0.0.0/0  0.0.0.0/0  tcp dpt:139
+7        0     0 DROP       tcp  --  *      *       0.0.0.0/0  0.0.0.0/0  tcp dpt:445
+8        0     0 DROP       tcp  --  *      *       0.0.0.0/0  0.0.0.0/0  tcp dpt:3389
+9        0     0 DROP       tcp  --  *      *       0.0.0.0/0  0.0.0.0/0  tcp dpt:5985
+10       0     0 DROP       tcp  --  *      *       0.0.0.0/0  0.0.0.0/0  tcp dpt:5986
+</code></pre>
+<h2 is-upgraded>Medidas implementadas</h2>
+<ol type="1">
+<li><strong>Bloqueo de IP maliciosa</strong> — IP de Monkey Island (<code>10.0.0.50</code>) bloqueada en INPUT</li>
+<li><strong>Rate limiting SSH</strong> — Máximo 3 intentos cada 120 segundos</li>
+<li><strong>Restricción de SSH a red interna</strong> — Solo tráfico desde <code>10.0.0.0/24</code></li>
+<li><strong>Bloqueo de puertos de propagación</strong> — 135 (RPC), 139 (NetBIOS), 445 (SMB), 3389 (RDP), 5985/5986 (WinRM)</li>
+<li><strong>Hardening SSH</strong> — <code>PermitRootLogin no</code>, <code>PasswordAuthentication no</code></li>
+<li><strong>Fail2ban</strong> — Baneo de 1 hora tras 3 intentos fallidos en 10 minutos</li>
+</ol>
+<h2 is-upgraded>Verificación SSH</h2>
+<pre><code language="language-bash" class="language-bash">$ docker exec victim-1 grep -E &#39;^(PermitRootLogin|PasswordAuthentication)&#39; /etc/ssh/sshd_config
+</code></pre>
+<pre><code>PermitRootLogin no
+PasswordAuthentication no
+</code></pre>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="5. Auditoría con InSpec" duration="0">
+        <p>Para certificar el bastionado, ejecutamos el perfil de Chef InSpec contra las víctimas.</p>
+<h2 is-upgraded>Controles verificados</h2>
+<table>
+<tr><td colspan="1" rowspan="1"><p>ID</p>
+</td><td colspan="1" rowspan="1"><p>Descripción</p>
+</td><td colspan="1" rowspan="1"><p>Estado</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>ssh-01</p>
+</td><td colspan="1" rowspan="1"><p>Puerto SSH 22 abierto y protocolo seguro</p>
+</td><td colspan="1" rowspan="1"><p>✔</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>ssh-02</p>
+</td><td colspan="1" rowspan="1"><p>Login root deshabilitado (<code>PermitRootLogin no</code>)</p>
+</td><td colspan="1" rowspan="1"><p>✔</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>ssh-03</p>
+</td><td colspan="1" rowspan="1"><p>Autenticación por contraseña deshabilitada</p>
+</td><td colspan="1" rowspan="1"><p>✔</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>fw-01</p>
+</td><td colspan="1" rowspan="1"><p>iptables operativo</p>
+</td><td colspan="1" rowspan="1"><p>✔</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>fw-02</p>
+</td><td colspan="1" rowspan="1"><p>Puertos de propagación bloqueados (445, 135)</p>
+</td><td colspan="1" rowspan="1"><p>✔</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>svc-01</p>
+</td><td colspan="1" rowspan="1"><p>Permisos <code>/etc/shadow</code> en 0600</p>
+</td><td colspan="1" rowspan="1"><p>✔</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>svc-02</p>
+</td><td colspan="1" rowspan="1"><p>Servicios inseguros deshabilitados (telnet, ftp)</p>
+</td><td colspan="1" rowspan="1"><p>✔</p>
+</td></tr>
+</table>
+<h2 is-upgraded>Resultados Victim-1</h2>
+<p><img alt="InSpec Victim-1" src="img\\e2f80871237a7286.png"><em>Figura 7: Auditoría InSpec en victim-1 — 8 controles exitosos, 0 fallos.</em></p>
+<h2 is-upgraded>Resultados Victim-2</h2>
+<p><img alt="InSpec Victim-2" src="img\\e022fe251a814ef1.png"><em>Figura 8: Auditoría InSpec en victim-2 — 8 controles exitosos, 0 fallos.</em></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="6. Verificación del Bloqueo" duration="0">
+        <p>Para demostrar la efectividad de las contramedidas, intentamos reinyectar el agente malicioso.</p>
+<h2 is-upgraded>Ataque después del bastionado</h2>
+<p><img alt="Ataque Bloqueado" src="img\\4cbc6406325561ce.png"><em>Figura 9: Intento de inyección después del bastionado. La conexión queda bloqueada indefinidamente por iptables.</em></p>
+<h2 is-upgraded>Logs post-bloqueo en Kibana</h2>
+<p><img alt="Logs post-bloqueo" src="img\\b8d694a975c6b98a.png"><em>Figura 10: Registros en Kibana tras el bastionado — actividad limpia sin compromisos.</em></p>
+<h2 is-upgraded>Mapa de infección final</h2>
+<p><img alt="Verificación Monkey" src="img\\8042068a01f2a190.png"><em>Figura 11: Mapa de infección tras el bastionado — nodos inalcanzables para el atacante.</em></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="7. Mapeo MITRE ATT&amp;CK" duration="0">
+        <table>
+<tr><td colspan="1" rowspan="1"><p>#</p>
+</td><td colspan="1" rowspan="1"><p>Ataque</p>
+</td><td colspan="1" rowspan="1"><p>Fase MITRE</p>
+</td><td colspan="1" rowspan="1"><p>Técnica</p>
+</td><td colspan="1" rowspan="1"><p>Evidencia en ELK</p>
+</td><td colspan="1" rowspan="1"><p>Contramedida</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>1</p>
+</td><td colspan="1" rowspan="1"><p>Escaneo de puertos</p>
+</td><td colspan="1" rowspan="1"><p>Discovery</p>
+</td><td colspan="1" rowspan="1"><p>T1046</p>
+</td><td colspan="1" rowspan="1"><p><code>firewall_drop</code></p>
+</td><td colspan="1" rowspan="1"><p>Política INPUT DROP</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>2</p>
+</td><td colspan="1" rowspan="1"><p>Fuerza bruta SSH</p>
+</td><td colspan="1" rowspan="1"><p>Credential Access</p>
+</td><td colspan="1" rowspan="1"><p>T1110.001</p>
+</td><td colspan="1" rowspan="1"><p><code>ssh_failed_attempt</code></p>
+</td><td colspan="1" rowspan="1"><p>Rate limiting + Fail2ban</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>3</p>
+</td><td colspan="1" rowspan="1"><p>Login SSH exitoso</p>
+</td><td colspan="1" rowspan="1"><p>Initial Access</p>
+</td><td colspan="1" rowspan="1"><p>T1078</p>
+</td><td colspan="1" rowspan="1"><p><code>ssh_login_success</code></p>
+</td><td colspan="1" rowspan="1"><p>Deshabilitar root + clave pública</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>4</p>
+</td><td colspan="1" rowspan="1"><p>Propagación SMB</p>
+</td><td colspan="1" rowspan="1"><p>Lateral Movement</p>
+</td><td colspan="1" rowspan="1"><p>T1021.002</p>
+</td><td colspan="1" rowspan="1"><p><code>lateral_movement</code></p>
+</td><td colspan="1" rowspan="1"><p>Bloqueo puertos 135/139/445</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>5</p>
+</td><td colspan="1" rowspan="1"><p>Propagación RPC/WMI</p>
+</td><td colspan="1" rowspan="1"><p>Lateral Movement</p>
+</td><td colspan="1" rowspan="1"><p>T1047</p>
+</td><td colspan="1" rowspan="1"><p>Conexiones puerto 135</p>
+</td><td colspan="1" rowspan="1"><p>Bloqueo puerto 135</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>6</p>
+</td><td colspan="1" rowspan="1"><p>Dumpeo credenciales</p>
+</td><td colspan="1" rowspan="1"><p>Credential Access</p>
+</td><td colspan="1" rowspan="1"><p>T1003.008</p>
+</td><td colspan="1" rowspan="1"><p><code>auditd_event</code> en /etc/shadow</p>
+</td><td colspan="1" rowspan="1"><p>Permisos 0600 en shadow</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>7</p>
+</td><td colspan="1" rowspan="1"><p>Persistencia local</p>
+</td><td colspan="1" rowspan="1"><p>Persistence</p>
+</td><td colspan="1" rowspan="1"><p>T1543.003</p>
+</td><td colspan="1" rowspan="1"><p>Escrituras en cron</p>
+</td><td colspan="1" rowspan="1"><p>Restricción cron.allow</p>
+</td></tr>
+<tr><td colspan="1" rowspan="1"><p>8</p>
+</td><td colspan="1" rowspan="1"><p>Servicios obsoletos</p>
+</td><td colspan="1" rowspan="1"><p>Discovery</p>
+</td><td colspan="1" rowspan="1"><p>T1592</p>
+</td><td colspan="1" rowspan="1"><p>Puertos 21/23 abiertos</p>
+</td><td colspan="1" rowspan="1"><p>Desactivación ftp/telnet</p>
+</td></tr>
+</table>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="8. Conclusión" duration="0">
+        <p>El proyecto ha demostrado el ciclo completo de emulación de adversarios:</p>
+<ol type="1">
+<li><strong>Detección de vulnerabilidades</strong> — Inyección y movimiento de Infection Monkey en una red no asegurada</li>
+<li><strong>Monitorización centralizada</strong> — Captura de evidencias del comportamiento anómalo mediante el stack ELK</li>
+<li><strong>Mitigación efectiva</strong> — Aislamiento de la infraestructura mediante reglas de firewalling interno y bastionado de servicios, bloqueando ataques subsecuentes</li>
+</ol>
+<p>El resultado es una infraestructura que no solo es más segura, sino que puede auditarse y verificarse técnicamente con herramientas como Chef InSpec.</p>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

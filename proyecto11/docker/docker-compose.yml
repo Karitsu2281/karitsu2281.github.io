@@ -7,7 +7,6 @@ networks:
           gateway: 192.168.100.1
   internal_net:
     driver: bridge
-    internal: true
     ipam:
       config:
         - subnet: 10.0.0.0/24
@@ -38,7 +37,9 @@ services:
       - net.ipv4.conf.default.send_redirects=0
     networks:
       external_net:
+        ipv4_address: 192.168.100.10
       internal_net:
+        ipv4_address: 10.0.0.2
     volumes:
       - suricata_logs:/var/log/suricata
     depends_on:
@@ -55,6 +56,7 @@ services:
       - SYS_ADMIN
     networks:
       internal_net:
+        ipv4_address: 10.0.0.10
     sysctls:
       - net.ipv4.conf.all.accept_source_route=0
     environment:
@@ -72,29 +74,33 @@ services:
       - SYS_ADMIN
     networks:
       internal_net:
+        ipv4_address: 10.0.0.11
     sysctls:
       - net.ipv4.conf.all.accept_source_route=0
     environment:
       - VICTIM_ID=2
       - SSH_PASSWORD=toor
 
-  monkey_island:
-    image: infectionmonkey/monkey-island:latest
-    container_name: monkey_island
-    hostname: monkey_island
-    tty: true
-    stdin_open: true
-    network_mode: host
-    depends_on:
-      - monkey_mongo
-
   monkey_mongo:
     image: mongo:6.0
     container_name: monkey_mongo
     hostname: monkey_mongo
-    network_mode: host
+    networks:
+      internal_net:
+        ipv4_address: 10.0.0.50
+    ports:
+      - "5000:5000"
     volumes:
       - monkey_mongo_data:/data/db
+
+  monkey_island:
+    image: infectionmonkey/monkey-island:latest
+    container_name: monkey_island
+    tty: true
+    stdin_open: true
+    network_mode: "service:monkey_mongo"
+    depends_on:
+      - monkey_mongo
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
@@ -103,7 +109,8 @@ services:
     ports:
       - "9200:9200"
     networks:
-      external_net:
+      internal_net:
+        ipv4_address: 10.0.0.30
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
@@ -119,7 +126,8 @@ services:
       - "5515:5515/udp"
       - "5044:5044"
     networks:
-      external_net:
+      internal_net:
+        ipv4_address: 10.0.0.32
     volumes:
       - ./elk/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
     depends_on:
@@ -132,7 +140,8 @@ services:
     ports:
       - "5601:5601"
     networks:
-      external_net:
+      internal_net:
+        ipv4_address: 10.0.0.31
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     depends_on:

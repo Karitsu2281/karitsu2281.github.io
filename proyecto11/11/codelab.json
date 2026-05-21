@@ -1,0 +1,26 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2026-05-21T10:28:39+02:00",
+  "id": "11",
+  "duration": 0,
+  "title": "Proyecto 11 — Informe Final: Emulación de Adversarios, Monitorización y Bastionado",
+  "summary": "Informe final del Proyecto 11 — Emulación de adversarios con Infection Monkey, monitorización con ELK y bastionado de infraestructura.",
+  "source": "codelab.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "codelab",
+    "markdown"
+  ],
+  "tags": [
+    "web"
+  ],
+  "feedback": "https://github.com/karitsu2281/karitsu2281.github.io/issues",
+  "ga": "ID de Google Analytics",
+  "url": "11"
+}
