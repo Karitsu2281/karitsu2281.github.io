@@ -1,226 +1,176 @@
-# Proyecto 11 - Emulacion de Adversarios y Contramedidas
+# Proyecto 11 — Emulación de Adversarios, Monitorización y Bastionado
+
+Ciclo completo de emulación de adversarios utilizando **Infection Monkey**, monitorización centralizada con **ELK Stack** (Elasticsearch, Logstash, Kibana) y bastionado de infraestructura con **iptables, SSH hardening, Fail2ban** y verificación mediante **Chef InSpec**.
+
+---
 
 ## Arquitectura
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│                      Docker Host (tu maquina)                     │
-│                                                                  │
-│  ┌─────────────────┐     ┌────────────────────────────────────┐ │
-│  │ Infection Monkey │     │         ELK Stack                  │ │
-│  │  (monkey_island) │     │  Elasticsearch :9200              │ │
-│  │  http://:5000    │     │  Logstash     :5515/:5044         │ │
-│  └────────┬─────────┘     │  Kibana       :5601               │ │
-│           │               └────────────────────────────────────┘ │
-│           │                                                      │
-│  ┌────────▼──────────────────────────────────────────────────┐   │
-│  │              Red Externa (192.168.100.0/24)                │   │
-│  └────────────────────────┬───────────────────────────────────┘   │
-│                           │                                      │
-│  ┌────────────────────────▼───────────────────────────────────┐   │
-│  │  FIREWALL (iptables + Suricata IDS)                        │   │
-│  │  - NAT/Masquerade                                         │   │
-│  │  - Rate limiting SSH                                      │   │
-│  │  - Logging → Logstash                                     │   │
-│  │  - Forwarding                                              │   │
-│  └────────────────────────┬───────────────────────────────────┘   │
-│                           │                                      │
-│  ┌────────────────────────▼───────────────────────────────────┐   │
-│  │              Red Interna (10.0.0.0/24)                     │   │
-│  │                                                            │   │
-│  │  ┌──────────────┐    ┌──────────────┐                     │   │
-│  │  │  victim-1     │    │  victim-2    │                     │   │
-│  │  │  .10          │    │  .11         │                     │   │
-│  │  │  SSH:22       │    │  SSH:22      │                     │   │
-│  │  │  HTTP:80      │    │  MySQL:3306  │                     │   │
-│  │  │  NGINX        │    │  SMB:445     │                     │   │
-│  │  └──────────────┘    └──────────────┘                     │   │
-│  └────────────────────────────────────────────────────────────┘   │
-└──────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                         DOCKER HOST                                 │
+│  ┌───────────────────┐          ┌──────────────────────────────┐   │
+│  │ Infection Monkey  │          │        ELK STACK             │   │
+│  │ Island (C2)       │          │ - Elasticsearch :9200        │   │
+│  │ :5000             │          │ - Kibana        :5601        │   │
+│  └────────┬──────────┘          └───────────────┬──────────────┘   │
+│           │                                     │                  │
+│  ┌────────▼─────────────────────────────────────▼──────────────┐  │
+│  │           Red Externa (192.168.100.0/24)                     │  │
+│  └───────────────────────────────┬──────────────────────────────┘  │
+│                                  │                                 │
+│  ┌───────────────────────────────▼──────────────────────────────┐  │
+│  │     FIREWALL (iptables + Suricata IDS)                       │  │
+│  │     - Ext: 192.168.100.10  - Int: 10.0.0.2                  │  │
+│  │     - Políticas: INPUT DROP, FORWARD DROP                    │  │
+│  │     - NAT / Masquerade                                       │  │
+│  │     - Rate limiting SSH                                      │  │
+│  │     - Logging → Logstash                                     │  │
+│  └───────────────────────────────┬──────────────────────────────┘  │
+│                                  │                                 │
+│  ┌───────────────────────────────▼──────────────────────────────┐  │
+│  │           Red Interna (10.0.0.0/24)                           │  │
+│  │                                                               │  │
+│  │   victim-1 (Web)           victim-2 (BD)                      │  │
+│  │   10.0.0.10                10.0.0.11                          │  │
+│  │   SSH:22 | Nginx:80        SSH:22 | MySQL:3306               │  │
+│  └───────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────┘
 ```
+
+---
 
 ## Requisitos
 
 - Docker Desktop (o Docker Engine + Docker Compose)
-- Terraform >= 1.3.0 (opcional, alternativa a docker-compose)
-- Ansible >= 2.12 (para hardening automatizado)
-- InSpec >= 5 (para verificacion de cumplimiento)
-- Al menos 8 GB de RAM disponibles
-- Python 3 (para scripts de analisis)
+- 8 GB RAM disponibles
+- InSpec >= 4.46 (para verificación de cumplimiento, instalado en `C:\opscode\inspec`)
 
-## Despliegue Rapido (Docker Compose)
+---
 
-### Paso 1: Levantar el entorno
+## Despliegue Rápido
+
+### 1. Levantar el entorno
 
 ```bash
-cd proyecto11/docker
+cd docker
 docker compose up -d
 ```
 
-Esto levanta:
-- Firewall con iptables + Suricata IDS
-- 2 maquinas victima (Ubuntu con SSH, HTTP, MySQL)
-- ELK Stack (Elasticsearch, Logstash, Kibana)
-- Infection Monkey Island + MongoDB
+Esto levanta 8 contenedores:
+- `firewall` — iptables + Suricata IDS
+- `victim-1` — Servidor web (Nginx)
+- `victim-2` — Servidor base de datos (MySQL)
+- `elasticsearch`, `logstash`, `kibana` — Stack ELK
+- `monkey_island`, `monkey_mongo` — Infection Monkey
 
-### Paso 2: Verificar el entorno
+### 2. Verificar
 
 ```bash
-# Ver contenedores
 docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
-
-# Comprobar red interna
 docker exec victim-1 ping -c 2 victim-2
-
-# Verificar firewall
 docker exec firewall iptables -L -n -v
 ```
 
-### Paso 3: Acceder a Infection Monkey
+### 3. Acceder a Infection Monkey
 
-1. Abre http://localhost:5000 en tu navegador
-2. Configura la simulacion:
-   - **Island mode**: Accede a la configuracion
-   - **PBA (Post-Breach Assessment)**: Habilita la evaluacion
-   - **Network scan**: Escanea la red 10.0.0.0/24
-   - **Exploits**: Habilita los que quieras probar
-3. Despliega Monkey Agents via SSH a las victimas:
-   ```
-   Host: 10.0.0.10 (victim-1)  Usuario: root  Password: toor
-   Host: 10.0.0.11 (victim-2)  Usuario: root  Password: toor
-   ```
-4. Ejecuta la simulacion
+1. Abre `https://localhost:5000`
+2. Acepta el certificado autofirmado
+3. Crea usuario (ej: `admin` / `BastionadoProyecto11`)
+4. Configura el ataque:
+   - **Server IP**: `10.0.0.1`
+   - **Network Scan**: `10.0.0.0/24`
+   - **Exploits**: SSH Exploiter, SMB Exploiter
+5. Despliega agentes vía SSH:
+   - `victim-1`: `10.0.0.10` — `root` / `toor`
+   - `victim-2`: `10.0.0.11` — `root` / `toor`
 
-### Paso 4: Analizar los logs
+### 4. Monitorizar en Kibana
 
-```bash
-# Acceder a Kibana
-# Abre http://localhost:5601
+1. Abre `http://localhost:5601`
+2. Crea un Data View: `proyecto11-logs-*` (campo temporal: `@timestamp`)
 
-# O ejecuta el script de analisis automatico
-cd proyecto11/scripts
-chmod +x analyze_logs.sh
-./analyze_logs.sh
-```
+**Queries de detección:**
 
-#### Consultas utiles en Kibana:
-- `tags: firewall_drop` — Paquetes bloqueados por el firewall
-- `tags: ssh_failed_attempt` — Intentos de fuerza bruta SSH
-- `tags: suricata_alert` — Alertas del IDS
-- `tags: ssh_login_success` — Logins SSH exitosos
+| Query | Qué detecta |
+|---|---|
+| `tags: firewall_drop` | Paquetes bloqueados por iptables |
+| `tags: ssh_failed_attempt` | Fuerza bruta SSH |
+| `tags: ssh_login_success` | Compromiso SSH exitoso |
+| `tags: suricata_alert` | Alertas del IDS Suricata |
 
-### Paso 5: Aplicar contramedidas
+### 5. Aplicar contramedidas
 
 ```bash
-cd proyecto11/scripts
-chmod +x apply_countermeasures.sh
+cd scripts
+# En Bash:
 ./apply_countermeasures.sh
+
+# O manualmente en cada víctima (ver scripts/)
 ```
 
-### Paso 6: Re-ejecutar simulacion
+### 6. Re-ejecutar simulación y comparar
 
-Vuelve a Infection Monkey y lanza otra simulacion. Compara los resultados antes/despues de las contramedidas en Kibana.
+Vuelve a Infection Monkey, lanza otra simulación y compara el mapa de infección (antes rojo vs después verde) y los logs en Kibana.
 
 ---
 
-## Despliegue con Terraform (alternativa)
+## Verificación con InSpec
 
 ```bash
-cd proyecto11/terraform
-terraform init
-terraform plan
-terraform apply -auto-approve
+cd inspec
 
-# Para destruir
-terraform destroy -auto-approve
+# En Windows con Chef InSpec instalado en C:\opscode\inspec
+$env:CHEF_LICENSE="accept"
+& "C:\opscode\inspec\bin\inspec.bat" exec profiles/hardening -t docker://victim-1
+& "C:\opscode\inspec\bin\inspec.bat" exec profiles/hardening -t docker://victim-2
+```
+
+**Resultado esperado:** 8 controles exitosos, 0 fallos.
+
+| ID | Control | Descripción |
+|---|---|---|
+| ssh-01 | SSH Protocol and Port | Puerto 22 abierto |
+| ssh-02 | SSH Root Login Disabled | `PermitRootLogin no` |
+| ssh-03 | SSH Password Auth Disabled | `PasswordAuthentication no` |
+| fw-01 | iptables operational | Firewall activo |
+| fw-02 | Propagation ports blocked | Puertos 445, 135 bloqueados |
+| svc-01 | Shadow file permissions | `/etc/shadow` en 0600 |
+| svc-02 | Insecure services disabled | Telnet/FTP desactivados |
+
+Si InSpec falla por el transporte Docker en Windows (named pipe), usa el script alternativo:
+
+```powershell
+.\scripts\run_inspec_checks.ps1       # Para victim-1
+.\scripts\run_inspec_checks_victim2.ps1  # Para victim-2
 ```
 
 ---
 
-## Hardening con Ansible
+## Mapeo MITRE ATT&CK
 
-```bash
-cd proyecto11/ansible
-
-# Aplicar hardening a las victimas
-ansible-playbook -i inventory.ini playbooks/hardening.yml
-
-# Solo a una victima
-ansible-playbook -i inventory.ini playbooks/hardening.yml --limit victim-1
-```
-
----
-
-## Verificar hardening con InSpec
-
-```bash
-cd proyecto11/inspec
-
-# Ejecutar perfil de hardening contra una victima
-inspec exec profiles/hardening -t docker://victim-1
-
-# Generar reporte
-inspec exec profiles/hardening -t docker://victim-1 --reporter json:report.json
-```
+| # | Ataque | Fase MITRE | Técnica | Contramedida |
+|---|---|---|---|---|
+| 1 | Escaneo de puertos | Discovery | T1046 | Política INPUT DROP |
+| 2 | Fuerza bruta SSH | Credential Access | T1110.001 | Rate limiting + Fail2ban |
+| 3 | Login SSH exitoso | Initial Access | T1078 | Deshabilitar root + clave pública |
+| 4 | Propagación SMB | Lateral Movement | T1021.002 | Bloqueo puertos 135/139/445 |
+| 5 | Propagación RPC/WMI | Lateral Movement | T1047 | Bloqueo puerto 135 |
+| 6 | Dumpeo credenciales | Credential Access | T1003.008 | Permisos 0600 en shadow |
+| 7 | Persistencia local | Persistence | T1543.003 | Restricción cron.allow |
+| 8 | Servicios obsoletos | Discovery | T1592 | Desactivación ftp/telnet |
 
 ---
 
-## Analisis de resultados para la presentacion
+## Informe en formato Codelabs
 
-Documenta los siguientes puntos en tu presentacion:
+El informe final está disponible como Google Codelab:
 
-1. **Proceso de despliegue**
-   - Capturas de `docker ps`, `iptables -L`
-   - Evidencia de que los servicios estan corriendo
-
-2. **Emulacion de adversarios**
-   - Configuracion usada en Infection Monkey
-   - Tipos de ataques ejecutados (fuerza bruta, propagacion, escaneo)
-   - Captura del informe de Infection Monkey
-
-3. **Deteccion en registros**
-   - Capturas de Kibana mostrando:
-     - Paquetes bloqueados por el firewall
-     - Intentos de fuerza bruta SSH
-     - Alertas de Suricata con firmas activadas
-   - Tabla de comportamientos detectados vs origen
-
-4. **Medidas de mitigacion**
-   - Reglas de iptables implementadas
-   - Configuracion de fail2ban
-   - Hardening SSH
-   - Comparativa antes/despues (graficas de Kibana)
-
----
-
-## Comandos utiles
-
-```bash
-# Ver logs del firewall en tiempo real
-docker exec firewall tail -f /var/log/suricata/fast.log
-docker exec firewall tail -f /var/log/syslog
-
-# Ver intentos de SSH en victimas
-docker exec victim-1 tail -f /var/log/auth.log
-
-# Entrar en una victima
-docker exec -it victim-1 bash
-
-# Ver reglas de iptables en el firewall
-docker exec firewall iptables -L -n -v --line-numbers
-
-# Ver alerts de Suricata
-docker exec firewall cat /var/log/suricata/fast.log
-
-# Testear conectividad desde Monkey Island
-docker exec monkey_island ping 10.0.0.10
-docker exec monkey_island nmap 10.0.0.10
-
-# Reiniciar todo
-cd proyecto11/docker
-docker compose down
-docker compose up -d
 ```
+proyecto11/11/index.html
+```
+
+Generado con `claat` a partir de `codelab.md`.
 
 ---
 
@@ -228,16 +178,35 @@ docker compose up -d
 
 ```
 proyecto11/
-├── terraform/           # Infraestructura como codigo (Docker provider)
-│   ├── main.tf
-│   ├── variables.tf
-│   ├── outputs.tf
-│   └── terraform.tfvars
-├── ansible/             # Automatizacion de hardening
+├── 11/                    # Codelab generado (HTML)
+├── docker/                # Entorno de simulación
+│   ├── docker-compose.yml
+│   ├── victim/Dockerfile
+│   ├── firewall/
+│   │   ├── Dockerfile
+│   │   ├── entrypoint.sh
+│   │   ├── suricata.yaml
+│   │   └── custom.rules
+│   └── elk/
+│       ├── logstash.conf
+│       └── kibana_saved_searches.ndjson
+├── scripts/
+│   ├── apply_countermeasures.sh
+│   ├── apply_countermeasures.ps1
+│   ├── analyze_logs.sh
+│   ├── run_inspec_checks.ps1
+│   └── run_inspec_checks_victim2.ps1
+├── inspec/
+│   └── profiles/hardening/
+│       ├── inspec.yml
+│       └── controls/
+│           ├── ssh.rb
+│           ├── firewall.rb
+│           └── services.rb
+├── ansible/               # Hardening automatizado
 │   ├── ansible.cfg
 │   ├── inventory.ini
-│   ├── playbooks/
-│   │   └── hardening.yml
+│   ├── playbooks/hardening.yml
 │   └── roles/hardening/
 │       ├── tasks/main.yml
 │       ├── handlers/main.yml
@@ -246,24 +215,47 @@ proyecto11/
 │       │   ├── iptables.rules.j2
 │       │   └── rsyslog.conf.j2
 │       └── vars/main.yml
-├── inspec/              # Verificacion de cumplimiento
-│   └── profiles/hardening/
-│       ├── inspec.yml
-│       └── controls/
-│           ├── ssh.rb
-│           ├── firewall.rb
-│           └── services.rb
-├── docker/              # Entorno de simulacion
-│   ├── docker-compose.yml
-│   ├── victim/Dockerfile
-│   ├── firewall/
-│   │   ├── Dockerfile
-│   │   ├── entrypoint.sh
-│   │   └── suricata.yaml
-│   └── elk/
-│       └── logstash.conf
-├── scripts/             # Analisis y contramedidas
-│   ├── analyze_logs.sh
-│   └── apply_countermeasures.sh
+├── terraform/             # Infraestructura como código
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── outputs.tf
+│   └── terraform.tfvars
+├── img/                   # Capturas de pantalla
+├── INFORME_FINAL.md       # Informe final del proyecto
+├── INFORME_EJECUCION_Y_CAPTURAS.md  # Guía de ejecución y capturas
+├── GUION_PRESENTACION.md  # Guión para la presentación
+├── INFECTION_MONKEY_GUIDE.md
+├── codelab.md             # Fuente del Codelab
+├── codelab.json
+├── claat-windows-amd64.exe
 └── README.md
+```
+
+---
+
+## Comandos útiles
+
+```bash
+# Ver logs del firewall
+docker exec firewall tail -f /var/log/suricata/fast.log
+
+# Ver intentos de SSH en víctimas
+docker exec victim-1 tail -f /var/log/auth.log
+
+# Ver reglas de iptables
+docker exec victim-1 iptables -L INPUT -n -v --line-numbers
+
+# Acceder a una víctima
+docker exec -it victim-1 bash
+
+# Verificar SSH hardening
+docker exec victim-1 grep -E '^(PermitRootLogin|PasswordAuthentication)' /etc/ssh/sshd_config
+
+# Testear conectividad
+docker exec monkey_island ping 10.0.0.10
+
+# Reiniciar todo
+cd docker
+docker compose down
+docker compose up -d
 ```
