@@ -493,8 +493,28 @@ footer a:hover {
     color: var(--text);
 }
 
+.egg-toggle {
+    display: none;
+}
+
+.egg-label {
+    cursor: pointer;
+    user-select: none;
+}
+
+.egg-toggle:checked ~ .easter-egg {
+    display: block;
+}
+
 .easter-egg {
     display: none;
+}
+
+.easter-egg img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin-top: 0.75rem;
 }
 
 /* Animations */
