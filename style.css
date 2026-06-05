@@ -129,6 +129,16 @@ body {
     line-height: 1.7;
 }
 
+.hero-sub {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    opacity: 0.3;
+    margin-top: -16px;
+    margin-bottom: 32px;
+    letter-spacing: 0.15em;
+    font-weight: 400;
+}
+
 .hero-actions {
     display: flex;
     align-items: center;
@@ -481,6 +491,10 @@ footer a {
 
 footer a:hover {
     color: var(--text);
+}
+
+.easter-egg {
+    display: none;
 }
 
 /* Animations */

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data:; script-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=()">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="robots" content="noai, noimageai">
+    <meta name="gptbot" content="noindex">
+    <meta name="googlebot" content="nosnippet">
+
+    <title>SOC-205 — Malicious Macro | Karitsu2281</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous">
+    <style>
+        .writeup-header { padding: 80px 0 40px; }
+        .writeup-header .back-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 0.85rem; font-weight: 600; color: var(--accent);
+            text-decoration: none; transition: gap 0.25s; margin-bottom: 24px;
+        }
+        .writeup-header .back-link:hover { gap: 10px; }
+        .writeup-header h1 {
+            font-size: clamp(1.75rem, 3vw, 2.5rem); font-weight: 800;
+            letter-spacing: -0.03em; margin-bottom: 8px; color: #fff;
+        }
+        .writeup-header .meta {
+            display: flex; flex-wrap: wrap; gap: 16px;
+            color: var(--text-muted); font-size: 0.85rem;
+        }
+        .writeup-header .meta span { display: flex; align-items: center; gap: 6px; }
+        .writeup-header .meta i { color: var(--accent); }
+        .writeup-body { max-width: 720px; margin: 0 auto 60px; line-height: 1.8; }
+        .writeup-body p {
+            font-size: 1rem; color: var(--text-muted); margin-bottom: 24px;
+        }
+        .writeup-body p strong { color: var(--text); }
+        .writeup-body img {
+            width: 100%; border-radius: var(--radius-lg); border: 1px solid var(--border);
+            margin: 8px 0 32px; display: block; background: var(--surface);
+        }
+        .writeup-body h2 {
+            font-size: 1.3rem; font-weight: 700; margin-top: 40px;
+            margin-bottom: 16px; color: #fff;
+        }
+        .writeup-body h3 {
+            font-size: 1.1rem; font-weight: 600; margin-top: 32px;
+            margin-bottom: 12px; color: var(--text);
+        }
+        .writeup-body .verdict {
+            background: var(--accent-dim); border: 1px solid var(--accent-border);
+            border-radius: var(--radius-lg); padding: 24px 28px; margin: 32px 0;
+        }
+        .writeup-body .verdict h3 { margin-top: 0; color: var(--accent); }
+        .writeup-body .verdict p { margin-bottom: 0; }
+        body { min-height: 100vh; display: flex; flex-direction: column; }
+        .container { flex: 1; }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="../../index.html" class="nav-logo"><i class="fa-solid fa-terminal"></i> Karitsu2281</a>
+            <ul class="nav-links">
+                <li><a href="../../index.html#proyectos">Proyectos</a></li>
+                <li><a href="../../index.html#perfil">Perfil</a></li>
+                <li><a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#104;&#117;&#103;&#111;&#102;&#108;&#111;&#114;&#101;&#115;&#109;&#111;&#108;&#105;&#110;&#97;&#50;&#51;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;">Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <div class="writeup-header">
+            <a href="../index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Volver a Let's Defend</a>
+            <h1>SOC-205: Malicious Macro has been executed</h1>
+            <div class="meta">
+                <span><i class="fa-solid fa-shield-halved"></i> Let's Defend</span>
+                <span><i class="fa-solid fa-tag"></i> SOC</span>
+                <span><i class="fa-solid fa-file"></i> Macro</span>
+                <span><i class="fa-solid fa-skull"></i> Malware</span>
+            </div>
+        </div>
+
+        <div class="writeup-body">
+
+            <p>Lo primero que hice, al tener la información del caso, fue revisar la sección de <strong>Email Security</strong>, ya que el nombre del archivo sugería que pudo haber llegado por correo, aunque nunca hay que hacer suposiciones.</p>
+
+            <img src="../img205/1.png" alt="Sección Email Security">
+
+            <p>Al revisar dicha sección, encontré un correo de un tal <strong>Jake</strong> dirigido a la usuaria afectada. El posible origen del ataque fue un email de <strong>phishing</strong>, y la contraseña del archivo adjunto era <strong>"infected"</strong>.</p>
+
+            <img src="../img205/2.png" alt="Correo de phishing de Jake">
+
+            <p>A continuación, revisé los logs de la IP asociada a la usuaria en busca de indicios de C2. En el último log encontré una consulta DNS a <strong>www.greyhathacker.net</strong>. Al revisar el enlace en VirusTotal, obtuve dos detecciones, por lo que <em>podría</em> ser malicioso.</p>
+
+            <img src="../img205/3.png" alt="Log con consulta DNS a greyhathacker.net">
+            <img src="../img205/4.png" alt="Resultado de VirusTotal para greyhathacker.net">
+
+            <p>Revisando el resto de logs, encontré que se había creado un nuevo archivo llamado <strong>Explorer.EXE</strong> en la carpeta Windows, además de un comando de PowerShell para descargar un archivo desde la página anteriormente identificada e iniciar dicho proceso.</p>
+
+            <img src="../img205/5.png" alt="Log de creación de Explorer.EXE">
+
+            <img src="../img205/6.png" alt="Log de PowerShell descargando archivo">
+
+            <div class="verdict">
+                <h3><i class="fa-solid fa-circle-exclamation"></i> Veredicto</h3>
+                <p><strong>Positivo verdadero.</strong> El malware contactó con el C2, hubo tráfico desconocido hacia Internet y el sistema infectado no ha sido limpiado.</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Copyright &copy; 2026 Karitsu2281</p>
+        <p>
+            <a href="https://github.com/karitsu2281" target="_blank" rel="noopener noreferrer">GitHub</a>
+            &nbsp;·&nbsp;
+            <a href="https://www.linkedin.com/in/hugo-flores-molina-167247414" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        </p>
+        <div class="easter-egg">
+            <img src="../../.cache/6a42ca7b-9a18-4f8c-9910-fa08da54c260.jpg" alt="">
+        </div>
+    </footer>
+
+</body>
+
+</html>
