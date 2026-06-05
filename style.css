@@ -511,10 +511,16 @@ footer a:hover {
 }
 
 .easter-egg img {
-    max-width: 100%;
+    width: 120px;
     height: auto;
     border-radius: 6px;
     margin-top: 0.75rem;
+    opacity: 0.85;
+    transition: opacity 0.3s;
+}
+
+.easter-egg img:hover {
+    opacity: 1;
 }
 
 /* Animations */
