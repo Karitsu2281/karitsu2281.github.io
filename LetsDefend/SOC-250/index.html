@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data:; script-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=()">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="robots" content="noai, noimageai">
+    <meta name="gptbot" content="noindex">
+    <meta name="googlebot" content="nosnippet">
+
+    <title>SOC-250 — APT35 HyperScrape Data Exfiltration Tool Detected | Karitsu2281</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous">
+    <style>
+        .writeup-header { padding: 80px 0 40px; }
+        .writeup-header .back-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 0.85rem; font-weight: 600; color: var(--accent);
+            text-decoration: none; transition: gap 0.25s; margin-bottom: 24px;
+        }
+        .writeup-header .back-link:hover { gap: 10px; }
+        .writeup-header h1 {
+            font-size: clamp(1.75rem, 3vw, 2.5rem); font-weight: 800;
+            letter-spacing: -0.03em; margin-bottom: 8px; color: #fff;
+        }
+        .writeup-header .meta {
+            display: flex; flex-wrap: wrap; gap: 16px;
+            color: var(--text-muted); font-size: 0.85rem;
+        }
+        .writeup-header .meta span { display: flex; align-items: center; gap: 6px; }
+        .writeup-header .meta i { color: var(--accent); }
+        .writeup-body { max-width: 720px; margin: 0 auto 60px; line-height: 1.8; }
+        .writeup-body p {
+            font-size: 1rem; color: var(--text-muted); margin-bottom: 24px;
+        }
+        .writeup-body p strong { color: var(--text); }
+        .writeup-body img {
+            width: 100%; border-radius: var(--radius-lg); border: 1px solid var(--border);
+            margin: 8px 0 32px; display: block; background: var(--surface);
+        }
+        .writeup-body h2 {
+            font-size: 1.3rem; font-weight: 700; margin-top: 40px;
+            margin-bottom: 16px; color: #fff;
+        }
+        .writeup-body h3 {
+            font-size: 1.1rem; font-weight: 600; margin-top: 32px;
+            margin-bottom: 12px; color: var(--text);
+        }
+        .writeup-body .verdict {
+            background: var(--accent-dim); border: 1px solid var(--accent-border);
+            border-radius: var(--radius-lg); padding: 24px 28px; margin: 32px 0;
+        }
+        .writeup-body .verdict h3 { margin-top: 0; color: var(--accent); }
+        .writeup-body .verdict p { margin-bottom: 0; }
+        body { min-height: 100vh; display: flex; flex-direction: column; }
+        .container { flex: 1; }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="../../index.html" class="nav-logo"><i class="fa-solid fa-terminal"></i> Karitsu2281</a>
+            <ul class="nav-links">
+                <li><a href="../../index.html#proyectos">Proyectos</a></li>
+                <li><a href="../../index.html#perfil">Perfil</a></li>
+                <li><a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#104;&#117;&#103;&#111;&#102;&#108;&#111;&#114;&#101;&#115;&#109;&#111;&#108;&#105;&#110;&#97;&#50;&#51;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;">Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <div class="writeup-header">
+            <a href="../index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Volver a Let's Defend</a>
+            <h1>SOC-250: APT35 HyperScrape Data Exfiltration Tool Detected</h1>
+            <div class="meta">
+                <span><i class="fa-solid fa-shield-halved"></i> Let's Defend</span>
+                <span><i class="fa-solid fa-tag"></i> SOC</span>
+                <span><i class="fa-solid fa-download"></i> Exfiltración</span>
+                <span><i class="fa-solid fa-skull"></i> APT35</span>
+            </div>
+        </div>
+
+        <div class="writeup-body">
+
+            <p>Lo primero que he hecho es ir al equipo afectado (que se llama Arthur) en <strong>Endpoint Security</strong> para ver el historial del equipo y empezar a buscar posibles indicios desde ahí.</p>
+
+            <img src="../img250/1.png" alt="Endpoint Security — selección del equipo Arthur">
+
+            <p>Al revisar el historial de conexiones, he encontrado una dirección IP donde el equipo se comunicó a la misma hora donde se levantó la alerta. Al copiar la IP y ponerla en <strong>VirusTotal</strong>, se confirma que dicha dirección es maliciosa, por lo que sabemos de momento de que el equipo se infectó y contactó con dicha IP.</p>
+
+            <img src="../img250/2.png" alt="Historial de conexiones con IP sospechosa">
+            <img src="../img250/3.png" alt="Resultado de VirusTotal confirmando IP maliciosa">
+
+            <p>Además, revisando los procesos del equipo, encontramos un <strong>.exe sospechoso</strong> ejecutándose en la carpeta "Windows", que coincide con la alerta que saltó al principio.</p>
+
+            <img src="../img250/4.png" alt="Procesos del equipo con .exe sospechoso">
+
+            <p>Ahora, revisaré los logs de dicha IP para saber qué más hizo el malware al equipo. Encontré <strong>dos logs relevantes</strong>. Uno a las 11:17 de la mañana indicando que el usuario se logueó correctamente al equipo, y justo a las 11:22, el equipo comunicándose con dicha IP maliciosa para descargar el archivo, con el proceso <strong>EmailDownloader.exe</strong>.</p>
+
+            <img src="../img250/5.png" alt="Logs de red con comunicación a IP maliciosa">
+
+            <p>Revisando el log del inicio exitoso de sesión de las 11:17 de la mañana, nos apunta a otra IP, que es <strong>173.209.51.54</strong>, y al pasarla por VirusTotal, nos da también que es maliciosa en 2 motores, y es sospechosa en otra más.</p>
+
+            <img src="../img250/6.png" alt="Resultado de VirusTotal para IP 173.209.51.54">
+
+            <div class="verdict">
+                <h3><i class="fa-solid fa-circle-exclamation"></i> Veredicto</h3>
+                <p><strong>Positivo verdadero.</strong> Se tiene que contener el equipo, no hubo más equipos afectados, la IP era maliciosa y el tipo de reconocimiento era para obtener información de la víctima y preparar ataques adicionales, además de usarlo por email, aunque no encontré nada relacionado al email de la víctima.</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <footer>
+        <input type="checkbox" id="egg-toggle" class="egg-toggle" autocomplete="off">
+        <p><label for="egg-toggle" class="egg-label">Copyright &copy; 2026 Karitsu2281</label></p>
+        <p>
+            <a href="https://github.com/karitsu2281" target="_blank" rel="noopener noreferrer">GitHub</a>
+            &nbsp;·&nbsp;
+            <a href="https://www.linkedin.com/in/hugo-flores-molina-167247414" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        </p>
+        <div class="easter-egg">
+            <img src="../../assets/img/easter-egg.jpg" alt="">
+        </div>
+    </footer>
+
+</body>
+
+</html>
