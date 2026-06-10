@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data:; script-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=()">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="robots" content="noai, noimageai">
+    <meta name="gptbot" content="noindex">
+    <meta name="googlebot" content="nosnippet">
+    <title>Infostealer haciendo bypass a 2FA por Discord — Karitsu2281</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous">
+    <style>
+        .article {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 48px 56px;
+            margin: 40px 0 60px;
+            position: relative;
+        }
+
+        .article::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        .article-header {
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .article-header .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--accent-dim);
+            border: 1px solid var(--accent-border);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .article-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .article-header .meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .article-body {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text);
+        }
+
+        .article-body p {
+            margin-bottom: 20px;
+        }
+
+        .article-body strong {
+            color: #fff;
+        }
+
+        .article-body em {
+            color: var(--accent);
+        }
+
+        .moraleja {
+            background: var(--accent-dim);
+            border: 1px solid var(--accent-border);
+            border-radius: var(--radius);
+            padding: 28px 32px;
+            margin: 40px 0 20px;
+        }
+
+        .moraleja h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .moraleja h3 i {
+            color: var(--accent);
+        }
+
+        .moraleja ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .moraleja ul li {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text);
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .moraleja ul li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-size: 0.8rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 24px;
+            transition: gap 0.25s;
+        }
+
+        .back-link:hover {
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .article {
+                padding: 28px 20px;
+            }
+
+            .article-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .moraleja {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="../index.html" class="nav-logo"><i class="fa-solid fa-terminal"></i> Karitsu2281</a>
+            <ul class="nav-links">
+                <li><a href="../index.html#proyectos">Proyectos</a></li>
+                <li><a href="../index.html#perfil">Perfil</a></li>
+                <li><a href="../index.html#contacto">Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <article class="article">
+            <a href="../index.html" class="back-link"><i class="fa-solid fa-chevron-left"></i> Volver al portfolio</a>
+
+            <div class="article-header">
+                <span class="badge"><i class="fa-solid fa-shield-halved"></i> Caso Real</span>
+                <h1>Infostealer haciendo bypass a 2FA por Discord</h1>
+                <p class="meta"><i class="fa-regular fa-calendar"></i> Junio 2026 &nbsp;·&nbsp; <i class="fa-regular fa-clock"></i> 8 min de lectura</p>
+            </div>
+
+            <div class="article-body">
+
+                <p>Wow. No ha pasado ni un mes cuando terminé el curso de ciberseguridad y ya tengo mi primer incidente de verdad. Al parecer, me levanté y vi un montón de "<strong>@everyone</strong>" en Discord de alguien. Y al verlo, era de un amigo mío, que me había mandado 4 fotos de una estafa de criptomonedas de MrBeast.</p>
+
+                <p>Mi primer instinto fue de que no tenía doble factor activado en la cuenta ¿un clásico?, pero me puse a investigar por mi cuenta, y después de la declaración de mi amigo que tenía <strong>2FA activado</strong>, me quedé asombrado.</p>
+
+                <p>Era un <strong>"infostealer"</strong> que se había colado a través de Roblox (principalmente, pero se pueden colar por juegos piratas), robó el <strong>token de sesión</strong>, saltándose todas las medidas de seguridad que tenía Discord, y extraer las bases SQLite de los navegadores, y pudo acceder a su cuenta de Microsoft (que no tenía 2FA), la de EA (tampoco la tenía) y la de Ubisoft (tampoco).</p>
+
+                <p>Menos mal que la de Steam no fue afectada, ya que tenía el bendito <strong>Steam Guard</strong> activado, y evitó un desastre aún mayor. Le instruí de que cambie inmediatamente todas y cada una de las contraseñas desde un dispositivo que no esté infectado y pasar inmediatamente un antivirus con escaneo profundo (<strong>Malwarebytes</strong> en este caso) en el PC comprometido para erradicar la amenaza.</p>
+
+                <p>Lo más gracioso de este incidente es que pudimos adivinar el correo del atacante y probamos a poner la misma contraseña que tenía en su cuenta de Microsoft simplemente por los loles, y… <strong>¡Entró!</strong>. El atacante era tan imbécil que no cambió la contraseña de la cuenta, se dejó la sesión abierta en el servicio de Xbox y pudimos contactar con el soporte para que la bloqueasen y pueda cambiar el correo y la contraseña de forma urgente, así que día salvado para mi amigo.</p>
+
+                <div class="moraleja">
+                    <h3><i class="fa-solid fa-triangle-exclamation"></i> Moraleja</h3>
+                    <ul>
+                        <li><strong>NO</strong> hacer clic en enlaces extraños ni descargar archivos sospechosos.</li>
+                        <li><strong>USAR SIEMPRE 2FA EN TODAS LAS CUENTAS.</strong></li>
+                        <li>En caso de cualquier sospecha de compromiso, <strong>REVOCAR EL CÓDIGO 2FA Y GENERAR UNO NUEVO, Y REFRESCAR SESIONES.</strong></li>
+                        <li>En caso de duda, no, por dar clic en una imagen no te pueden "robar" la cuenta. Discord quita los metadatos EXIF de las fotos para comprimirlos en sus servidores y que ocupen menos, por lo que elimina cualquier posibilidad de que te puedan comprometer la sesión de dicha forma.</li>
+                        <li><strong>POR DIOS, NO REUTILICES LAS CONTRASEÑAS, QUE ES UN PELIGRO ENORME.</strong></li>
+                        <li><strong>NO GUARDAR CONTRASEÑAS EN EL NAVEGADOR</strong>, usar <strong>Proton Pass</strong> o <strong>Bitwarden</strong>.</li>
+                    </ul>
+                </div>
+
+            </div>
+        </article>
+
+        <footer>
+            <p>Copyright &copy; 2026 Karitsu2281</p>
+            <p>
+                <a href="https://github.com/karitsu2281" target="_blank" rel="noopener noreferrer">GitHub</a>
+                &nbsp;·&nbsp;
+                <a href="https://www.linkedin.com/in/hugo-flores-molina-167247414" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            </p>
+        </footer>
+
+    </div>
+
+</body>
+
+</html>
