@@ -12,7 +12,7 @@
     <meta name="robots" content="noai, noimageai">
     <meta name="gptbot" content="noindex">
     <meta name="googlebot" content="nosnippet">
-    <title>Bluebox: Primera VM — Ubuntu Server + SSH — Karitsu2281</title>
+    <title>Bluebox: SIEM con Wazuh — Dashboard — Karitsu2281</title>
     <link rel="stylesheet" href="../../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous">
@@ -132,20 +132,6 @@
             color: inherit;
         }
 
-        .article-body blockquote {
-            border-left: 3px solid var(--accent);
-            padding: 16px 20px;
-            margin: 24px 0;
-            background: var(--accent-dim);
-            border-radius: 0 var(--radius) var(--radius) 0;
-            font-style: italic;
-            color: var(--text-muted);
-        }
-
-        .article-body blockquote strong {
-            color: var(--accent);
-        }
-
         .article-body ul, .article-body ol {
             margin: 16px 0 24px;
             padding-left: 24px;
@@ -160,42 +146,6 @@
             border-radius: var(--radius);
             border: 1px solid var(--border);
             margin: 24px 0;
-        }
-
-        .img-caption {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            text-align: center;
-            margin-top: -16px;
-            margin-bottom: 24px;
-            font-style: italic;
-        }
-
-        .specs-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0 28px;
-            font-size: 0.95rem;
-        }
-
-        .specs-table th, .specs-table td {
-            padding: 12px 16px;
-            border: 1px solid var(--border);
-            text-align: left;
-        }
-
-        .specs-table th {
-            background: rgba(0, 0, 0, 0.3);
-            color: var(--text-muted);
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 0.06em;
-        }
-
-        .specs-table td {
-            color: var(--text);
-            font-weight: 500;
         }
 
         .summary-box {
@@ -230,6 +180,18 @@
             left: 0;
             color: var(--accent);
             font-size: 0.9rem;
+        }
+
+        .warning-box {
+            background: rgba(232, 93, 44, 0.08);
+            border: 1px solid var(--accent-border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin: 24px 0;
+        }
+
+        .warning-box strong {
+            color: var(--accent);
         }
 
         .back-link {
@@ -283,105 +245,83 @@
             <a href="../../index.html" class="back-link"><i class="fa-solid fa-chevron-left"></i> Volver al portfolio</a>
 
             <div class="article-header">
-                <span class="badge"><i class="fa-solid fa-server"></i> Homelab · Proxmox</span>
-                <h1>Bluebox: Primera VM — Ubuntu Server + SSH</h1>
-                <p class="meta"><i class="fa-regular fa-calendar"></i> Junio 2026 &nbsp;·&nbsp; <i class="fa-regular fa-clock"></i> 4 min de lectura</p>
+                <span class="badge"><i class="fa-solid fa-shield-halved"></i> Homelab · SIEM</span>
+                <h1>Bluebox: SIEM con Wazuh — Instalación y dashboard</h1>
+                <p class="meta"><i class="fa-regular fa-calendar"></i> Junio 2026 &nbsp;·&nbsp; <i class="fa-regular fa-clock"></i> 6 min de lectura</p>
             </div>
 
             <div class="article-body">
 
-                <p>En esta segunda entrada de la serie <strong>Bluebox</strong> se documenta el proceso de creación de la primera máquina virtual sobre Proxmox VE: un Ubuntu Server 24.04 LTS con acceso SSH habilitado. Este será el contenedor base sobre el que se desplegarán servicios adicionales en el futuro.</p>
+                <p>En esta tercera entrada de la serie <strong>Bluebox</strong> se documenta la instalación de <strong>Wazuh</strong> sobre la máquina virtual Ubuntu Server 24.04 creada en la Misión 1. Wazuh es una plataforma de seguridad open source que combina SIEM, EDR y monitorización de integridad de archivos, todo integrado en un dashboard centralizado.</p>
 
-                <h2>1. Descarga de la ISO de Ubuntu Server</h2>
+                <h2>1. Instalación de Wazuh</h2>
 
-                <p>Desde el panel de administración de Proxmox, se accedió a la sección <strong>local (pve) > ISO Images</strong>. Inicialmente, la opción "Download from URL" no resultó inmediatamente evidente — se encuentra en la interfaz de almacenamiento local del nodo, no en un apartado independiente. Una vez localizada, se introdujo la URL de descarga directa:</p>
+                <p>Desde la sesión SSH en el Ubuntu Server, se ejecutó el asistente de instalación oficial de Wazuh. Este script despliega automáticamente los componentes necesarios: Wazuh manager, indexer y dashboard.</p>
 
-                <pre><code>https://releases.ubuntu.com/24.04/ubuntu-24.04-live-server-amd64.iso</code></pre>
+                <pre><code>curl -sO https://packages.wazuh.com/4.7/wazuh-install.sh
+sudo bash wazuh-install.sh -a</code></pre>
 
-                <img src="../img/1.png" alt="Descarga de ISO de Ubuntu Server desde el panel de Proxmox">
+                <img src="../img/6.png" alt="Ejecución del script de instalación de Wazuh en la terminal">
 
-                <p>Una vez descargada, la ISO quedó disponible en el almacenamiento local y visible en la interfaz de ISO Images.</p>
+                <p>Al finalizar el proceso, el instalador muestra las credenciales de acceso al dashboard. Es importante registrar el usuario y la contraseña generados en un gestor de contraseñas (Bitwarden, en este caso).</p>
 
-                <img src="../img/2.png" alt="ISO de Ubuntu Server disponible en el almacenamiento local de Proxmox">
+                <h2>2. Acceso al dashboard</h2>
 
-                <h2>2. Creación de la máquina virtual</h2>
+                <p>Desde el equipo principal se accedió al dashboard vía navegador web:</p>
 
-                <p>Se creó una nueva máquina virtual con los siguientes recursos asignados:</p>
+                <pre><code>https://192.168.10.210</code></pre>
 
-                <table class="specs-table">
-                    <tr>
-                        <th>Recurso</th>
-                        <th>Asignado</th>
-                    </tr>
-                    <tr>
-                        <td>RAM</td>
-                        <td>2 GB</td>
-                    </tr>
-                    <tr>
-                        <td>CPU</td>
-                        <td>1 núcleo</td>
-                    </tr>
-                    <tr>
-                        <td>Disco</td>
-                        <td>20 GB</td>
-                    </tr>
-                    <tr>
-                        <td>SO</td>
-                        <td>Ubuntu Server 24.04 LTS</td>
-                    </tr>
-                </table>
-
-                <p>Durante el asistente de creación se seleccionó la ISO descargada, se configuró la red en modo bridge para que la VM obtuviera una IP dentro de la red local, y se habilitó el agente QEMU para una mejor integración con el hipervisor.</p>
-
-                <img src="../img/3.png" alt="Asistente de creación de VM en Proxmox">
-
-                <h2>3. Instalación de Ubuntu Server</h2>
-
-                <p>Tras iniciar la VM, se procedió con la instalación estándar de Ubuntu Server. Las decisiones principales durante el instalador fueron:</p>
-
+                <p>Las credenciales de acceso son las proporcionadas por el instalador:</p>
                 <ul>
-                    <li><strong>Instalación mínima</strong> — sin paquete gráfico ni herramientas adicionales</li>
-                    <li><strong>OpenSSH server</strong> activado durante la instalación para permitir el acceso remoto inmediato</li>
-                    <li><strong>Usuario administrador</strong> creado con contraseña segura</li>
+                    <li><strong>Usuario:</strong> <code>wazuh</code></li>
+                    <li><strong>Contraseña:</strong> (almacenada en Bitwarden)</li>
                 </ul>
 
-                <img src="../img/4.png" alt="Instalación de Ubuntu Server en curso">
+                <img src="../img/7.png" alt="Pantalla de inicio de sesión del dashboard de Wazuh">
 
-                <p>Al finalizar la instalación, la VM se reinició automáticamente y quedó operativa en la red local con la IP <code>192.168.10.210</code>.</p>
+                <p>Una vez autenticado, el dashboard principal muestra el estado general del entorno: agentes conectados, eventos de seguridad y alertas generadas por el propio sistema.</p>
 
-                <h2>4. Acceso SSH desde el equipo principal</h2>
+                <img src="../img/8.png" alt="Dashboard principal de Wazuh mostrando el panel de monitorización">
 
-                <p>Desde el equipo principal se verificó la conectividad SSH contra la nueva VM:</p>
+                <h2>3. Problemas encontrados</h2>
 
-                <pre><code>ssh usuario@192.168.10.210</code></pre>
+                <div class="warning-box">
+                    <strong>Recursos insuficientes.</strong> La configuración inicial de la VM (2 GB RAM, 20 GB disco) resultó insuficiente para Wazuh. El proceso de instalación falló por falta de memoria y posteriormente por falta de espacio en disco.
+                </div>
 
-                <img src="../img/5.png" alt="Conexión SSH exitosa a la VM Ubuntu Server">
+                <p>Para resolverlo, fue necesario:</p>
 
-                <p>La conexión se estableció correctamente, confirmando que el servidor SSH estaba operativo y que la VM respondía en la red local.</p>
+                <ul>
+                    <li><strong>Aumentar la RAM</strong> de la VM de 2 GB a <strong>18 GB</strong> desde la configuración de Proxmox, deteniendo la VM previamente.</li>
+                    <li><strong>Expandir el disco</strong> de 20 GB a un tamaño suficiente. Tras ampliar el disco desde Proxmox, se requirió redimensionar las particiones en el sistema invitado. Se siguieron las siguientes guías de referencia:
+                        <ul>
+                            <li><a href="https://unix.stackexchange.com/questions/320957/extend-a-luks-encrypted-partition-to-fill-disk" target="_blank" rel="noopener noreferrer">Extender partición LUKS — Unix StackExchange</a></li>
+                            <li><a href="https://help.clouding.io/hc/es/articles/360010074599-C%C3%B3mo-extender-particiones-manualmente-en-Linux" target="_blank" rel="noopener noreferrer">Extender particiones manualmente en Linux — Clouding</a></li>
+                            <li><a href="https://www.arsys.es/blog/redimensionar-discos-duros-linux-no-reinicio" target="_blank" rel="noopener noreferrer">Redimensionar discos en Linux sin reinicio — Arsys</a></li>
+                        </ul>
+                    </li>
+                </ul>
 
-                <h2>5. Resumen de configuración final</h2>
+                <p>Adicionalmente, durante una reinstalación de Wazuh, el gestor de paquetes no permitía eliminar correctamente <code>wazuh-manager</code>. Para forzar la limpieza se ejecutó:</p>
+
+                <pre><code>sudo rm -rf /var/lib/dpkg/info/wazuh-manager.*
+sudo apt update</code></pre>
+
+                <p>Tras estos ajustes, la instalación se completó sin errores.</p>
+
+                <h2>4. Estado actual</h2>
 
                 <div class="summary-box">
                     <ul>
-                        <li><strong>Hipervisor:</strong> Proxmox VE — Dell Latitude</li>
-                        <li><strong>VM:</strong> Ubuntu Server 24.04 LTS</li>
-                        <li><strong>Recursos:</strong> 2 GB RAM / 1 CPU / 20 GB disco</li>
-                        <li><strong>IP local:</strong> <code>192.168.10.210</code></li>
-                        <li><strong>Acceso:</strong> SSH habilitado — <code>ssh usuario@192.168.10.210</code></li>
-                        <li><strong>Acceso remoto:</strong> Vía Tailscale + split tunneling (configurado en Misión 0)</li>
+                        <li><strong>Plataforma:</strong> Wazuh 4.7 sobre Ubuntu Server 24.04 LTS</li>
+                        <li><strong>URL del dashboard:</strong> <code>https://192.168.10.210</code></li>
+                        <li><strong>Usuario:</strong> <code>wazuh</code></li>
+                        <li><strong>Recursos finales:</strong> 18 GB RAM / disco expandido</li>
+                        <li><strong>Primeras alertas:</strong> Pendientes de agentes adicionales</li>
                     </ul>
                 </div>
 
-                <h2>6. Incidencias</h2>
-
-                <p>Durante el proceso se encontraron las siguientes dificultades:</p>
-
-                <ul>
-                    <li>La sección para descargar ISOs no estaba visible inicialmente. Se resolvió accediendo a <strong>local (pve) > ISO Images > Download from URL</strong>.</li>
-                    <li>Los enlaces de descarga directa de las ISOs de Ubuntu no siempre son fáciles de localizar en el sitio oficial. Se recomienda verificar la URL antes de introducirla.</li>
-                </ul>
-
-                <p>La VM se completó el <strong>11/06/2026</strong> en un intervalo de <strong>11:01 a 12:08</strong>.</p>
+                <p>La instalación se completó el <strong>11/06/2026</strong> en un intervalo de <strong>14:30 a 15:55</strong>. El dashboard está operativo y listo para recibir agentes en los próximos pasos.</p>
 
             </div>
         </article>
