@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data:; script-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=()">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="robots" content="noai, noimageai">
+    <meta name="gptbot" content="noindex">
+    <meta name="googlebot" content="nosnippet">
+    <title>Bluebox: Primer Agente Wazuh — Windows 10 — Karitsu2281</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous">
+    <style>
+        .article {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 48px 56px;
+            margin: 40px 0 60px;
+            position: relative;
+        }
+
+        .article::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        .article-header {
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .article-header .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--accent-dim);
+            border: 1px solid var(--accent-border);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .article-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .article-header .meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .article-body {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text);
+        }
+
+        .article-body p {
+            margin-bottom: 20px;
+        }
+
+        .article-body strong {
+            color: #fff;
+        }
+
+        .article-body em {
+            color: var(--accent);
+        }
+
+        .article-body h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 40px 0 16px;
+            letter-spacing: -0.02em;
+        }
+
+        .article-body h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fff;
+            margin: 32px 0 12px;
+            letter-spacing: -0.01em;
+        }
+
+        .article-body pre {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin: 16px 0 24px;
+            color: #e0e0e0;
+        }
+
+        .article-body code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            color: var(--accent);
+        }
+
+        .article-body pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        .article-body ul, .article-body ol {
+            margin: 16px 0 24px;
+            padding-left: 24px;
+        }
+
+        .article-body li {
+            margin-bottom: 8px;
+        }
+
+        .article-body img {
+            max-width: 100%;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            margin: 24px 0;
+        }
+
+        .article-body .alert-json {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin: 20px 0 28px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.75rem;
+            line-height: 1.5;
+            color: #c0c0c0;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .specs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0 28px;
+            font-size: 0.95rem;
+        }
+
+        .specs-table th, .specs-table td {
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+
+        .specs-table th {
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.06em;
+        }
+
+        .specs-table td {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .summary-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 32px;
+            margin: 40px 0 20px;
+        }
+
+        .summary-box ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .summary-box ul li {
+            padding-left: 24px;
+            position: relative;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text);
+        }
+
+        .summary-box ul li::before {
+            content: '\f105';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 24px;
+            transition: gap 0.25s;
+        }
+
+        .back-link:hover {
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .article {
+                padding: 28px 20px;
+            }
+
+            .article-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .summary-box {
+                padding: 20px;
+            }
+
+            .article-body .alert-json {
+                font-size: 0.65rem;
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="../../index.html" class="nav-logo"><i class="fa-solid fa-terminal"></i> Karitsu2281</a>
+            <ul class="nav-links">
+                <li><a href="../../index.html#proyectos">Proyectos</a></li>
+                <li><a href="../../index.html#perfil">Perfil</a></li>
+                <li><a href="../../index.html#contacto">Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <article class="article">
+            <a href="../../index.html" class="back-link"><i class="fa-solid fa-chevron-left"></i> Volver al portfolio</a>
+
+            <div class="article-header">
+                <span class="badge"><i class="fa-solid fa-shield-halved"></i> Homelab · SIEM</span>
+                <h1>Bluebox: Primer agente Wazuh — Windows 10</h1>
+                <p class="meta"><i class="fa-regular fa-calendar"></i> Junio 2026 &nbsp;·&nbsp; <i class="fa-regular fa-clock"></i> 5 min de lectura</p>
+            </div>
+
+            <div class="article-body">
+
+                <p>En esta cuarta entrada de la serie <strong>Bluebox</strong> se documenta la incorporación del primer agente al SIEM Wazuh: una máquina virtual con <strong>Windows 10 LTSC</strong>. A partir de este momento, todos los eventos de seguridad del sistema operativo Windows se centralizan en el dashboard de Wazuh para su monitorización en tiempo real.</p>
+
+                <h2>1. Creación de la VM Windows 10</h2>
+
+                <p>Se creó una nueva máquina virtual en Proxmox con los siguientes recursos:</p>
+
+                <table class="specs-table">
+                    <tr>
+                        <th>Recurso</th>
+                        <th>Asignado</th>
+                    </tr>
+                    <tr>
+                        <td>RAM</td>
+                        <td>4 GB</td>
+                    </tr>
+                    <tr>
+                        <td>CPU</td>
+                        <td>2 núcleos</td>
+                    </tr>
+                    <tr>
+                        <td>Disco</td>
+                        <td>40 GB</td>
+                    </tr>
+                    <tr>
+                        <td>SO</td>
+                        <td>Windows 10 LTSC</td>
+                    </tr>
+                </table>
+
+                <p>Se utilizó una ISO de Windows 10 LTSC como fuente de instalación. Durante el proceso de creación de la VM, se añadieron los controladores <strong>VirtIO</strong> para optimizar el rendimiento de los dispositivos virtualizados (red, almacenamiento y memoria).</p>
+
+                <img src="../img/9.png" alt="Creación de la VM Windows 10 en Proxmox">
+
+                <h2>2. Instalación del agente Wazuh</h2>
+
+                <p>Una vez instalado y configurado Windows 10, se accedió al dashboard de Wazuh y se navegó a <strong>Agents > Deploy new agent</strong>. Seleccionando la plataforma Windows, el dashboard genera un comando personalizado con la IP del servidor Wazuh y la clave de autenticación del agente.</p>
+
+                <p>El comando generado se ejecutó en <strong>PowerShell como Administrador</strong> dentro de la VM Windows:</p>
+
+                <pre><code>wazuh-agent --install --server 192.168.10.210 --agent-name Junko</code></pre>
+
+                <img src="../img/10.png" alt="Ejecución del comando de instalación del agente Wazuh en PowerShell">
+
+                <p>La única dificultad durante este paso fue localizar el comando exacto generado por el dashboard, ya que la ruta para obtenerlo no es inmediatamente obvia. Una vez ejecutado, el agente inició la comunicación con el servidor Wazuh y apareció en la lista de agentes del dashboard.</p>
+
+                <h2>3. Verificación en el dashboard</h2>
+
+                <p>Tras la instalación, el agente — nombrado <strong>Junko</strong> — apareció en el dashboard con estado activo (indicador verde), confirmando la conectividad correcta con el servidor Wazuh.</p>
+
+                <img src="../img/11.png" alt="Agente Windows activo en el dashboard de Wazuh">
+
+                <p>Los primeros eventos de seguridad comenzaron a llegar inmediatamente. Entre ellos, destacó un análisis de configuración (SCA) basado en el benchmark <strong>CIS Microsoft Windows 10 Enterprise Benchmark v4.0.0</strong>, que reveló una puntuación de cumplimiento del <strong>26%</strong> (109 checks pasados, 310 fallados, 5 inválidos de un total de 424). El evento fue catalogado con nivel de severidad <strong>9</strong>.</p>
+
+                <h3>Alerta SCA registrada</h3>
+
+                <div class="alert-json">{
+  "_index": "wazuh-alerts-4.x-2026.06.11",
+  "_id": "gpQct54Bqy8HDlrCbApO",
+  "_source": {
+    "agent": {
+      "ip": "192.168.10.36",
+      "name": "Junko",
+      "id": "001"
+    },
+    "manager": {
+      "name": "ubuntussh"
+    },
+    "data": {
+      "sca": {
+        "score": "26",
+        "total_checks": "424",
+        "file": "cis_win10_enterprise.yml",
+        "policy_id": "cis_win10_enterprise",
+        "invalid": "5",
+        "description": "This document provides prescriptive guidance for establishing a secure configuration posture for Microsoft Windows 10 Enterprise.",
+        "scan_id": "1774855630",
+        "passed": "109",
+        "failed": "310",
+        "type": "summary",
+        "policy": "CIS Microsoft Windows 10 Enterprise Benchmark v4.0.0"
+      }
+    },
+    "rule": {
+      "firedtimes": 2,
+      "level": 9,
+      "pci_dss": ["2.2"],
+      "tsc": ["CC7.1", "CC7.2"],
+      "description": "SCA summary: CIS Microsoft Windows 10 Enterprise Benchmark v4.0.0: Score less than 30% (26)",
+      "groups": ["sca"],
+      "id": "19005",
+      "nist_800_53": ["CM.1"],
+      "gdpr": ["IV_35.7.d"]
+    },
+    "location": "sca",
+    "decoder": {
+      "name": "sca"
+    },
+    "id": "1781188551.3056958",
+    "timestamp": "2026-06-11T14:35:51.403+0000"
+  }
+}</div>
+
+                <h2>4. Resumen de configuración final</h2>
+
+                <div class="summary-box">
+                    <ul>
+                        <li><strong>Servidor Wazuh:</strong> Ubuntu Server 24.04 LTS — <code>192.168.10.210</code></li>
+                        <li><strong>Agente:</strong> Junko — Windows 10 LTSC — <code>192.168.10.36</code></li>
+                        <li><strong>Estado del agente:</strong> Activo (verde)</li>
+                        <li><strong>Recursos VM:</strong> 4 GB RAM / 2 CPU / 40 GB disco</li>
+                        <li><strong>Primera alerta:</strong> SCA CIS Windows 10 — Score 26% (severidad 9)</li>
+                        <li><strong>Eventos:</strong> Recibiendo en tiempo real en el dashboard</li>
+                    </ul>
+                </div>
+
+                <p>La incorporación del agente se completó el <strong>11/06/2026</strong> en un intervalo de <strong>16:05 a 16:37</strong>. El proceso fue ágil gracias a la experiencia acumulada en misiones anteriores; la única fricción fue localizar el comando de despliegue en la interfaz del dashboard.</p>
+
+            </div>
+        </article>
+
+        <footer>
+            <p>Copyright &copy; 2026 Karitsu2281</p>
+            <p>
+                <a href="https://github.com/karitsu2281" target="_blank" rel="noopener noreferrer">GitHub</a>
+                &nbsp;·&nbsp;
+                <a href="https://www.linkedin.com/in/hugo-flores-molina-167247414" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            </p>
+        </footer>
+
+    </div>
+
+</body>
+
+</html>
