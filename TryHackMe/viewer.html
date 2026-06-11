@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' https://cdn.jsdelivr.net; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;">
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=()">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="robots" content="noai, noimageai">
+  <meta name="gptbot" content="noindex">
+  <meta name="googlebot" content="nosnippet">
+  <title>WriteUp Viewer — Karitsu2281</title>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    .writeup-container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+      margin-bottom: 2rem;
+      transition: gap 0.25s;
+    }
+
+    .back-link:hover {
+      gap: 12px;
+    }
+
+    #loading, #error {
+      text-align: center;
+      padding: 4rem 0;
+      color: var(--text-muted);
+    }
+
+    #error {
+      color: #ff5555;
+    }
+
+    .writeup-body {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 48px 56px;
+      position: relative;
+    }
+
+    .writeup-body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .writeup-body h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #fff;
+      margin-bottom: 1rem;
+      margin-top: 0;
+    }
+
+    .writeup-body h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 2.5rem 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      letter-spacing: -0.02em;
+    }
+
+    .writeup-body h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #fff;
+      margin: 2rem 0 0.75rem;
+    }
+
+    .writeup-body p {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+    }
+
+    .writeup-body strong {
+      color: #fff;
+    }
+
+    .writeup-body a {
+      color: var(--accent);
+    }
+
+    .writeup-body ul, .writeup-body ol {
+      margin: 1rem 0 1.5rem;
+      padding-left: 1.5rem;
+    }
+
+    .writeup-body li {
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .writeup-body code {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 0.9em;
+      color: var(--accent);
+    }
+
+    .writeup-body pre {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      margin: 1rem 0 1.5rem;
+    }
+
+    .writeup-body pre code {
+      background: none;
+      padding: 0;
+      color: #e0e0e0;
+    }
+
+    .writeup-body img {
+      max-width: 100%;
+      height: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin: 1.5rem auto;
+      display: block;
+    }
+
+    .writeup-body blockquote {
+      border-left: 3px solid var(--accent);
+      padding: 16px 20px;
+      margin: 1.5rem 0;
+      background: var(--accent-dim);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      color: var(--text-muted);
+    }
+
+    .writeup-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+
+    .writeup-body th, .writeup-body td {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .writeup-body th {
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .writeup-body td {
+      color: var(--text);
+    }
+
+    .writeup-body hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2rem 0;
+    }
+
+    @media (max-width: 768px) {
+      .writeup-body {
+        padding: 24px 20px;
+      }
+      .writeup-body h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="nav-content">
+      <a href="../index.html" class="nav-logo"><i class="fa-solid fa-terminal"></i> Karitsu2281</a>
+      <ul class="nav-links">
+        <li><a href="../index.html#proyectos">Proyectos</a></li>
+        <li><a href="../index.html#perfil">Perfil</a></li>
+        <li><a href="../index.html#contacto">Contacto</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="writeup-container">
+    <a class="back-link" href="index.html"><i class="fa-solid fa-chevron-left"></i> Volver a writeups</a>
+
+    <div id="loading"><i class="fa-solid fa-spinner fa-pulse"></i> Cargando writeup...</div>
+    <div id="error" style="display: none;">Error al cargar el writeup.</div>
+
+    <div class="writeup-body" id="content"></div>
+  </div>
+
+  <script>
+    async function loadMarkdown() {
+      const params = new URLSearchParams(window.location.search);
+      const file = params.get('file');
+
+      if (!file) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').textContent = 'No se especificó ningún archivo en la URL (?file=...).';
+        document.getElementById('error').style.display = 'block';
+        return;
+      }
+
+      try {
+        const response = await fetch(file);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const text = await response.text();
+        let htmlContent = marked.parse(text);
+
+        const lastSlash = file.lastIndexOf('/');
+        let basePath = lastSlash !== -1 ? file.substring(0, lastSlash + 1) : '';
+
+        htmlContent = htmlContent.replace(/src="([^"]+)"/g, (match, src) => {
+          if (src.startsWith('http') || src.startsWith('data:') || src.startsWith('/')) return match;
+          return `src="${basePath}${src}"`;
+        });
+
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('content').innerHTML = htmlContent;
+
+        const h1 = document.querySelector('.writeup-body h1');
+        if (h1) document.title = h1.textContent + ' | WriteUp';
+      } catch (e) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').textContent = 'Error: ' + e.message;
+        document.getElementById('error').style.display = 'block';
+      }
+    }
+
+    loadMarkdown();
+  </script>
+
+  <footer style="text-align:center; padding:2rem; border-top:1px solid var(--border); margin-top:2rem; color:var(--text-muted); font-size:0.8rem;">
+    <p>Copyright &copy; 2026 Karitsu2281</p>
+  </footer>
+
+</body>
+
+</html>

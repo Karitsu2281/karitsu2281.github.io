@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data:; script-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=()">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="robots" content="noai, noimageai">
+    <meta name="gptbot" content="noindex">
+    <meta name="googlebot" content="nosnippet">
+    <title>WriteUps TryHackMe — Karitsu2281</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous">
+    <style>
+        .page-header {
+            text-align: center;
+            padding: 80px 0 40px;
+        }
+
+        .page-header h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 12px;
+            color: #fff;
+        }
+
+        .page-header h1 span {
+            color: var(--accent);
+        }
+
+        .page-header p {
+            font-size: 1rem;
+            color: var(--text-muted);
+            max-width: 560px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        .page-header .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 24px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .page-header .stats-row strong {
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .bento-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 28px 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 260px;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bento-card:hover {
+            background: var(--surface-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-4px);
+        }
+
+        .card-subhead {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        .card-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .card-difficulty {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 4px;
+        }
+
+        .card-difficulty.easy {
+            background: rgba(46, 160, 67, 0.15);
+            color: #3fb950;
+            border: 1px solid rgba(46, 160, 67, 0.3);
+        }
+
+        .card-difficulty.medium {
+            background: rgba(232, 93, 44, 0.15);
+            color: var(--accent);
+            border: 1px solid var(--accent-border);
+        }
+
+        .card-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+
+        .card-tag {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .card-tag.linux {
+            background: rgba(232, 93, 44, 0.12);
+            color: var(--accent);
+        }
+
+        .card-tag.windows {
+            background: rgba(46, 160, 67, 0.12);
+            color: #3fb950;
+        }
+
+        .card-tag.ctf {
+            background: rgba(121, 192, 255, 0.12);
+            color: #79c0ff;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 24px;
+            transition: gap 0.25s;
+        }
+
+        .back-link:hover {
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .bento-grid {
+                grid-template-columns: 1fr;
+            }
+            .bento-card {
+                min-height: 220px;
+                padding: 24px;
+            }
+            .card-title {
+                font-size: 1.1rem;
+            }
+            .page-header .stats-row {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="../index.html" class="nav-logo"><i class="fa-solid fa-terminal"></i> Karitsu2281</a>
+            <ul class="nav-links">
+                <li><a href="../index.html#proyectos">Proyectos</a></li>
+                <li><a href="../index.html#perfil">Perfil</a></li>
+                <li><a href="../index.html#contacto">Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <a href="../index.html" class="back-link"><i class="fa-solid fa-chevron-left"></i> Volver al portfolio</a>
+
+        <div class="page-header">
+            <h1>WriteUps <span>TryHackMe</span></h1>
+            <p>Colección de writeups de máquinas y retos CTF resueltos paso a paso en la plataforma TryHackMe.</p>
+            <div class="stats-row">
+                <span><strong>23</strong> writeups</span>
+                <span><strong>5</strong> fáciles por hacer</span>
+            </div>
+        </div>
+
+        <section class="bento-grid">
+
+            <!-- Blue -->
+            <a class="bento-card" href="viewer.html?file=writeups/Blue-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Pwn</div>
+                    <div class="card-title">Blue</div>
+                    <div class="card-desc">Explotación de EternalBlue (MS17-010) en Windows 7 y escalada de privilegios a admin.</div>
+                    <div class="card-tags">
+                        <span class="card-tag windows">Windows</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-03-04</span>
+                    <span class="card-difficulty easy">Easy</span>
+                </div>
+            </a>
+
+            <!-- Ice -->
+            <a class="bento-card" href="viewer.html?file=writeups/Ice-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Pwn</div>
+                    <div class="card-title">Ice</div>
+                    <div class="card-desc">Explotación de Icecast (CVE-2004-1561) en Windows 7 y escalada de privilegios evadiendo UAC.</div>
+                    <div class="card-tags">
+                        <span class="card-tag windows">Windows</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-03-05</span>
+                    <span class="card-difficulty easy">Easy</span>
+                </div>
+            </a>
+
+            <!-- Blaster -->
+            <a class="bento-card" href="viewer.html?file=writeups/Blaster-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Pwn</div>
+                    <div class="card-title">Blaster</div>
+                    <div class="card-desc">Directorios ocultos, CVE-2019-1388 (UAC Bypass) y persistencia con Metasploit Web Delivery.</div>
+                    <div class="card-tags">
+                        <span class="card-tag windows">Windows</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-03-05</span>
+                    <span class="card-difficulty easy">Easy</span>
+                </div>
+            </a>
+
+            <!-- Library -->
+            <a class="bento-card" href="viewer.html?file=writeups/Library-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Linux</div>
+                    <div class="card-title">Library</div>
+                    <div class="card-desc">Fuerza bruta SSH con Hydra, pista en robots.txt y escalada mediante Python Library Hijacking.</div>
+                    <div class="card-tags">
+                        <span class="card-tag linux">Linux</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-03-05</span>
+                    <span class="card-difficulty easy">Easy</span>
+                </div>
+            </a>
+
+            <!-- Retro -->
+            <a class="bento-card" href="viewer.html?file=writeups/Retro-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Pwn</div>
+                    <div class="card-title">Retro</div>
+                    <div class="card-desc">WordPress CMS, credenciales en posts y bypass de UAC (CVE-2019-1388) en Windows.</div>
+                    <div class="card-tags">
+                        <span class="card-tag windows">Windows</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-03-05</span>
+                    <span class="card-difficulty easy">Easy</span>
+                </div>
+            </a>
+
+            <!-- Techsupp0rt1 -->
+            <a class="bento-card" href="viewer.html?file=writeups/Techsupp0rt1-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Linux</div>
+                    <div class="card-title">Techsupp0rt1</div>
+                    <div class="card-desc">Enumeración SMB, explotación de Subrion CMS (CVE-2018-19422) y escalada con sudo iconv.</div>
+                    <div class="card-tags">
+                        <span class="card-tag linux">Linux</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-03-05</span>
+                    <span class="card-difficulty easy">Easy</span>
+                </div>
+            </a>
+
+            <!-- Relevant -->
+            <a class="bento-card" href="viewer.html?file=writeups/Relevant-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Pwn</div>
+                    <div class="card-title">Relevant</div>
+                    <div class="card-desc">Auditoría de Windows con SMB permisivos, web shells y escalada con PrintSpoofer (SeImpersonate).</div>
+                    <div class="card-tags">
+                        <span class="card-tag windows">Windows</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-03-05</span>
+                    <span class="card-difficulty medium">Medium</span>
+                </div>
+            </a>
+
+            <!-- Anthem -->
+            <a class="bento-card" href="viewer.html?file=writeups/Anthem-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Windows</div>
+                    <div class="card-title">Anthem</div>
+                    <div class="card-desc">OSINT y análisis de CMS Umbraco, acceso vía RDP y escalada con permisos NTFS y backups.</div>
+                    <div class="card-tags">
+                        <span class="card-tag windows">Windows</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-03-05</span>
+                    <span class="card-difficulty easy">Easy</span>
+                </div>
+            </a>
+
+            <!-- RootMe -->
+            <a class="bento-card" href="viewer.html?file=writeups/RootMe-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Linux</div>
+                    <div class="card-title">RootMe</div>
+                    <div class="card-desc">Web shell en PHP (bypass de extensión) y escalada de privilegios con Python 2.7 SUID.</div>
+                    <div class="card-tags">
+                        <span class="card-tag linux">Linux</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-03-30</span>
+                    <span class="card-difficulty easy">Easy</span>
+                </div>
+            </a>
+
+            <!-- Agent Sudo -->
+            <a class="bento-card" href="viewer.html?file=writeups/SudoAgent-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Linux</div>
+                    <div class="card-title">Agent Sudo</div>
+                    <div class="card-desc">User-Agent spoofing, esteganografía con steghide y escalada con CVE-2019-14287.</div>
+                    <div class="card-tags">
+                        <span class="card-tag linux">Linux</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-03-30</span>
+                    <span class="card-difficulty easy">Easy</span>
+                </div>
+            </a>
+
+            <!-- Brooklyn -->
+            <a class="bento-card" href="viewer.html?file=writeups/Brooklyn-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Linux</div>
+                    <div class="card-title">Brooklyn Nine Nine</div>
+                    <div class="card-desc">FTP anónimo, fuerza bruta SSH con Hydra y escalada de privilegios con less (GTFOBins).</div>
+                    <div class="card-tags">
+                        <span class="card-tag linux">Linux</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-03-30</span>
+                    <span class="card-difficulty easy">Easy</span>
+                </div>
+            </a>
+
+            <!-- Basic Pentesting -->
+            <a class="bento-card" href="viewer.html?file=writeups/Basic-Pentesting-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Linux</div>
+                    <div class="card-title">Basic Pentesting</div>
+                    <div class="card-desc">Enumeración SMB anónima, fuerza bruta SSH con Hydra y crackeo de clave RSA con John.</div>
+                    <div class="card-tags">
+                        <span class="card-tag linux">Linux</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-03-27</span>
+                    <span class="card-difficulty easy">Easy</span>
+                </div>
+            </a>
+
+            <!-- EasyPeasy -->
+            <a class="bento-card" href="viewer.html?file=writeups/EasyPeasy-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Linux</div>
+                    <div class="card-title">Easy Peasy</div>
+                    <div class="card-desc">Fuzzing de directorios, crackeo de hashes, esteganografía con stegseek y escalada vía crontab.</div>
+                    <div class="card-tags">
+                        <span class="card-tag linux">Linux</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-03-28</span>
+                    <span class="card-difficulty easy">Easy</span>
+                </div>
+            </a>
+
+            <!-- Kenobi -->
+            <a class="bento-card" href="viewer.html?file=writeups/Kenobi-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Linux</div>
+                    <div class="card-title">Kenobi</div>
+                    <div class="card-desc">SMB anónimo, explotación de ProFTPD 1.3.5 (mod_copy) con NFS y PATH hijacking en SUID.</div>
+                    <div class="card-tags">
+                        <span class="card-tag linux">Linux</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-03-28</span>
+                    <span class="card-difficulty easy">Easy</span>
+                </div>
+            </a>
+
+            <!-- Bounty -->
+            <a class="bento-card" href="viewer.html?file=writeups/Bounty-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Linux</div>
+                    <div class="card-title">Bounty Hacker</div>
+                    <div class="card-desc">FTP anónimo, fuerza bruta SSH con Hydra y escalada de privilegios con tar (GTFOBins).</div>
+                    <div class="card-tags">
+                        <span class="card-tag linux">Linux</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-03-31</span>
+                    <span class="card-difficulty easy">Easy</span>
+                </div>
+            </a>
+
+            <!-- Poster -->
+            <a class="bento-card" href="viewer.html?file=writeups/Poster-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Linux</div>
+                    <div class="card-title">Poster</div>
+                    <div class="card-desc">PostgreSQL mal configurado, enumeración con Metasploit y escalada con sudo ALL.</div>
+                    <div class="card-tags">
+                        <span class="card-tag linux">Linux</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-03-31</span>
+                    <span class="card-difficulty easy">Easy</span>
+                </div>
+            </a>
+
+            <!-- Startup -->
+            <a class="bento-card" href="viewer.html?file=writeups/Startup-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Linux</div>
+                    <div class="card-title">Startup</div>
+                    <div class="card-desc">FTP anónimo, PHP reverse shell vía web, análisis de pcapng y escalada con script cron.</div>
+                    <div class="card-tags">
+                        <span class="card-tag linux">Linux</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-04-01</span>
+                    <span class="card-difficulty easy">Easy</span>
+                </div>
+            </a>
+
+            <!-- Gaming -->
+            <a class="bento-card" href="viewer.html?file=writeups/Gaming-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Linux</div>
+                    <div class="card-title">Gaming</div>
+                    <div class="card-desc">Clave RSA en directorio oculto, crackeo con John y escalada con contenedor LXD privilegiado.</div>
+                    <div class="card-tags">
+                        <span class="card-tag linux">Linux</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-04-01</span>
+                    <span class="card-difficulty easy">Easy</span>
+                </div>
+            </a>
+
+            <!-- Lazy Admin -->
+            <a class="bento-card" href="viewer.html?file=writeups/LazyAdmin-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Linux</div>
+                    <div class="card-title">Lazy Admin</div>
+                    <div class="card-desc">CMS SweetRice, credenciales en backup, reverse shell PHP y escalada con script Perl via sudo.</div>
+                    <div class="card-tags">
+                        <span class="card-tag linux">Linux</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-04-02</span>
+                    <span class="card-difficulty easy">Easy</span>
+                </div>
+            </a>
+
+            <!-- Ignite -->
+            <a class="bento-card" href="viewer.html?file=writeups/Ignite-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Linux</div>
+                    <div class="card-title">Ignite</div>
+                    <div class="card-desc">RCE en Fuel CMS 1.4, credenciales en database.php y escalada con su root via TTY upgrade.</div>
+                    <div class="card-tags">
+                        <span class="card-tag linux">Linux</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-04-02</span>
+                    <span class="card-difficulty easy">Easy</span>
+                </div>
+            </a>
+
+            <!-- Wgel -->
+            <a class="bento-card" href="viewer.html?file=writeups/Wgel-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Linux</div>
+                    <div class="card-title">Wgel CTF</div>
+                    <div class="card-desc">Fuerza bruta SSH, usuario en comentario HTML y escalada abusando de sudo wget.</div>
+                    <div class="card-tags">
+                        <span class="card-tag linux">Linux</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-04-03</span>
+                    <span class="card-difficulty easy">Easy</span>
+                </div>
+            </a>
+
+            <!-- Rabbit -->
+            <a class="bento-card" href="viewer.html?file=writeups/Rabbit-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Linux</div>
+                    <div class="card-title">Year of the Rabbit</div>
+                    <div class="card-desc">Esteganografía PNG, Brainfuck decoder, movimiento lateral FTP→SSH y escalada con CVE-2019-14287.</div>
+                    <div class="card-tags">
+                        <span class="card-tag linux">Linux</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-04-03</span>
+                    <span class="card-difficulty easy">Easy</span>
+                </div>
+            </a>
+
+            <!-- Lian Yu -->
+            <a class="bento-card" href="viewer.html?file=writeups/LianYu-TryHackMe-rehecho.md">
+                <div class="card-content">
+                    <div class="card-subhead">TryHackMe · Linux</div>
+                    <div class="card-title">Lian Yu</div>
+                    <div class="card-desc">Fuzzing, esteganografía con steghide (reparación de magic bytes PNG) y escalada con pkexec.</div>
+                    <div class="card-tags">
+                        <span class="card-tag linux">Linux</span>
+                        <span class="card-tag ctf">CTF</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span><i class="fa-regular fa-calendar"></i> 2026-04-04</span>
+                    <span class="card-difficulty easy">Easy</span>
+                </div>
+            </a>
+
+        </section>
+
+        <footer>
+            <p>Copyright &copy; 2026 Karitsu2281</p>
+            <p>
+                <a href="https://github.com/karitsu2281" target="_blank" rel="noopener noreferrer">GitHub</a>
+                &nbsp;·&nbsp;
+                <a href="https://www.linkedin.com/in/hugo-flores-molina-167247414" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            </p>
+        </footer>
+
+    </div>
+
+</body>
+
+</html>
