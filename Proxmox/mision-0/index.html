@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data:; script-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=()">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="robots" content="noai, noimageai">
+    <meta name="gptbot" content="noindex">
+    <meta name="googlebot" content="nosnippet">
+    <title>Bluebox: Despliegue de Proxmox VE con Tailscale — Karitsu2281</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous">
+    <style>
+        .article {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 48px 56px;
+            margin: 40px 0 60px;
+            position: relative;
+        }
+
+        .article::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        .article-header {
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .article-header .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--accent-dim);
+            border: 1px solid var(--accent-border);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .article-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .article-header .meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .article-body {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text);
+        }
+
+        .article-body p {
+            margin-bottom: 20px;
+        }
+
+        .article-body strong {
+            color: #fff;
+        }
+
+        .article-body em {
+            color: var(--accent);
+        }
+
+        .article-body h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 40px 0 16px;
+            letter-spacing: -0.02em;
+        }
+
+        .article-body h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fff;
+            margin: 32px 0 12px;
+            letter-spacing: -0.01em;
+        }
+
+        .article-body pre {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin: 16px 0 24px;
+            color: #e0e0e0;
+        }
+
+        .article-body code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            color: var(--accent);
+        }
+
+        .article-body pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        .article-body blockquote {
+            border-left: 3px solid var(--accent);
+            padding: 16px 20px;
+            margin: 24px 0;
+            background: var(--accent-dim);
+            border-radius: 0 var(--radius) var(--radius) 0;
+            font-style: italic;
+            color: var(--text-muted);
+        }
+
+        .article-body blockquote strong {
+            color: var(--accent);
+        }
+
+        .article-body ul, .article-body ol {
+            margin: 16px 0 24px;
+            padding-left: 24px;
+        }
+
+        .article-body li {
+            margin-bottom: 8px;
+        }
+
+        .diario-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 32px;
+            margin: 40px 0 20px;
+        }
+
+        .diario-box h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .diario-box h3 i {
+            color: var(--accent);
+        }
+
+        .diario-box p, .diario-box li {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text);
+        }
+
+        .diario-box ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .diario-box ul li {
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .diario-box ul li::before {
+            content: '\f105';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 24px;
+            transition: gap 0.25s;
+        }
+
+        .back-link:hover {
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .article {
+                padding: 28px 20px;
+            }
+
+            .article-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .diario-box {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="../../index.html" class="nav-logo"><i class="fa-solid fa-terminal"></i> Karitsu2281</a>
+            <ul class="nav-links">
+                <li><a href="../../index.html#proyectos">Proyectos</a></li>
+                <li><a href="../../index.html#perfil">Perfil</a></li>
+                <li><a href="../../index.html#contacto">Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <article class="article">
+            <a href="../../index.html" class="back-link"><i class="fa-solid fa-chevron-left"></i> Volver al portfolio</a>
+
+            <div class="article-header">
+                <span class="badge"><i class="fa-solid fa-server"></i> Homelab · Proxmox</span>
+                <h1>Bluebox: Despliegue de Proxmox VE con Tailscale</h1>
+                <p class="meta"><i class="fa-regular fa-calendar"></i> Junio 2026 &nbsp;·&nbsp; <i class="fa-regular fa-clock"></i> 5 min de lectura</p>
+            </div>
+
+            <div class="article-body">
+
+                <p>Este documento describe el proceso de instalación y configuración inicial de <strong>Proxmox VE</strong> sobre un Dell Latitude, junto con la integración de <strong>Tailscale</strong> para acceso remoto seguro y la configuración de <strong>split tunneling</strong> en ProtonVPN para evitar conflictos de conectividad.</p>
+
+                <p>El objetivo es establecer una base sólida sobre la que desplegar contenedores LXC, máquinas virtuales y servicios self-hosted, todo ello accesible de forma remota sin depender de la red local.</p>
+
+                <h2>1. Descarga de Proxmox VE</h2>
+
+                <p>Desde el equipo principal, se descargó la ISO del instalador de Proxmox VE desde el sitio oficial. Posteriormente, se grabó en una memoria USB mediante <code>dd</code>:</p>
+
+                <pre><code>sudo dd if=proxmox-ve_*.iso of=/dev/sdX bs=4M status=progress</code></pre>
+
+                <p>También puede utilizarse <strong>Rufus</strong> en Windows para este paso.</p>
+
+                <h2>2. Instalación en el Latitude</h2>
+
+                <p>Se conectaron teclado y monitor al Latitude. Se arrancó desde la USB pulsando <strong>F12</strong> para acceder al menú de boot. Durante el instalador se configuraron los siguientes parámetros:</p>
+
+                <ul>
+                    <li><strong>Disco de destino:</strong> SSD 256 GB</li>
+                    <li><strong>Ubicación:</strong> Spain / Europe/Madrid</li>
+                    <li><strong>Hostname:</strong> <code>bluebox.lab</code></li>
+                    <li><strong>IP estática:</strong> <code>192.168.10.78/24</code></li>
+                    <li><strong>Gateway:</strong> IP del router local</li>
+                    <li><strong>DNS:</strong> <code>1.1.1.1</code></li>
+                </ul>
+
+                <p>Es importante conectar el cable de red <strong>antes</strong> de iniciar la instalación. De no hacerlo, el instalador asigna direcciones IP incorrectas al no detectar la red a tiempo.</p>
+
+                <p>Una vez finalizada la instalación, se retiró el USB y se reinició. El panel de administración quedó accesible desde la red local en <code>https://192.168.10.78:8006</code>.</p>
+
+                <h2>3. Configuración de repositorios</h2>
+
+                <p>Proxmox VE incluye repositorios empresariales por defecto. Sin una suscripción activa, estos repositorios devuelven errores. Para resolverlo, se debe acceder a <strong>Updates > Repositories</strong> en el panel web y seleccionar la opción <strong>pve-no-subscription</strong>. Es recomendable realizar este cambio inmediatamente después de la instalación.</p>
+
+                <h2>4. Instalación de Tailscale</h2>
+
+                <p>Desde la shell del nodo en el panel de Proxmox, se ejecutaron los siguientes comandos para instalar y autenticar Tailscale:</p>
+
+                <pre><code>curl -fsSL https://tailscale.com/install.sh | sh
+tailscale up
+tailscale ip -4</code></pre>
+
+                <p>La IP asignada por Tailscale (<code>100.114.37.9</code> en este caso) es la que se utilizará para todas las conexiones remotas posteriores. Se recomienda registrarla para su uso futuro.</p>
+
+                <h2>5. Split tunneling en ProtonVPN</h2>
+
+                <p>ProtonVPN en modo túnel completo interfiere con las conexiones a través de Tailscale, ya que todo el tráfico se redirige a través de la VPN. Para solucionarlo, es necesario configurar el <strong>split tunneling</strong> para excluir el rango de direcciones de Tailscale:</p>
+
+                <ul>
+                    <li>En ProtonVPN, acceder a <strong>Settings > Connection > Split Tunneling</strong></li>
+                    <li>Activar el modo <strong>"Exclude selected IPs"</strong></li>
+                    <li>Añadir el rango <code>100.64.0.0/10</code></li>
+                    <li>Aplicar los cambios y reconectar la VPN</li>
+                </ul>
+
+                <p>Tras esta configuración, el panel de Proxmox es accesible desde cualquier ubicación a través de <code>https://100.114.37.9:8006</code>, incluso con ProtonVPN activo.</p>
+
+                <h2>6. Problema con el firewall de datacenter</h2>
+
+                <p>Durante las pruebas de conectividad remota, las conexiones entrantes a través de Tailscale fallaban con el mensaje <strong>"connection refused"</strong>. El origen del problema era la activación del firewall a nivel de <strong>datacenter</strong>, que entraba en conflicto con las reglas definidas a nivel de nodo.</p>
+
+                <p>La solución consistió en desactivar el firewall a nivel de datacenter y mantener únicamente las reglas configuradas directamente en el nodo. Esto eliminó los conflictos y permitió el acceso remoto sin incidencias.</p>
+
+                <h2>7. Resumen de configuración final</h2>
+
+                <div class="diario-box">
+                    <ul>
+                        <li><strong>Hipervisor:</strong> Proxmox VE instalado y operativo en Dell Latitude</li>
+                        <li><strong>Acceso local:</strong> <code>https://192.168.10.78:8006</code></li>
+                        <li><strong>Acceso remoto:</strong> <code>https://100.114.37.9:8006</code> vía Tailscale</li>
+                        <li><strong>VPN:</strong> Split tunneling configurado — ProtonVPN no interfiere con Tailscale</li>
+                        <li><strong>Firewall:</strong> Reglas activas solo a nivel de nodo, sin conflictos</li>
+                        <li><strong>Hardware:</strong> Latitude conectado a corriente y a la red — sin intervención física necesaria a partir de este punto</li>
+                    </ul>
+                </div>
+
+            </div>
+        </article>
+
+        <footer>
+            <p>Copyright &copy; 2026 Karitsu2281</p>
+            <p>
+                <a href="https://github.com/karitsu2281" target="_blank" rel="noopener noreferrer">GitHub</a>
+                &nbsp;·&nbsp;
+                <a href="https://www.linkedin.com/in/hugo-flores-molina-167247414" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            </p>
+        </footer>
+
+    </div>
+
+</body>
+
+</html>
