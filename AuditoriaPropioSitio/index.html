@@ -263,14 +263,14 @@
             <div class="article-header">
                 <span class="badge"><i class="fa-solid fa-magnifying-glass-chart"></i> Auto-auditoría</span>
                 <h1>Auditando mi propio portfolio: cuando el espejo devuelve fallos</h1>
-                <p class="meta"><i class="fa-regular fa-calendar"></i> Junio 2026 &nbsp;·&nbsp; <i class="fa-regular fa-clock"></i> 12 min de lectura &nbsp;·&nbsp; <i class="fa-solid fa-shield-halved"></i> OWASP Top 10 (2021)</p>
+                <p class="meta"><i class="fa-regular fa-calendar"></i> Junio 2026 &nbsp;·&nbsp; <i class="fa-regular fa-clock"></i> 12 min de lectura &nbsp;·&nbsp; <i class="fa-solid fa-shield-halved"></i> OWASP Top 10:2025</p>
             </div>
 
             <div class="article-body">
 
                 <p>Suena a chiste de arquero: <em>"el que vigila a los vigilantes"</em>. Pero cuando tienes un portfolio público de ciberseguridad, hay una pregunta que llega sola: <strong>¿y tú, te has auditado a ti mismo?</strong></p>
 
-                <p>Pues sí, le he pasado por encima a mi propio sitio siguiendo el mismo flujo que aplicaría a un cliente: <strong>OWASP Top 10 (2021)</strong>, ASVS, CIS Controls v8, y un repaso de configuraciones específicas de GitHub Pages. Y como era de esperar, <strong>encontré fallos</strong>. Algunos de bulto, otros sutiles. Este artículo documenta el proceso, los hallazgos y —lo más importante— las correcciones ya aplicadas.</p>
+                <p>Pues sí, le he pasado por encima a mi propio sitio siguiendo el mismo flujo que aplicaría a un cliente: <strong>OWASP Top 10:2025</strong>, ASVS, CIS Controls v8, y un repaso de configuraciones específicas de GitHub Pages. Y como era de esperar, <strong>encontré fallos</strong>. Algunos de bulto, otros sutiles. Este artículo documenta el proceso, los hallazgos y —lo más importante— las correcciones ya aplicadas.</p>
 
                 <h2>1. Por qué auditarte a ti mismo</h2>
 
@@ -284,7 +284,7 @@
                     <li><strong>Stack:</strong> sitio estático en GitHub Pages (HTML + CSS vanilla + FontAwesome 6 desde cdnjs) y una utilidad local <code>dni-share</code> en Python 3.13 que NO está desplegada (no forma parte del repo público).</li>
                     <li><strong>868 archivos tracked, ~491 MB</strong>. La mayor parte son capturas de pantalla de Codelabs.</li>
                     <li><strong>Sin secretos filtrados:</strong> busqué patrones tipo <code>AKIA</code>, <code>ghp_</code>, <code>sk-</code>, <code>BEGIN PRIVATE KEY</code>, <code>password=</code>, <code>api_key=</code>, y similares. Cero hallazgos.</li>
-                    <li><strong>Categorías evaluadas:</strong> A01–A10 de OWASP Top 10, A05 (Security Misconfiguration), A06 (Vulnerable Components), cabeceras HTTP, dependencias, archivos expuestos, supply-chain, privacidad.</li>
+                    <li><strong>Categorías evaluadas:</strong> A01–A10 de OWASP Top 10:2025 (Broken Access Control, Security Misconfiguration, Software Supply Chain Failures, Cryptographic Failures, Injection, Insecure Design, Authentication Failures, Software/Data Integrity, Logging/Alerting, Exceptional Conditions), cabeceras HTTP, dependencias, archivos expuestos, privacidad.</li>
                 </ul>
 
                 <h2>3. Hallazgos (resumen)</h2>
@@ -383,8 +383,8 @@
                 <h2>7. Fuentes y referencias</h2>
 
                 <ul>
-                    <li><a href="https://owasp.org/Top10/" target="_blank" rel="noopener noreferrer">OWASP Top 10 (2021)</a> — el marco de categorización de hallazgos.</li>
-                    <li><a href="https://owasp.org/www-project-application-security-verification-standard/" target="_blank" rel="noopener noreferrer">OWASP ASVS</a> — lista de verificación detallada.</li>
+                    <li><a href="https://owasp.org/Top10/" target="_blank" rel="noopener noreferrer">OWASP Top 10:2025</a> — el marco de categorización de hallazgos (la URL raíz siempre apunta a la release vigente; en el momento de la auditoría era la 2025).</li>
+                    <li><a href="https://owasp.org/www-project-application-security-verification-standard/" target="_blank" rel="noopener noreferrer">OWASP ASVS 5.0</a> — lista de verificación detallada.</li>
                     <li><a href="https://www.cisecurity.org/controls/v8" target="_blank" rel="noopener noreferrer">CIS Critical Security Controls v8</a> — controles priorizados.</li>
                     <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">OWASP XSS Prevention Cheat Sheet</a> — base del fix de dni-share.</li>
                     <li><a href="https://pages.nist.gov/800-63-3/sp800-63b.html" target="_blank" rel="noopener noreferrer">NIST SP 800-63B</a> — autenticación y passkeys.</li>
