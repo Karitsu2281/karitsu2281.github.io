@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data:; script-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=()">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="robots" content="noai, noimageai">
+    <meta name="gptbot" content="noindex">
+    <meta name="googlebot" content="nosnippet">
+    <title>Auditando mi propio portfolio — Karitsu2281</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous">
+    <style>
+        .article {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 48px 56px;
+            margin: 40px 0 60px;
+            position: relative;
+        }
+
+        .article::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(135deg, var(--accent) 0%, transparent 100%);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        .article-header {
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .article-header .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--accent-dim);
+            border: 1px solid var(--accent-border);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .article-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .article-header .meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .article-body {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text);
+        }
+
+        .article-body p {
+            margin-bottom: 20px;
+        }
+
+        .article-body strong {
+            color: #fff;
+        }
+
+        .article-body em {
+            color: var(--accent);
+        }
+
+        .article-body h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 40px 0 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .article-body h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 28px 0 10px;
+        }
+
+        .article-body ul,
+        .article-body ol {
+            margin: 12px 0 20px 24px;
+        }
+
+        .article-body li {
+            margin-bottom: 8px;
+        }
+
+        .article-body code {
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+            font-size: 0.88em;
+            background: rgba(232, 93, 44, 0.08);
+            color: var(--accent);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid var(--accent-border);
+        }
+
+        .findings {
+            display: grid;
+            gap: 12px;
+            margin: 24px 0;
+        }
+
+        .finding {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--text-muted);
+            border-radius: 6px;
+            padding: 16px 20px;
+        }
+
+        .finding.critica { border-left-color: #f87171; }
+        .finding.alta    { border-left-color: #fb923c; }
+        .finding.media   { border-left-color: #fbbf24; }
+        .finding.baja    { border-left-color: #38bdf8; }
+
+        .finding .head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
+
+        .finding .title {
+            font-weight: 700;
+            color: #fff;
+            font-size: 0.95rem;
+        }
+
+        .finding .sev {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-muted);
+        }
+
+        .finding.critica .sev { background: rgba(248, 113, 113, 0.15); color: #f87171; }
+        .finding.alta    .sev { background: rgba(251, 146, 60, 0.15); color: #fb923c; }
+        .finding.media   .sev { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+        .finding.baja    .sev { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
+
+        .finding .where {
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .finding .fix {
+            font-size: 0.9rem;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .callout {
+            background: var(--accent-dim);
+            border: 1px solid var(--accent-border);
+            border-radius: var(--radius);
+            padding: 24px 28px;
+            margin: 32px 0;
+        }
+
+        .callout h3 {
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+        }
+
+        .callout h3 i { color: var(--accent); }
+
+        .callout ul { margin: 12px 0 0 0; padding: 0; list-style: none; }
+        .callout li {
+            padding-left: 24px;
+            position: relative;
+            margin-bottom: 8px;
+        }
+        .callout li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-size: 0.85rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 24px;
+            transition: gap 0.25s;
+        }
+
+        .back-link:hover { gap: 12px; }
+
+        @media (max-width: 768px) {
+            .article { padding: 28px 20px; }
+            .article-header h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="../index.html" class="nav-logo"><i class="fa-solid fa-terminal"></i> Karitsu2281</a>
+            <ul class="nav-links">
+                <li><a href="../index.html#proyectos">Proyectos</a></li>
+                <li><a href="../index.html#perfil">Perfil</a></li>
+                <li><a href="../index.html#contacto">Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <article class="article">
+            <a href="../index.html" class="back-link"><i class="fa-solid fa-chevron-left"></i> Volver al portfolio</a>
+
+            <div class="article-header">
+                <span class="badge"><i class="fa-solid fa-magnifying-glass-chart"></i> Auto-auditoría</span>
+                <h1>Auditando mi propio portfolio: cuando el espejo devuelve fallos</h1>
+                <p class="meta"><i class="fa-regular fa-calendar"></i> Junio 2026 &nbsp;·&nbsp; <i class="fa-regular fa-clock"></i> 12 min de lectura &nbsp;·&nbsp; <i class="fa-solid fa-shield-halved"></i> OWASP Top 10 (2021)</p>
+            </div>
+
+            <div class="article-body">
+
+                <p>Suena a chiste de arquero: <em>"el que vigila a los vigilantes"</em>. Pero cuando tienes un portfolio público de ciberseguridad, hay una pregunta que llega sola: <strong>¿y tú, te has auditado a ti mismo?</strong></p>
+
+                <p>Pues sí, le he pasado por encima a mi propio sitio siguiendo el mismo flujo que aplicaría a un cliente: <strong>OWASP Top 10 (2021)</strong>, ASVS, CIS Controls v8, y un repaso de configuraciones específicas de GitHub Pages. Y como era de esperar, <strong>encontré fallos</strong>. Algunos de bulto, otros sutiles. Este artículo documenta el proceso, los hallazgos y —lo más importante— las correcciones ya aplicadas.</p>
+
+                <h2>1. Por qué auditarte a ti mismo</h2>
+
+                <p>En clase, en talleres, en writeups: siempre le digo a la gente que <strong>la seguridad no es un estado, es un proceso</strong>. Y la mejor forma de predicarlo es predicarlo con el ejemplo. Si me presento como futuro profesional de Blue Team y dejo XSS en una utilidad local, o dejo subir un binario de 9 MB por error al repo, mi palabra vale cero.</p>
+
+                <p>La auditoría la hice <strong>en modo solo lectura</strong>, con la misma disciplina que recomendaría a un cliente: no toco nada sin aprobación explícita, cada hallazgo con severidad y fuente, y reporte final antes de aplicar nada.</p>
+
+                <h2>2. Inventario y metodología</h2>
+
+                <ul>
+                    <li><strong>Stack:</strong> sitio estático en GitHub Pages (HTML + CSS vanilla + FontAwesome 6 desde cdnjs) y una utilidad local <code>dni-share</code> en Python 3.13 que NO está desplegada (no forma parte del repo público).</li>
+                    <li><strong>868 archivos tracked, ~491 MB</strong>. La mayor parte son capturas de pantalla de Codelabs.</li>
+                    <li><strong>Sin secretos filtrados:</strong> busqué patrones tipo <code>AKIA</code>, <code>ghp_</code>, <code>sk-</code>, <code>BEGIN PRIVATE KEY</code>, <code>password=</code>, <code>api_key=</code>, y similares. Cero hallazgos.</li>
+                    <li><strong>Categorías evaluadas:</strong> A01–A10 de OWASP Top 10, A05 (Security Misconfiguration), A06 (Vulnerable Components), cabeceras HTTP, dependencias, archivos expuestos, supply-chain, privacidad.</li>
+                </ul>
+
+                <h2>3. Hallazgos (resumen)</h2>
+
+                <div class="findings">
+
+                    <div class="finding critica">
+                        <div class="head">
+                            <span class="title">Marcadores de conflicto git sin resolver en un informe de pentest público</span>
+                            <span class="sev">Crítica</span>
+                        </div>
+                        <div class="where">P3HackingEtico/pentest_report.md:3, 21, 42, 49, 72, 98, 104, 120, 126</div>
+                        <div class="fix"><strong>Por qué es crítica:</strong> el archivo está en el repositorio público y forma parte del portfolio. Un visitante veía texto crudo tipo <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code> mezclado con el informe. Indica merge mal resuelto y queda fatal en un CV. <strong>Fix:</strong> se resolvió manualmente el conflicto, manteniendo la versión narrativa (más cercana al tono del portfolio).</div>
+                    </div>
+
+                    <div class="finding alta">
+                        <div class="head">
+                            <span class="title">Stored XSS en dni-share (utilidad local para compartir DNI)</span>
+                            <span class="sev">Alta</span>
+                        </div>
+                        <div class="where">dni-share/app.py:280 (render sin autoescape) + :424 (regex de sanitización) + templates/view.html:2</div>
+                        <div class="fix"><strong>Por qué es alta y no crítica:</strong> la app no está desplegada, solo se corre en <code>127.0.0.1</code>. Pero si alguien la expone a LAN con <code>DNI_HOST=0.0.0.0</code>, un nombre de archivo malicioso (<code>&lt;img src=x onerror=...&gt;</code>) se almacena tal cual y se inyecta en el HTML al abrir el enlace. <strong>Fix (defense in depth):</strong> 1) regex endurecido para también eliminar <code>&lt;</code> y <code>&gt;</code>; 2) <code>_html()</code> aplicado a <code>original_name</code> antes de renderizar <code>{{original}}</code> en view.html; 3) comentario explícito en <code>render()</code> documentando que NO autoescapa por contrato.</div>
+                    </div>
+
+                    <div class="finding media">
+                        <div class="head">
+                            <span class="title">Google Fonts cargado por @import → fuga de IP a tercero</span>
+                            <span class="sev">Media</span>
+                        </div>
+                        <div class="where">style.css:1</div>
+                        <div class="fix">Cada visita realizaba una petición a <code>fonts.googleapis.com</code> + <code>fonts.gstatic.com</code>, exponiendo IP + UA + Referer a Google. <strong>Fix:</strong> se descargó la fuente Inter (SIL OFL) y se sirve localmente desde <code>assets/fonts/inter-latin.woff2</code> (48 KB) con <code>@font-face</code>. Más rápido, más privado, sin dependencia de CDN.</div>
+                    </div>
+
+                    <div class="finding media">
+                        <div class="head">
+                            <span class="title">9 binarios de Codelabs (~84 MB) versionados en el repo</span>
+                            <span class="sev">Media</span>
+                        </div>
+                        <div class="where">9× claat-windows-amd64.exe en 9 subproyectos</div>
+                        <div class="fix">Infla el repo, no son ejecutables en el sitio y pueden tener CVEs sin parchear. <strong>Fix:</strong> <code>git rm --cached</code> de los 9 binarios (se mantienen locales para regenerar codelabs si hace falta) y <code>**/claat-*.exe</code> añadido a <code>.gitignore</code>. Aproximadamente 84 MB fuera del tracking.</div>
+                    </div>
+
+                    <div class="finding media">
+                        <div class="head">
+                            <span class="title">.rar con código PHP vulnerable accesible en el repo</span>
+                            <span class="sev">Media</span>
+                        </div>
+                        <div class="where">P3HackingEtico/Web_Talent-ScoutTech.rar</div>
+                        <div class="fix">El PoC de la auditoría contiene SQLi/XSS/CSRF funcionales. Si alguien lo monta en producción, queda expuesto. <strong>Fix:</strong> añadido <code>P3HackingEtico/SECURITY.md</code> con aviso explícito de que el archivo es un PoC histórico y NO debe desplegarse.</div>
+                    </div>
+
+                </div>
+
+                <h2>4. Lo que ya estaba bien (no todo es malo)</h2>
+
+                <p>Antes de pasar a lo siguiente, también quiero dejar por escrito lo que <strong>no</strong> encontré, porque es parte de la auditoría honesta.</p>
+
+                <ul>
+                    <li><strong>Cabeceras de seguridad de las páginas hechas a mano:</strong> <code>script-src 'none'</code>, <code>object-src 'none'</code>, <code>form-action 'self'</code>, <code>frame-ancestors 'none'</code>, <code>base-uri 'self'</code>, <code>upgrade-insecure-requests</code>; <code>Permissions-Policy</code> desactiva cámara/microgeo/pago/USB; <code>X-Content-Type-Options: nosniff</code>; <code>Referrer-Policy: strict-origin-when-cross-origin</code>; directivas <code>noai, noimageai</code> para bots. <strong>Excelente.</strong></li>
+                    <li><strong>FontAwesome 6</strong> se carga con SRI (<code>sha384-iw3OoT…</code>), lo que blinda contra compromiso del CDN de cdnjs.</li>
+                    <li><strong>El correo de contacto</strong> está ofuscado con entidades HTML —defensa modesta pero defensa.</li>
+                    <li><strong>El <code>dni-share</code></strong> usa AES-256-GCM con <code>secrets.token_bytes(12)</code>, tokens de 256 bits con <code>secrets.token_urlsafe(32)</code>, <code>scrypt</code> con sal por enlace, <code>hmac.compare_digest</code> para verificación en tiempo constante, sentencias SQL siempre parametrizadas, rate-limit por IP, validación de tokens con regex estricto, anti path-traversal, y <code>0o600</code> en <code>.key</code> y archivos cifrados. <strong>El diseño criptográfico es serio.</strong> Lo que fallaba era el saneamiento del nombre de archivo (ya corregido).</li>
+                    <li><strong>Sin secretos en el repo:</strong> no hay claves, tokens, hashes de contraseñas reales ni API keys. <code>grep -rE "AKIA|ghp_|sk-|BEGIN (RSA|PRIVATE|OPENSSH)|password="</code> devolvió cero falsos positivos.</li>
+                </ul>
+
+                <h2>5. Lo que no toqué (y por qué)</h2>
+
+                <p>Hay tres clases de cosas que <strong>no</strong> arreglé, para no romper nada del sitio:</p>
+
+                <ol>
+                    <li><strong>CSP permisiva en páginas generadas por Codelabs (<code>script-src 'unsafe-inline'</code>, GA, GTM, storage.googleapis.com).</strong> Los codelabs están generados por la herramienta oficial de Google (claat) y necesitan esos orígenes para funcionar (web components, scripts de tracking, runtime). Modificar el HTML a mano sería sobrescrito en la próxima regeneración. La solución de fondo sería regenerar con una versión modificada de claat, fuera del alcance de esta auditoría.</li>
+                    <li><strong>Imágenes duplicadas en <code>proyecto1/img/</code></strong> (MD5 idénticos entre <code>img14.png</code> y nombres hasheados). Inflate el repo, pero deduplicar requiere tocar <code>codelab.md</code> y regenerar.</li>
+                    <li><strong>Reporte OSINT <code>A08-DNS</code></strong> que publica infraestructura de una empresa real (ElPozo Alimentación S.A., IPs específicas). Es investigación mía, ya viene marcada como OSINT pasivo, y la decisión de ofuscar/anonimizar es de contenido, no de seguridad per se.</li>
+                </ol>
+
+                <h2>6. Lo que aprendí (en primera persona)</h2>
+
+                <p>Cuando auditas a otros, tiendes a separar "auditor" y "auditado". Cuando te auditas a ti mismo, descubres que <strong>los mismos descuidos aparecen en tu propio código</strong>. Tres cosas concretas que me llevo:</p>
+
+                <ul>
+                    <li><strong>El conflicto git sin resolver llevaba ahí meses.</strong> Si alguien externo no me lo dice (yo no lo vi), nadie lo habría visto en mi flujo de trabajo diario. Lección: instala un <em>pre-commit hook</em> con <code>git diff --check</code> que bloquee commits con marcadores.</li>
+                    <li><strong>El XSS en dni-share era real, no teórico.</strong> Con cinco líneas de código malicioso en un nombre de archivo se consigue ejecución de JS arbitrario. Si lo llego a exponer a una red, era incidente. Lección: <em>defense in depth</em>. Aunque el regex de subida intente bloquear, la capa de render SIEMPRE debe escapar.</li>
+                    <li><strong>La fuga por Google Fonts es invisible hasta que la buscas.</strong> No es un exploit, es telemetría no deseada que cede datos de cada visitante a un tercero. Lección: la privacidad no es un "nice to have", es higiene.</li>
+                </ul>
+
+                <div class="callout">
+                    <h3><i class="fa-solid fa-shield-halved"></i> Compromiso personal</h3>
+                    <ul>
+                        <li>Voy a añadir un <em>pre-commit hook</em> con <code>git diff --check</code> para que no vuelva a colarse un conflicto sin resolver.</li>
+                        <li>Voy a regenerar los codelabs con una build local de claat sin tracking, o aceptar la CSP permisiva como deuda técnica documentada.</li>
+                        <li>Voy a activar passkeys en mi cuenta de GitHub. Tengo 2FA TOTP, pero la passkey es más fuerte contra phishing.</li>
+                        <li>Voy a hacer una autoauditoría <strong>trimestral</strong> de mi propio portfolio. La seguridad no es un commit, es una cadencia.</li>
+                    </ul>
+                </div>
+
+                <h2>7. Fuentes y referencias</h2>
+
+                <ul>
+                    <li><a href="https://owasp.org/Top10/" target="_blank" rel="noopener noreferrer">OWASP Top 10 (2021)</a> — el marco de categorización de hallazgos.</li>
+                    <li><a href="https://owasp.org/www-project-application-security-verification-standard/" target="_blank" rel="noopener noreferrer">OWASP ASVS</a> — lista de verificación detallada.</li>
+                    <li><a href="https://www.cisecurity.org/controls/v8" target="_blank" rel="noopener noreferrer">CIS Critical Security Controls v8</a> — controles priorizados.</li>
+                    <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">OWASP XSS Prevention Cheat Sheet</a> — base del fix de dni-share.</li>
+                    <li><a href="https://pages.nist.gov/800-63-3/sp800-63b.html" target="_blank" rel="noopener noreferrer">NIST SP 800-63B</a> — autenticación y passkeys.</li>
+                    <li><a href="https://docs.github.com/en/pages" target="_blank" rel="noopener noreferrer">GitHub Pages documentation</a> — HTTPS forzado, cabeceras que se pueden y no se pueden controlar.</li>
+                </ul>
+
+                <p>Y nada, eso es todo. Si has leído hasta aquí: gracias. Si has encontrado algo que se me haya escapado: <a href="../index.html#contacto">escríbeme</a>. La seguridad se entrena con humildad, no en plan estrella del rock.</p>
+
+            </div>
+        </article>
+
+        <footer>
+            <p>Copyright &copy; 2026 Karitsu2281</p>
+            <p>
+                <a href="https://github.com/karitsu2281" target="_blank" rel="noopener noreferrer">GitHub</a>
+                &nbsp;·&nbsp;
+                <a href="https://www.linkedin.com/in/hugo-flores-molina-167247414" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            </p>
+        </footer>
+
+    </div>
+</body>
+
+</html>
