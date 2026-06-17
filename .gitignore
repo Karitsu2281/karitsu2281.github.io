@@ -1,1 +1,16 @@
 .cache/
+
+# dni-share: nunca subir claves, base de datos ni archivos subidos
+dni-share/data/
+dni-share/*.db
+dni-share/*.db-journal
+dni-share/*.db-wal
+dni-share/*.db-shm
+dni-share/.key
+dni-share/__pycache__/
+
+# Binarios de Codelabs: pesan ~9 MB cada uno y no se sirven desde el sitio.
+# El toolchain de claat solo se necesita para regenerar codelabs; no versionar.
+**/claat-*.exe
+.claat/
+

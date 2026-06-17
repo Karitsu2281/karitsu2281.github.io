@@ -1,4 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+/* Inter (SIL Open Font License 1.1) — auto-hospedada para evitar fugar la IP
+   de cada visitante a Google Fonts y para no depender de un CDN de terceros.
+   Fuente única variable (400–800) servida desde assets/fonts/. */
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400 800;
+    font-display: swap;
+    src: url('./assets/fonts/inter-latin.woff2') format('woff2');
+}
 
 :root {
     --bg: #0a0a0b;
