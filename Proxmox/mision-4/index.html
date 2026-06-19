@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data:; script-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=()">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="robots" content="noai, noimageai">
+    <meta name="gptbot" content="noindex">
+    <meta name="googlebot" content="nosnippet">
+    <title>Bluebox: Primer incidente simulado + informe — Karitsu2281</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous">
+    <style>
+        .article {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 48px 56px;
+            margin: 40px 0 60px;
+            position: relative;
+        }
+
+        .article::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        .article-header {
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .article-header .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--accent-dim);
+            border: 1px solid var(--accent-border);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .article-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .article-header .meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .article-body {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text);
+        }
+
+        .article-body p {
+            margin-bottom: 20px;
+        }
+
+        .article-body strong {
+            color: #fff;
+        }
+
+        .article-body em {
+            color: var(--accent);
+        }
+
+        .article-body h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 40px 0 16px;
+            letter-spacing: -0.02em;
+        }
+
+        .article-body h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fff;
+            margin: 32px 0 12px;
+            letter-spacing: -0.01em;
+        }
+
+        .article-body pre {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin: 16px 0 24px;
+            color: #e0e0e0;
+        }
+
+        .article-body code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            color: var(--accent);
+        }
+
+        .article-body pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        .article-body ul, .article-body ol {
+            margin: 16px 0 24px;
+            padding-left: 24px;
+        }
+
+        .article-body li {
+            margin-bottom: 8px;
+        }
+
+        .article-body img {
+            max-width: 100%;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            margin: 24px 0;
+        }
+
+        .article-body .alert-json {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin: 20px 0 28px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.75rem;
+            line-height: 1.5;
+            color: #c0c0c0;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .specs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0 28px;
+            font-size: 0.95rem;
+        }
+
+        .specs-table th, .specs-table td {
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+
+        .specs-table th {
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.06em;
+        }
+
+        .specs-table td {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .summary-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 32px;
+            margin: 40px 0 20px;
+        }
+
+        .summary-box ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .summary-box ul li {
+            padding-left: 24px;
+            position: relative;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text);
+        }
+
+        .summary-box ul li::before {
+            content: '\f105';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+
+        .incident-report {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--accent-border);
+            border-left: 4px solid var(--accent);
+            border-radius: var(--radius);
+            padding: 28px 32px;
+            margin: 32px 0 28px;
+        }
+
+        .incident-report h3 {
+            margin-top: 0;
+            color: var(--accent);
+        }
+
+        .incident-report .field {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .incident-report .field-label {
+            font-weight: 700;
+            color: #fff;
+            min-width: 160px;
+            flex-shrink: 0;
+        }
+
+        .incident-report .field-value {
+            color: var(--text);
+        }
+
+        .incident-report .section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .incident-report .section-label {
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.06em;
+            margin-bottom: 8px;
+        }
+
+        .incident-report .section-text {
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        .tutorial-note {
+            background: rgba(255, 165, 0, 0.08);
+            border: 1px solid rgba(255, 165, 0, 0.3);
+            border-left: 4px solid #ffa500;
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin: 24px 0;
+            color: var(--text);
+        }
+
+        .tutorial-note .tutorial-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            color: #ffa500;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.06em;
+            margin-bottom: 8px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 24px;
+            transition: gap 0.25s;
+        }
+
+        .back-link:hover {
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .article {
+                padding: 28px 20px;
+            }
+
+            .article-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .summary-box {
+                padding: 20px;
+            }
+
+            .incident-report {
+                padding: 20px;
+            }
+
+            .incident-report .field {
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .incident-report .field-label {
+                min-width: 0;
+            }
+
+            .article-body .alert-json {
+                font-size: 0.65rem;
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="../../index.html" class="nav-logo"><i class="fa-solid fa-terminal"></i> Karitsu2281</a>
+            <ul class="nav-links">
+                <li><a href="../../index.html#proyectos">Proyectos</a></li>
+                <li><a href="../../index.html#perfil">Perfil</a></li>
+                <li><a href="../../index.html#contacto">Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <article class="article">
+            <a href="../../index.html" class="back-link"><i class="fa-solid fa-chevron-left"></i> Volver al portfolio</a>
+
+            <div class="article-header">
+                <span class="badge"><i class="fa-solid fa-file-circle-exclamation"></i> Homelab · Blue Team</span>
+                <h1>Bluebox: Primer incidente simulado + informe</h1>
+                <p class="meta"><i class="fa-regular fa-calendar"></i> Junio 2026 &nbsp;·&nbsp; <i class="fa-regular fa-clock"></i> 6 min de lectura</p>
+            </div>
+
+            <div class="article-body">
+
+                <p>En esta quinta entrada de la serie <strong>Bluebox</strong> se cierra el ciclo completo de detección: tras desplegar el SIEM Wazuh y conectar agentes, llega el momento de <strong>provocar un evento sobre la infraestructura</strong> para validar que las alertas se generan correctamente. Se lanza un ping ICMP desde la red hacia la VM Windows donde corre Suricata como IDS, y se documenta el incidente siguiendo una plantilla formal, simulando el trabajo diario de un analista Blue Team.</p>
+
+                <div class="tutorial-note">
+                    <div class="tutorial-label"><i class="fa-solid fa-circle-info"></i> Nota sobre el desarrollo</div>
+                    <p style="margin: 0;">Durante esta misión estuve <strong>varias horas probando combinaciones</strong> de reglas personalizadas, decodificadores y directivas en <code>/var/ossec/etc/ossec.conf</code> para conseguir que Wazuh registrara algo más específico que la telemetría genérica del agente. Tras mucho ensayo y error, recurrí al tutorial de <a href="https://www.youtube.com/watch?v=7j4aGb5qnrE" target="_blank" rel="noopener noreferrer" style="color: #ffa500;"><strong>este vídeo de YouTube</strong></a>, cuyo enfoque sobre la integración de Suricata con Wazuh y el uso de las reglas <code>ruleset</code> del IDS me permitió finalmente afinar la detección y obtener las alertas que se muestran a continuación.</p>
+                </div>
+
+                <h2>1. Preparación del evento</h2>
+
+                <p>El escenario es el siguiente: la VM Ubuntu Server (<code>192.168.10.210</code>) ejecuta Wazuh como servidor central, y la VM Windows 10 LTSC —registrada como agente con el nombre <strong>Junko_Enoshima</strong> y <code>id 003</code> en <code>192.168.10.45</code>— corre Suricata como IDS local, reenviando sus alertas <code>eve.json</code> al manager de Wazuh. La acción consistió en lanzar un <strong>ping ICMP</strong> desde la red hacia la máquina Windows para validar que Suricata registraba el evento y que Wazuh lo correlacionaba correctamente.</p>
+
+                <img src="../img/12.png" alt="Lanzamiento del ping ICMP desde la red contra la VM Windows con Suricata">
+
+                <p>El comando ejecutado fue un simple <code>ping</code> desde una máquina del segmento de monitorización:</p>
+
+                <pre><code>ping 192.168.10.45</code></pre>
+
+                <p>A priori, un ping parece inofensivo, pero en realidad es una de las técnicas clásicas de reconocimiento activo: permite confirmar que un host está vivo antes de lanzar un escaneo más agresivo. Por eso las reglas de Suricata (incluso las de severidad baja) lo registran: cualquier ICMP request entrante en una máquina monitorizada es <em>señal</em>, no ruido.</p>
+
+                <h2>2. Verificación de las alertas en Wazuh</h2>
+
+                <p>Con el ping en curso, accedí al dashboard de Wazuh para comprobar que las alertas se estaban generando. Esta es la parte crítica del ejercicio: si un SOC no detecta un ping ICMP básico, <strong>tampoco detectará nada más sofisticado</strong>.</p>
+
+                <img src="../img/13.png" alt="Alerta de Suricata visible en el dashboard de Wazuh tras el ping ICMP">
+
+                <p>La alerta apareció en el módulo <strong>Security events</strong> con la severidad indicada por Suricata, agrupada en una ventana temporal coherente con el momento del ping. A continuación se muestra el JSON tal y como lo devolvió el motor de búsqueda de Wazuh.</p>
+
+                <h3>Alerta: ICMP PING detectado por Suricata</h3>
+
+                <div class="alert-json">{
+  "_index": "wazuh-alerts-4.x-2026.06.19",
+  "_id": "8tDf354BNGwWh50c8Bc9",
+  "_score": 1,
+  "_source": {
+    "agent": {
+      "ip": "192.168.10.45",
+      "name": "Junko_Enoshima",
+      "id": "003"
+    },
+    "manager": {
+      "name": "ubuntussh"
+    },
+    "data": {
+      "icmp_type": "8",
+      "ip_v": "4",
+      "in_iface": "\\Device\\NPF_{9913E83D-96E0-45B5-967A-BE8CBFBE23CE}",
+      "src_ip": "192.168.10.210",
+      "event_type": "alert",
+      "alert": {
+        "severity": "3",
+        "signature_id": "2100369",
+        "rev": "7",
+        "metadata": {
+          "updated_at": ["2019_07_26"],
+          "confidence": ["Medium"],
+          "created_at": ["2010_09_23"],
+          "tag": ["Description_Generated_By_Proofpoint_Nexus"],
+          "signature_severity": ["Informational"]
+        },
+        "gid": "1",
+        "signature": "GPL ICMP PING BayRS Router",
+        "action": "allowed",
+        "category": "Misc activity"
+      },
+      "flow_id": "753881661922225.000000",
+      "dest_ip": "192.168.10.45",
+      "proto": "ICMP",
+      "icmp_code": "0",
+      "pkt_src": "wire/pcap",
+      "flow": {
+        "src_ip": "192.168.10.210",
+        "pkts_toserver": "123",
+        "dest_ip": "192.168.10.45",
+        "start": "2026-06-19T14:30:10.306598+0200",
+        "bytes_toclient": "11956",
+        "bytes_toserver": "12054",
+        "pkts_toclient": "122"
+      },
+      "timestamp": "2026-06-19T14:34:11.947768+0200",
+      "direction": "to_server"
+    },
+    "rule": {
+      "firedtimes": 123,
+      "mail": false,
+      "level": 3,
+      "description": "Suricata: Alert - GPL ICMP PING BayRS Router",
+      "groups": ["ids", "suricata"],
+      "id": "86601"
+    },
+    "decoder": {
+      "name": "json"
+    },
+    "input": {
+      "type": "log"
+    },
+    "@timestamp": "2026-06-19T12:34:13.501Z",
+    "location": "C:\\Program Files\\Suricata\\log\\eve.json",
+    "id": "1781872453.4190404",
+    "timestamp": "2026-06-19T12:34:13.501+0000"
+  }
+}</div>
+
+                <p>La alerta la dispara la regla de Wazuh <strong>86601</strong> (<em>Suricata: Alert - GPL ICMP PING BayRS Router</em>, severidad 3, grupo <code>ids</code>), que es la regla que Wazuh aplica a las alertas generadas por Suricata. La firma concreta de Suricata es la <strong>2100369</strong> (<em>GPL ICMP PING BayRS Router</em>), que identifica el tráfico ICMP tipo 8 (echo request) —el clásico ping. Suricata la clasifica con severidad 3 e impacto <em>Informational</em>. Lo interesante de esta alerta es el <strong>flow</strong>: 123 paquetes hacia el servidor y 122 hacia el cliente, durante los casi 4 minutos que duró el flujo (<code>2026-06-19T14:30:10 → 14:34:11</code>), lo que indica que no fue un único ping suelto, sino un intercambio sostenido. La regla de Wazuh se disparó <strong>123 veces</strong> (<code>firedtimes</code>), una por cada evento <code>eve.json</code> que Suricata generó durante ese flujo.</p>
+
+                <h2>3. Informe de Incidente #001</h2>
+
+                <p>Con las alertas confirmadas, procedí a redactar el informe de incidente siguiendo la plantilla de Blue Team. Este es exactamente el tipo de documento que se enseña en entrevistas de trabajo y que se entrega al equipo de respuesta ante incidentes tras un evento real.</p>
+
+                <div class="incident-report">
+                    <h3><i class="fa-solid fa-file-shield"></i> Informe de Incidente #001</h3>
+
+                    <div class="field">
+                        <div class="field-label">Fecha:</div>
+                        <div class="field-value">19/06/2026</div>
+                    </div>
+                    <div class="field">
+                        <div class="field-label">Hora:</div>
+                        <div class="field-value">14:30 — 14:34 (CEST) / 12:34 (UTC)</div>
+                    </div>
+                    <div class="field">
+                        <div class="field-label">Tipo de evento:</div>
+                        <div class="field-value">ICMP Echo Request (ping) — reconocimiento activo</div>
+                    </div>
+                    <div class="field">
+                        <div class="field-label">Origen:</div>
+                        <div class="field-value">192.168.10.210 (servidor Wazuh / Ubuntu Server)</div>
+                    </div>
+                    <div class="field">
+                        <div class="field-label">Destino:</div>
+                        <div class="field-value">192.168.10.45 (Junko_Enoshima — Windows 10 LTSC, agente Wazuh id 003)</div>
+                    </div>
+                    <div class="field">
+                        <div class="field-label">Herramienta usada:</div>
+                        <div class="field-value"><code>ping</code> (origen) · Suricata IDS + Wazuh SIEM (detección)</div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-label">Descripción</div>
+                        <div class="section-text">Suricata, ejecutándose en la VM Windows 10 LTSC, detectó un flujo de paquetes ICMP echo request (tipo 8) dirigido a la propia máquina. El flujo, de casi 4 minutos de duración, intercambió 123 paquetes hacia el servidor y 122 hacia el cliente. Wazuh, que recibe los eventos <code>eve.json</code> de Suricata a través del agente, generó 123 alertas (firedtimes) a partir de la regla 86601. El evento se clasifica como reconocimiento activo: confirmación de host vivo previa a un posible escaneo o ataque.</div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-label">Evidencia en Wazuh</div>
+                        <div class="section-text">
+                            <strong>Regla 86601</strong> — <em>Suricata: Alert - GPL ICMP PING BayRS Router</em> — Severidad 3 — Firedtimes: 123 — 19/06/2026 12:34:13 UTC<br>
+                            <strong>Firma Suricata 2100369</strong> — <em>GPL ICMP PING BayRS Router</em> — Categoría: Misc activity — Acción: allowed<br>
+                            <strong>Protocolo:</strong> ICMP (tipo 8, código 0) — IPv4<br>
+                            <strong>Flujo:</strong> flow_id 753881661922225 · src 192.168.10.210 → dst 192.168.10.45 · 123 pkts toserver / 122 pkts toclient<br>
+                            <strong>Origen del log:</strong> <code>C:\Program Files\Suricata\log\eve.json</code>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-label">Análisis</div>
+                        <div class="section-text">Aunque la firma de Suricata se clasifica como <em>Informational</em> (severidad 3), un ICMP echo request no es tráfico neutro: es la técnica de reconocimiento activo más básica (técnica <strong>T1018 Remote System Discovery</strong> / <strong>ICMP T1046</strong> en MITRE ATT&amp;CK) y suele ser el primer paso antes de un escaneo de puertos o una explotación dirigida. En este caso, la IP origen es el propio servidor Wazuh (192.168.10.210), lo que reduce la probabilidad de ataque real y sugiere una prueba de validación del IDS. Aun así, en un entorno de producción, un host que no debería estar generando ICMP contra otro sin motivo justificado debe levantar sospecha. La detección funcionó: la cadena <strong>Suricata → eve.json → Wazuh → dashboard</strong> está operativa.</div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-label">Mitigación propuesta</div>
+                        <div class="section-text">
+                            1. <strong>Verificar legitimidad</strong> de la IP origen: confirmar que 192.168.10.210 tenía un motivo justificado para emitir ICMP contra 192.168.10.45 (pruebas, monitorización, etc.).<br>
+                            2. <strong>Regla de correlación personalizada</strong> en Wazuh que eleve la severidad cuando una IP genere más de X alertas ICMP en una ventana corta, descartando falsos positivos administrativos.<br>
+                            3. <strong>Segmentar la red de monitorización</strong> mediante VLAN o firewall para que el servidor Wazuh no comparta segmento con los endpoints monitorizados, reduciendo superficie de ataque lateral.<br>
+                            4. <strong>Desactivar respuestas ICMP</strong> en los endpoints de producción que no requieran responder a pings (Windows Firewall: bloquear eco entrante en perfil público y dominio).<br>
+                            5. <strong>Mantener Suricata actualizado</strong> y revisar periódicamente las reglas GPL para asegurar que las firmas de reconocimiento siguen activas.<br>
+                            6. <strong>Documentar pruebas</strong> en un runbook para que futuras validaciones del IDS queden registradas y no se confundan con tráfico malicioso real.
+                        </div>
+                    </div>
+                </div>
+
+                <h2>4. Resumen de la misión</h2>
+
+                <div class="summary-box">
+                    <ul>
+                        <li><strong>Evento:</strong> Ping ICMP desde 192.168.10.210 hacia 192.168.10.45 (4 min, 123/122 paquetes)</li>
+                        <li><strong>Detección:</strong> Suricata firma 2100369 → Wazuh regla 86601 (severidad 3, firedtimes 123)</li>
+                        <li><strong>Cadena validada:</strong> Suricata IDS → <code>eve.json</code> → agente Wazuh → manager → dashboard</li>
+                        <li><strong>Agente emisor:</strong> Junko_Enoshima (id 003) en 192.168.10.45</li>
+                        <li><strong>Informe:</strong> Documentado siguiendo plantilla formal de Blue Team</li>
+                        <li><strong>Aprendizaje clave:</strong> Un ping ICMP no es ruido, es reconocimiento activo — y la cadena de detección funciona</li>
+                    </ul>
+                </div>
+
+                <p>Con esta misión queda demostrado el ciclo completo: <strong>despliegue del SIEM → conexión de agentes → integración del IDS → detección de eventos → redacción de informes</strong>. El siguiente paso natural es aumentar la sofisticación de los eventos simulados (escaneos Nmap, explotación de SMB, movimiento lateral, exfiltración) para poner a prueba las reglas de correlación de Wazuh en escenarios más avanzados.</p>
+
+            </div>
+        </article>
+
+        <footer>
+            <p>Copyright &copy; 2026 Karitsu2281</p>
+            <p>
+                <a href="https://github.com/karitsu2281" target="_blank" rel="noopener noreferrer">GitHub</a>
+                &nbsp;·&nbsp;
+                <a href="https://www.linkedin.com/in/hugo-flores-molina-167247414" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            </p>
+        </footer>
+
+    </div>
+
+</body>
+
+</html>
