@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data:; script-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=()">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="robots" content="noai, noimageai">
+    <meta name="gptbot" content="noindex">
+    <meta name="googlebot" content="nosnippet">
+    <title>Certificación de Introducción a Ciberseguridad (Cisco) — Karitsu2281</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous">
+    <style>
+        .article {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 48px 56px;
+            margin: 40px 0 60px;
+            position: relative;
+        }
+
+        .article::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(135deg, var(--accent) 0%, transparent 100%);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        .article-header {
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .article-header .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--accent-dim);
+            border: 1px solid var(--accent-border);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+
+        .article-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .article-header .meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .article-body {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text);
+        }
+
+        .article-body p {
+            margin-bottom: 20px;
+        }
+
+        .article-body strong {
+            color: #fff;
+        }
+
+        .article-body em {
+            color: var(--accent);
+        }
+
+        .article-body h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 40px 0 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .article-body h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 28px 0 10px;
+        }
+
+        .article-body figure {
+            margin: 24px 0;
+        }
+
+        .article-body figure img {
+            width: 100%;
+            height: auto;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            display: block;
+        }
+
+        .article-body figcaption {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: #38bdf8;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        .status i {
+            font-size: 0.7rem;
+        }
+
+        .status.completed {
+            background: rgba(34, 197, 94, 0.12);
+            border-color: rgba(34, 197, 94, 0.4);
+            color: #4ade80;
+        }
+
+        .moraleja {
+            background: var(--accent-dim);
+            border: 1px solid var(--accent-border);
+            border-radius: var(--radius);
+            padding: 28px 32px;
+            margin: 40px 0 20px;
+        }
+
+        .moraleja h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .moraleja h3 i {
+            color: var(--accent);
+        }
+
+        .moraleja ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .moraleja ul li {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text);
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .moraleja ul li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-size: 0.8rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 24px;
+            transition: gap 0.25s;
+        }
+
+        .back-link:hover {
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .article {
+                padding: 28px 20px;
+            }
+
+            .article-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .moraleja {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="../../index.html" class="nav-logo"><i class="fa-solid fa-terminal"></i> Karitsu2281</a>
+            <ul class="nav-links">
+                <li><a href="../../index.html#proyectos">Proyectos</a></li>
+                <li><a href="../../index.html#perfil">Perfil</a></li>
+                <li><a href="../../index.html#contacto">Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <article class="article">
+            <a href="../../index.html" class="back-link"><i class="fa-solid fa-chevron-left"></i> Volver al portfolio</a>
+
+            <div class="article-header">
+                <span class="badge"><i class="fa-solid fa-certificate"></i> Certificación <span class="status completed"><i class="fa-solid fa-check"></i> Completado</span></span>
+                <h1>Certificación de Introducción a Ciberseguridad (Cisco)</h1>
+                <p class="meta"><i class="fa-regular fa-calendar"></i> Junio 2026 &nbsp;·&nbsp; <i class="fa-regular fa-clock"></i> 6 min de lectura &nbsp;·&nbsp; <i class="fa-solid fa-building"></i> Cisco Networking Academy &nbsp;·&nbsp; <i class="fa-solid fa-award"></i> Certificado obtenido</p>
+            </div>
+
+            <div class="article-body">
+
+                <p>En esta nueva serie del portfolio, voy a detallar la experiencia que he tenido al sacarme mi primera certificación oficial que he tenido de Cisco sobre ciberseguridad, para poder ampliar mis conocimientos en dicha materia.</p>
+
+                <p>Lo primero de todo, se puede hacer a través de una academia o hacerlo a tu propio ritmo, por lo que de primera ofrece opciones muy flexibles para cualquier usuario que quiera empezar en este mundillo o ampliar sus conocimientos.</p>
+
+                <figure>
+                    <img src="../img/1.png" alt="Curso de Introducción a Ciberseguridad de Cisco Networking Academy">
+                    <figcaption>Cisco Networking Academy — Introducción a Ciberseguridad. Esquema del curso y primer módulo sobre la guerra cibernética.</figcaption>
+                </figure>
+
+                <h2>1. Módulos básicos y técnicas de ataque</h2>
+
+                <p>Después, durante el curso, dan los módulos básicos de seguridad que ya dí en el curso de especialización, por lo que fue coser y cantar. Pero a partir del módulo 2, pude aprender técnicas de ataque que nunca ví o que se dió muy poco, por lo que aumentó mi curiosidad sobre este mundo y hasta investigué un poco sobre el tema para saber como funcionaban. El que más me ha soprendido fue <strong>Meltdown/Spectre</strong>, una vulnerabilidad física que tienen todos los procesadores del mercado (AMD, Intel, ARM...), descubierta por Google, que consiste en que hay una "ejecución especulativa" dentro del procesador que calcula posibles rutas y usa la más probable de que funcione.</p>
+
+                <p>Los atacantes aprovechan dicha vulnerabilidad para poder acceder a datos dentro del sistema operativo, como contraseñas, fotos personales, correos...</p>
+
+                <figure>
+                    <img src="../img/2.png" alt="Buenas prácticas para proteger los dispositivos: firewall, antivirus y contraseñas">
+                    <figcaption>Módulo 3 — Protegiendo sus Dispositivos Informáticos: firewall, antivirus y configuración de contraseñas.</figcaption>
+                </figure>
+
+                <h2>2. KRACK y la seguridad de la red Wi-Fi del hogar</h2>
+
+                <p>Además, gracias también a este curso, descubrí de que la tecnología <strong>WPA2</strong> fue crackeada en 2017 a través de una vulnerabilidad llamada "<strong>KRACK</strong>", rompiendo el cifrado entre el router y el endpoint, pudiendo tomar medidas en mi red personal del hogar para hacerla más segura, como usar una VPN, actualizar <strong>INMEDIATAMENTE</strong> el router del hogar y los dispositivos del hogar.</p>
+
+                <figure>
+                    <img src="../img/3.png" alt="Vulnerabilidad KRACK y recomendaciones de mitigación">
+                    <figcaption>KRACK (Key Reinstallation Attack): cómo se rompe el cifrado WPA2 y qué medidas aplicar (actualizar firmware, usar cable o VPN).</figcaption>
+                </figure>
+
+                <h2>3. Bluetooth: un vector de ataque subestimado</h2>
+
+                <p>Además de los ataques por <strong>Bluetooth</strong>, que antes no me lo tomaba en serio, pero al ver los ejemplos que dió el curso, me soprendió mucho y me comprometeré a intentar tener menos tiempo activado el Bluetooth del teléfono (solo para usar auriculares inalámbricos o sincronizar datos de mi <em>smartwatch</em>).</p>
+
+                <figure>
+                    <img src="../img/4.png" alt="Riesgos del Bluetooth y recomendación de mantenerlo desactivado">
+                    <figcaption>Bluetooth como vector de ataque: espionaje, control remoto, malware y drenaje de batería. Recomendación: desactivarlo cuando no se use.</figcaption>
+                </figure>
+
+                <h2>4. Contraseñas y autenticación en dos factores</h2>
+
+                <p>El curso también profundizó en las <strong>pautas NIST</strong> para la gestión de contraseñas: longitud mínima de 8 caracteres (máximo 64), sin reglas absurdas de composición, permitir todos los caracteres imprimibles, sin caducidad forzada y sin preguntas de seguridad tipo "nombre de tu primera mascota". Y, sobre todo, reforzar el acceso con <strong>autenticación en dos factores (2FA)</strong> como capa adicional.</p>
+
+                <figure>
+                    <img src="../img/5.png" alt="Pautas NIST para contraseñas: longitud, complejidad y sin caducidad">
+                    <figcaption>Pautas NIST: contraseñas largas, sin reglas de composición absurdas, sin caducidad periódica y sin autenticación basada en conocimiento.</figcaption>
+                </figure>
+
+                <figure>
+                    <img src="../img/6.png" alt="Autenticación en dos factores: algo que sabes, algo que tienes, algo que eres">
+                    <figcaption>Autenticación en dos factores: combinar contraseña/PIN con un objeto físico, biometría o código de un solo uso (SMS/email).</figcaption>
+                </figure>
+
+                <h2>5. Huella digital y redes sociales</h2>
+
+                <p>También me enseñó que si llego a usar redes sociales (aunque no las uso porque no las aguanto y por privacidad), solo tengo que compartir lo esencial para que no sepan mi vida entera sin conocerme: nombre de la organización en la que trabajas, nombres de tus colegas, fecha de nacimiento o foto de perfil son datos que alimentan vectores de <em>social engineering</em> y de <em>credential stuffing</em>.</p>
+
+                <figure>
+                    <img src="../img/7.png" alt="Datos a evitar compartir en redes sociales: nombre de organización, colegas, fecha de nacimiento y foto de perfil">
+                    <figcaption>Datos que conviene NO publicar en redes sociales: lugar de trabajo, contactos, fecha de nacimiento y foto de perfil.</figcaption>
+                </figure>
+
+                <h2>6. Comportamiento arriesgado en línea</h2>
+
+                <p>Por último, el curso cierra con un laboratorio interactivo para identificar <strong>comportamientos arriesgados en línea</strong>: clic en enlaces sospechosos, reutilización de contraseñas, descarga de adjuntos desconocidos, uso de redes Wi-Fi públicas sin VPN. La idea es pasar de la teoría a la práctica: reconocer el riesgo antes de que sea incidente.</p>
+
+                <figure>
+                    <img src="../img/8.png" alt="Laboratorio: descubra su comportamiento arriesgado en línea">
+                    <figcaption>Laboratorio final: "Descubra su comportamiento arriesgado en línea". Detector de malas prácticas habituales.</figcaption>
+                </figure>
+
+                <div class="moraleja">
+                    <h3><i class="fa-solid fa-graduation-cap"></i> Lo que me llevo de esta certificación</h3>
+                    <ul>
+                        <li><strong>La capa física importa:</strong> Meltdown/Spectre demuestran que el silicio también tiene fallos y que securizar solo el software se queda corto.</li>
+                        <li><strong>El hogar es parte del perímetro:</strong> WPA2/KRACK y el Bluetooth convierten al router y al móvil en vectores; actualizar firmware y limitar radios reduce superficie.</li>
+                        <li><strong>2FA siempre, sin excusas:</strong> mejor TOTP o passkeys que SMS, pero cualquier 2FA es mejor que ninguno.</li>
+                        <li><strong>La contraseña larga gana a la compleja:</strong> las reglas NIST se cargan años de malas prácticas (caducidad, símbolos forzosos, preguntas secretas).</li>
+                        <li><strong>Menos datos, menos riesgo:</strong> lo que no publicas no puede usarse contra ti en un ataque de ingeniería social.</li>
+                    </ul>
+                </div>
+
+            </div>
+        </article>
+
+        <footer>
+            <p>Copyright &copy; 2026 Karitsu2281</p>
+            <p>
+                <a href="https://github.com/karitsu2281" target="_blank" rel="noopener noreferrer">GitHub</a>
+                &nbsp;·&nbsp;
+                <a href="https://www.linkedin.com/in/hugo-flores-molina-167247414" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            </p>
+        </footer>
+
+    </div>
+</body>
+
+</html>
