@@ -14,3 +14,18 @@ dni-share/__pycache__/
 **/claat-*.exe
 .claat/
 
+# Backups locales y archivos de copia temporal. NUNCA versionar:
+# - pueden contener código obsoleto con fallos de seguridad ya parcheados
+# - GitHub Pages los serviría como páginas válidas
+# - exponen HTML previo a scrapers y a comparadores tipo "antes/después"
+*.bak
+*.bak.*
+*.backup
+*.old
+*.orig
+*.rej
+*.tmp
+*.swp
+*~
+.DS_Store
+Thumbs.db

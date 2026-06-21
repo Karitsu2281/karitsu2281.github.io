@@ -451,7 +451,7 @@
 
             <div class="article-body">
 
-                <p class="lede">Has abierto esta página porque querías saber si <a href="./index.html">el generador</a> que he puesto en mi portfolio es serio o un juguete. La respuesta corta: <strong>sí, es serio</strong>. La respuesta larga es este artículo. Voy a intentar explicarlo como me gustaría que me lo explicaran a mí: con calma, sin dar nada por sentado, y con la honestidad de decir también lo que <em>no</em> hace.</p>
+                <p class="lede">Has abierto esta página porque querías saber si <a href="./index.html">el generador</a> que he puesto en mi portfolio es serio o un juguete. La respuesta corta: <strong>sí, es serio</strong>. Voy a explicarlo de forma sencilla, sin tecnicismos innecesarios, y con la honestidad de decir también lo que <em>no</em> hace.</p>
 
                 <div class="takeaway" style="background: rgba(251, 191, 36, 0.06); border-color: rgba(251, 191, 36, 0.3);">
                     <h4 style="color: #fbbf24;"><i class="fa-solid fa-circle-info" style="color: #fbbf24;"></i> Una nota de transparencia</h4>
@@ -459,160 +459,78 @@
                     <p>Si estás evaluando este trabajo: lo que mido aquí no es si sé escribir JavaScript, sino si entiendo <em>por qué</em> cada decisión se tomó así, si puedo defenderla ante un auditor, y si sé cuándo un código <em>parece</em> seguro sin serlo. Eso es lo que ofrece un perfil Blue Team, no un perfil de desarrollo.</p>
                 </div>
 
-                <h2>0. Antes de empezar: el problema real</h2>
+                <h2>El problema con las contraseñas</h2>
 
-                <p>Cada año se filtran miles de millones de contraseñas a internet. La mayoría vienen de tres cosas:</p>
+                <p>Cada año se filtran miles de millones de contraseñas a internet. La mayoría se rompen por tres motivos:</p>
 
                 <ol>
                     <li><strong>Reutilización:</strong> la misma contraseña en muchos sitios. Si te roban una, caen todas.</li>
                     <li><strong>Patrones predecibles:</strong> <code>Verano2024!</code>, <code>qwerty</code>, el nombre del perro con un <code>1</code> al final. Los atacantes los prueban primero.</li>
-                    <li><strong>Generadores inseguros:</strong> sitios web que dicen "genera tu contraseña" pero usan algoritmos débiles. La contraseña parece aleatoria, pero un programa la adivina en segundos.</li>
+                    <li><strong>Generadores inseguros:</strong> webs que dicen "genera tu contraseña" pero usan algoritmos débiles. La contraseña parece aleatoria, pero un programa la adivina en segundos.</li>
                 </ol>
 
-                <p>Una contraseña <strong>buena</strong> cumple tres condiciones: es <em>única</em> (no la usas en otro sitio), es <em>impredecible</em> (no se puede adivinar con un diccionario) y es <em>suficientemente larga</em> (que da igual que sea compleja si tiene 8 caracteres, un ordenador la prueba toda en un rato).</p>
+                <p>Una contraseña <strong>buena</strong> cumple tres cosas: es <em>única</em> (no la usas en otro sitio), es <em>impredecible</em> (no se puede adivinar con un diccionario) y es <em>suficientemente larga</em> (una contraseña de 8 caracteres da igual que sea compleja, un ordenador la prueba toda en un rato).</p>
 
                 <div class="takeaway">
                     <h4><i class="fa-solid fa-lightbulb"></i> Idea clave</h4>
-                    <p>La longitud gana siempre a la complejidad. Una contraseña de 20 caracteres hecha sólo de letras minúsculas es <strong>más fuerte</strong> que una de 8 caracteres con mayúsculas, números y símbolos. Por eso el generador te deja elegir longitud hasta 64.</p>
+                    <p>La longitud gana siempre a la complejidad. Una contraseña de 20 caracteres hecha sólo de letras minúsculas es <strong>más segura</strong> que una de 8 caracteres con mayúsculas, números y símbolos. Por eso el generador te deja elegir longitud hasta 64.</p>
                 </div>
 
-                <h2>1. Qué hace que un generador sea "seguro" (y por qué la mayoría no lo es)</h2>
+                <h2>Cómo se genera una contraseña segura</h2>
 
-                <p>Cuando abres un generador de contraseñas en una web, lo que hace internamente es: coge un símbolo al azar, luego otro, luego otro, hasta tener la longitud que pediste. El detalle importante es <strong>de dónde sale ese "al azar"</strong>.</p>
+                <p>Cuando un generador crea una contraseña, va cogiendo caracteres al azar uno tras otro. El detalle importante es <strong>de dónde sale ese "al azar"</strong>.</p>
 
-                <p>Hay tres formas de generar números "aleatorios" en JavaScript, y <strong>solo una sirve para contraseñas</strong>:</p>
-
-                <h3>La mala: <code>Math.random()</code></h3>
-
-                <p>Es la que viene por defecto en cualquier tutorial. Por dentro usa un algoritmo llamado Mersenne-Twister: tiene un estado interno de unos 2.500 bits, y un atacante que vea unas pocas salidas puede reconstruir el resto. En la práctica, no necesitas romperlo: con suficiente contraseña generada, los patrones emergen.</p>
-
-                <h3>La regular: PRNG sembrado con la hora</h3>
-
-                <p>Algunos sitios usan <code>Date.now()</code> (los milisegundos actuales) como semilla. El problema es obvio: si el atacante sabe <em>más o menos</em> cuándo generaste la contraseña, el espacio de búsqueda es minúsculo.</p>
-
-                <h3>La buena: un CSPRNG</h3>
-
-                <p>Un <strong>CSPRNG</strong> (Generador Criptográficamente Seguro de Números Pseudoaleatorios, en inglés) es un tipo especial de generador que cumple tres propiedades:</p>
+                <p>En una web hay dos formas de hacerlo:</p>
 
                 <ul>
-                    <li><strong>No se puede predecir hacia atrás</strong>: aunque veas todas sus salidas, no puedes calcular las anteriores.</li>
-                    <li><strong>No se puede predecir hacia adelante</strong>: aunque veas todas sus salidas, no puedes calcular las siguientes.</li>
-                    <li><strong>Pasa tests estadísticos estrictos</strong>: no aparecen patrones visibles aunque generes millones de números.</li>
+                    <li><strong>La mala:</strong> usar <code>Math.random()</code>, que es el "aleatorio" normal de los tutoriales. No es seguro: tiene patrones internos que un atacante puede explotar para adivinar las contraseñas.</li>
+                    <li><strong>La buena:</strong> usar <code>crypto.getRandomValues()</code>, que es la herramienta que el navegador reserva para temas de seguridad. Por dentro, el sistema operativo mezcla ruido del ratón, del procesador y de timers internos. Esto es lo que se considera un CSPRNG (generador criptográficamente seguro).</li>
                 </ul>
 
-                <p>En el navegador, la forma correcta es llamar a <code>crypto.getRandomValues(...)</code>. Por debajo, el navegador le pide al sistema operativo bytes verdaderamente aleatorios (del movimiento del ratón, del ruido térmico del procesador, de timers del kernel…) y los mezcla con un CSPRNG. El estándar que respalda todo esto es <strong>NIST SP 800-90A</strong>.</p>
+                <p>Mi generador usa <code>crypto.getRandomValues</code> en <strong>todas</strong> sus decisiones. Si ves <code>Math.random</code> en un generador de contraseñas, desconfía.</p>
 
-                <div class="takeaway">
-                    <h4><i class="fa-solid fa-lightbulb"></i> Idea clave</h4>
-                    <p>Mi generador usa <code>crypto.getRandomValues</code> en <strong>todas</strong> las decisiones aleatorias: para elegir cada carácter, para colocar los caracteres garantizados y para barajar el resultado. Si ves <code>Math.random</code> en un generador de contraseñas, desconfía.</p>
-                </div>
+                <h2>Qué dice la guía oficial (NIST)</h2>
 
-                <h2>2. NIST SP 800-63B: lo que dice y por qué te afecta</h2>
+                <p>NIST es la agencia de estándares de EE.UU. Su guía <strong>SP 800-63B</strong> es la referencia mundial sobre contraseñas. Lo que recomienda hoy en día:</p>
 
-                <p>NIST es la agencia de estándares de EE.UU. Su documento <strong>SP 800-63B</strong> es la referencia mundial sobre autenticación digital. La sección §5.1.1.2, "Memorized Secrets" (secretos memorizados, es decir, contraseñas), cambió hace unos años y muchos artículos de internet siguen desfasados. Los puntos que importan:</p>
-
-                <h3>Lo que NIST dice que SÍ hay que hacer</h3>
+                <h3>Lo que SÍ hay que hacer</h3>
 
                 <ul>
-                    <li><strong>Mínimo 8 caracteres</strong>. La longitud es el factor que más pesa. No hay máximo.</li>
-                    <li><strong>Permitir cualquier carácter</strong>, incluidos espacios y símbolos Unicode.</li>
-                    <li><strong>Comprobar contraseñas contra listas de filtradas</strong> (como <a href="https://haveibeenpwned.com/" target="_blank" rel="noopener noreferrer">Have I Been Pwned</a>) al crear cuentas. Esto lo hace el sitio web, no el generador.</li>
+                    <li><strong>Mínimo 8 caracteres.</strong> La longitud es lo que más pesa. No hay máximo.</li>
+                    <li><strong>Permitir cualquier carácter,</strong> incluidos espacios y símbolos.</li>
+                    <li><strong>Comprobar contraseñas filtradas</strong> (como <a href="https://haveibeenpwned.com/" target="_blank" rel="noopener noreferrer">Have I Been Pwned</a>) al crear cuentas. Esto lo hace el sitio web, no el generador.</li>
                 </ul>
 
-                <h3>Lo que NIST dice que NO hay que hacer</h3>
+                <h3>Lo que NO hay que hacer</h3>
 
                 <ul>
                     <li><strong>No obligues a mezclar tipos</strong> ("al menos una mayúscula, un número y un símbolo"). Suena seguro, pero empuja a la gente a <code>Verano2024!</code> y similares. NIST lo desaconseja.</li>
-                    <li><strong>No fuerces cambios cada 90 días</strong>. La rotación periódica solo tiene sentido si hay evidencia de compromiso. Si te obligan a cambiarla cada tres meses, la gente acaba poniendo <code>Verano2025!</code>, y eso es <em>peor</em>.</li>
+                    <li><strong>No fuerces cambios cada 90 días.</strong> La rotación periódica solo tiene sentido si hay evidencia de compromiso. Si te obligan a cambiarla cada tres meses, la gente acaba poniendo <code>Verano2025!</code>, y eso es <em>peor</em>.</li>
                     <li><strong>No pongas pistas</strong> tipo "tu primer coche". Es información pública.</li>
                 </ul>
 
-                <p>Mi generador refleja todo esto. Los toggles de mayúsculas, números y símbolos son <em>opciones</em>: el usuario decide, no se lo imponen. Y la longitud por defecto es 20, no 8, porque 8 es el suelo y queremos ir holgados.</p>
+                <p>Mi generador refleja todo esto. Los toggles de mayúsculas, números y símbolos son <em>opciones</em>: tú decides, no se te imponen. Y la longitud por defecto es 20, no 8, porque 8 es el suelo y queremos ir holgados.</p>
 
                 <div class="takeaway">
                     <h4><i class="fa-solid fa-lightbulb"></i> Idea clave</h4>
-                    <p>Si una web te obliga a poner una mayúscula, un número y un símbolo, esa web está siguiendo un consejo de 2003 que NIST retiró oficialmente. No es que esté mal ser precavido, pero entiende que es una regla arbitraria, no una verdad de seguridad.</p>
+                    <p>Si una web te obliga a poner una mayúscula, un número y un símbolo, está siguiendo un consejo de 2003 que NIST retiró oficialmente. No es que esté mal ser precavido, pero entiende que es una regla arbitraria, no una verdad de seguridad.</p>
                 </div>
 
-                <h2>3. Entropía explicada con una moneda</h2>
+                <h2>Entropía: por qué importa la longitud</h2>
 
-                <p>"Entropía" suena a termodinámica, pero en contraseñas significa algo más simple: <strong>cuántas conjeturas tiene que probar un atacante, en el peor caso, para dar con la tuya</strong>.</p>
+                <p>"Entropía" suena complicado, pero la idea es simple: <strong>cuántas conjeturas tiene que probar un atacante para dar con tu contraseña</strong>.</p>
 
-                <p>Imagina una moneda. Cada tirada puede ser cara o cruz: 2 opciones. Si tiraras 10 veces, el resultado es una secuencia como <code>CXCCXCXCXX</code>. ¿Cuántas secuencias posibles hay? 2¹⁰ = 1.024. Si alguien intenta adivinar tu secuencia, en el peor caso prueba 1.024 veces; en el caso promedio, 512.</p>
+                <p>Una contraseña de 8 caracteres con letras, números y símbolos (95 opciones) tiene unos 52 bits de entropía. Un ordenador moderno prueba <strong>10.000 millones de contraseñas por segundo</strong>, así que adivinarla costaría unos 15 días.</p>
 
-                <p>Ahora una contraseña. Cada carácter sale de un "alfabeto" (por ejemplo, 26 letras minúsculas = 26 opciones). Si tu contraseña tiene 8 caracteres: 26⁸ = 208 mil millones de combinaciones. Suena mucho, pero un ordenador moderno prueba <strong>10.000 millones por segundo</strong>, así que la parte en peor caso son 20 segundos. Con un alfabeto de 95 (mayúsculas + minúsculas + números + símbolos) y la misma longitud, el peor caso es 4 días. Mejor, pero no mucho.</p>
+                <p>Si subes a <strong>20 caracteres</strong>, la entropía sube a 131 bits y el tiempo de adivinarla pasa a <strong>9.500 millones de años</strong>. Más que la edad del universo. Eso sí es seguro.</p>
 
-                <p>Si subes la longitud a <strong>20 caracteres</strong> con el mismo alfabeto de 95: el peor caso es 95²⁰ ≈ 3·10³⁹ combinaciones. A 10.000 millones por segundo, son <strong>9.500 millones de años</strong>. Más que la edad del universo. Eso sí es seguro.</p>
+                <p>El generador te muestra los bits de entropía en tiempo real. A partir de 80 bits ya estás en un territorio donde ningún atacante real va a probar por fuerza bruta. Por defecto apunta a más de 130 bits, que es tranquilidad de sobra.</p>
 
-                <h3>¿Qué mide exactamente la entropía?</h3>
-
-                <p>En seguridad se mide en <strong>bits de entropía</strong>. La fórmula, simplificada, es:</p>
-
-                <pre><code>entropía (bits) = log₂(tamaño_del_alfabeto) × longitud</code></pre>
-
-                <p>Para que te hagas una idea:</p>
-
-                <table class="entropy-table">
-                    <thead>
-                        <tr>
-                            <th>Contraseña</th>
-                            <th>Bits de entropía</th>
-                            <th>Tiempo a 10⁹ intentos/s</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><code>password</code></td>
-                            <td>~17 bits</td>
-                            <td>Menos de 1 segundo</td>
-                        </tr>
-                        <tr>
-                            <td><code>Verano2024!</code></td>
-                            <td>~33 bits</td>
-                            <td>2 horas</td>
-                        </tr>
-                        <tr>
-                            <td>8 caracteres random (95 chars)</td>
-                            <td>~52 bits</td>
-                            <td>15 días</td>
-                        </tr>
-                        <tr>
-                            <td>12 caracteres random (95 chars)</td>
-                            <td>~78 bits</td>
-                            <td>10⁷ años</td>
-                        </tr>
-                        <tr>
-                            <td>20 caracteres random (95 chars)</td>
-                            <td>~131 bits</td>
-                            <td>9.5 × 10⁹ años</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div class="takeaway">
-                    <h4><i class="fa-solid fa-lightbulb"></i> Idea clave</h4>
-                    <p>El generador te muestra los bits de entropía en tiempo real. A partir de 80 bits ya estás en un territorio donde ningún atacante real va a probar por fuerza bruta. Por defecto apunta a 130+ bits, que es tranquilidad de sobra.</p>
-                </div>
-
-                <h2>4. Por qué la contraseña no sale de tu navegador</h2>
+                <h2>Tu contraseña no sale del navegador</h2>
 
                 <p>Hay un detalle que mucha gente no piensa: si generas una contraseña en una web, esa web <em>podría</em> estar guardándola. Y si la guarda, está en sus servidores, y sus servidores pueden caer, y si caen, tu contraseña queda expuesta.</p>
 
-                <p>Para evitar eso, mi generador cumple una promesa muy concreta: <strong>la contraseña nunca sale del navegador</strong>. Cuando abres la página, el JavaScript se descarga, se ejecuta en tu máquina, y todo el trabajo ocurre ahí. No hay ninguna petición de red en ningún momento.</p>
-
-                <h3>Cómo se nota eso en el código</h3>
-
-                <p>El archivo <code>generator.js</code> no contiene ni una sola de estas cosas:</p>
-
-                <pre><code>// Lo que NO encontrarás en el código:
-fetch(...)                  // peticiones HTTP
-XMLHttpRequest              // peticiones HTTP (forma antigua)
-WebSocket(...)              // conexiones persistentes
-navigator.sendBeacon(...)   // telemetría al cerrar la pestaña
-localStorage.setItem(...)   // almacenamiento permanente
-sessionStorage.setItem(...) // almacenamiento de pestaña
-document.cookie = ...       // cookies
-indexedDB.open(...)         // base de datos local</code></pre>
+                <p>Para evitar eso, mi generador cumple una promesa muy concreta: <strong>la contraseña nunca sale del navegador</strong>. Cuando abres la página, el JavaScript se descarga y se ejecuta en tu máquina, y todo el trabajo ocurre ahí. No hay ninguna petición de red en ningún momento.</p>
 
                 <p>Si abres la pestaña "Red" de las DevTools (F12) y generas contraseñas, verás <strong>cero tráfico</strong> después de la carga inicial de la página. Eso es lo que verifico yo antes de dormir tranquilo.</p>
 
@@ -621,275 +539,64 @@ indexedDB.open(...)         // base de datos local</code></pre>
                     <p>Cuando uses este generador (o cualquier otro), abre F12 → pestaña Network → genera. Si ves tráfico después de la carga, no es seguro: están enviando tu contraseña a algún sitio.</p>
                 </div>
 
-                <h2>5. Anatomía del código (para quien sí sabe programar)</h2>
-
-                <p>El JS vive en <code>PasswordGenerator/generator.js</code> y se carga con <code>&lt;script src="./generator.js"&gt;&lt;/script&gt;</code> al final del <code>&lt;body&gt;</code>. La CSP permite sólo <code>script-src 'self'</code>, así que cualquier intento de inyectar código inline queda bloqueado por el navegador. Veamos las decisiones que importan.</p>
-
-                <h3>5.1. Muestreo con rechazo (sin sesgo de módulo)</h3>
-
-                <p>El error clásico de los generadores caseros es <code>alpha.charAt(crypto_val % alpha.length)</code>. Esto <strong>sesga</strong>: si tu alfabeto tiene 85 caracteres y un valor aleatorio de 32 bits puede llegar hasta 2³²−1, los valores altos se mapean más a menudo al principio del alfabeto. Es sutil, pero un atacante que lo sepa puede explotar ese sesgo.</p>
-
-                <p>La corrección es <strong>rechazar</strong> los valores que caen fuera del múltiplo exacto del tamaño del alfabeto y volver a pedir:</p>
-
-                <pre><code>function pickUniform(alpha) {
-    var size = alpha.length;
-    if (size === 0) return '';
-    // Bloque multiplo exacto: cualquier valor < limit es seguro para hacer modulo.
-    var limit = Math.floor(0x100000000 / size) * size;
-    var buf = randomValues(1);
-    var r = buf[0];
-    while (r >= limit) {
-        buf = randomValues(1);
-        r = buf[0];
-    }
-    return alpha.charAt(r % size);
-}</code></pre>
-
-                <p>Con un alfabeto de 85 caracteres, la probabilidad de entrar en el bucle de rechazo es menor al <strong>0.000003 %</strong> por carácter. Sesgo: cero.</p>
-
-                <h3>5.2. Cobertura mínima con CSPRNG</h3>
-
-                <p>Si la longitud pedida es 8 y los 4 tipos de carácter están activos, una generación puramente uniforme puede, por azar, dejar la contraseña sin dígitos. Eso es válido criptográficamente (la entropía es la misma), pero muchos sitios validan reglas de composición en el servidor, así que conviene garantizar al menos uno de cada tipo:</p>
-
-                <pre><code>function ensureCoverage(parts, len) {
-    var sets = [];
-    if (ui.lower.checked) sets.push('lower');
-    if (ui.upper.checked) sets.push('upper');
-    if (ui.digits.checked) sets.push('digits');
-    if (ui.symbols.checked) sets.push('symbols');
-
-    var out = new Array(len);
-    var remaining = [];
-    for (var i = 0; i < len; i++) remaining.push(i);
-
-    var coverageCount = Math.min(sets.length, len);
-    for (var s = 0; s < coverageCount; s++) {
-        var idx = pickIndexUniform(remaining.length);
-        var pos = remaining[idx];
-        remaining[idx] = remaining[remaining.length - 1];
-        remaining.pop();
-        out[pos] = pickUniform(parts[sets[s]]);
-    }
-
-    return { out: out, remaining: remaining };
-}</code></pre>
-
-                <p>Las posiciones se eligen con <code>pickIndexUniform</code> (otro muestreo con rechazo sobre CSPRNG). Esto es importante: si eligiera las posiciones con <code>Math.random()</code>, filtraría información sobre dónde caerán los caracteres garantizados. La diferencia es sutil pero existe.</p>
-
-                <h3>5.3. Barajado Fisher-Yates criptográficamente seguro</h3>
-
-                <p>Una vez que <code>ensureCoverage</code> deja los caracteres garantizados en posiciones elegidas al azar, el resto se rellena y se baraja <strong>in-place</strong> con Fisher-Yates:</p>
-
-                <pre><code>function shuffle(arr) {
-    for (var i = arr.length - 1; i > 0; i--) {
-        var limit = Math.floor(0x100000000 / (i + 1)) * (i + 1);
-        var buf = randomValues(1);
-        var r = buf[0];
-        while (r >= limit) {
-            buf = randomValues(1);
-            r = buf[0];
-        }
-        var j = r % (i + 1);
-        var tmp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = tmp;
-    }
-    return arr;
-}</code></pre>
-
-                <p>Igual que antes: CSPRNG + rechazo. Sin esto, los caracteres de cobertura quedarían siempre al principio y un observador externo podría detectarlo.</p>
-
-                <h3>5.4. Volcado al DOM: <code>textContent</code>, nunca <code>innerHTML</code></h3>
-
-                <p>El resultado se pinta con <code>ui.out.textContent = covered.out.join('')</code>. Esto cierra la superficie de XSS (Cross-Site Scripting, una clase de ataque donde te inyectan código en una página) por construcción: aunque en el futuro el alfabeto aceptara entrada del usuario, <code>textContent</code> nunca interpreta HTML. No hay que escapar, no hay que sanear, no hay que confiar.</p>
-
-                <h3>5.5. Cómo se ve el flujo completo</h3>
-
-                <div class="ascii-diagram">+--------------------+
-|  usuario click     |
-|  "Generar"         |
-+----------+---------+
-           |
-           v
-+--------------------+
-| buildAlphabet()    |--- lee toggles, une sets, quita ambiguos
-+----------+---------+
-           |
-           v
-+--------------------+
-| getCharsetParts()  |--- sub-alfabetos para cobertura minima
-+----------+---------+
-           |
-           v
-+--------------------+
-| ensureCoverage()   |--- coloca 1 char por set activo en
-|                    |    posicion elegida con CSPRNG
-+----------+---------+
-           |
-           v
-+--------------------+
-| rellenar huecos    |--- pickUniform() sobre alfabeto completo
-+----------+---------+
-           |
-           v
-+--------------------+
-| shuffle()          |--- Fisher-Yates con CSPRNG
-+----------+---------+
-           |
-           v
-+--------------------+
-| out.textContent =  |--- XSS-safe por construccion
-+----------+---------+
-           |
-           v
-+--------------------+
-| calcular entropia  |--- log2(N) * L, mostrar al usuario
-+--------------------+</div>
-
-                <h2>6. Lo que NO hace (y por qué importa)</h2>
+                <h2>Lo que NO hace (y por qué importa)</h2>
 
                 <p>En una página que proclama "cumplimiento", ser explícito sobre lo que se deja fuera es tan importante como lo que se incluye. Esta es la lista de cosas que el generador <em>no</em> hace, y por qué cada una importa.</p>
 
                 <ul>
-                    <li><strong>No transmite nada por red.</strong> Cero <code>fetch</code>, <code>XMLHttpRequest</code>, <code>WebSocket</code>, <code>sendBeacon</code>. La contraseña nunca sale del navegador. Esto cumple OWASP ASVS V9.1 (Secret Management: el secreto no debe viajar).</li>
-                    <li><strong>No persiste nada.</strong> Cero <code>localStorage</code>, <code>sessionStorage</code>, <code>IndexedDB</code>, cookies. Si recargas, vuelves a una contraseña distinta.</li>
-                    <li><strong>No usa <code>eval</code>, <code>Function</code>, ni <code>setTimeout</code> con string</strong> como primer argumento. Tampoco usa <code>innerHTML</code> con datos del usuario.</li>
+                    <li><strong>No transmite nada por red.</strong> Cero peticiones HTTP, conexiones WebSocket, telemetría. La contraseña nunca sale del navegador.</li>
+                    <li><strong>No persiste nada.</strong> Cero almacenamiento local, de sesión, cookies ni bases de datos locales. Si recargas, vuelves a una contraseña distinta.</li>
                     <li><strong>No tiene telemetría.</strong> Si generas mil contraseñas, no queda registro de ninguna.</li>
                     <li><strong>No verifica contra HIBP</strong> (Have I Been Pwned, una base de datos de contraseñas filtradas). Esta verificación la hace el sitio que recibe la contraseña, no el generador. Hacerla aquí enviaría la contraseña a un tercero, lo que violaría la promesa de "no red".</li>
                 </ul>
 
-                <h2>7. Autoauditoría: lo que encontré y arreglé antes de publicar</h2>
-
-                <p>Antes de pedir aprobación para subir esto, le pasé el código a un sub-agente auditor con instrucciones explícitas de "no seas amable, dime qué falla". Estos son los seis hallazgos que volvió, todos ya corregidos. Los enumero con el mismo formato que uso en auditorías reales: severidad, qué, dónde, por qué importa y cómo se arregló.</p>
-
-                <div class="findings">
-
-                    <div class="finding critica">
-                        <div class="head">
-                            <span class="title"><code>ensureCoverage</code> usaba <code>Math.random()</code> para elegir posiciones de cobertura</span>
-                            <span class="sev">Crítica</span>
-                        </div>
-                        <div class="where">generator.js (versión inicial)</div>
-                        <div class="fix">El comentario del header proclamaba "CSPRNG: crypto.getRandomValues" pero <code>ensureCoverage</code> elegía las posiciones con <code>Math.random()</code>. Aunque las posiciones de cobertura no son el contenido de la contraseña, son metadatos: un atacante que modele la distribución puede acotar dónde estarán los caracteres garantizados. <strong>Fix:</strong> nueva función <code>pickIndexUniform</code> con CSPRNG + rechazo, mismo patrón que <code>pickUniform</code>.</div>
-                    </div>
-
-                    <div class="finding alta">
-                        <div class="head">
-                            <span class="title">Doble generación al pulsar Enter o Espacio sobre el botón</span>
-                            <span class="sev">Alta</span>
-                        </div>
-                        <div class="where">generator.js: keydown listener sobre el botón generar</div>
-                        <div class="fix">Había un listener de <code>keydown</code> en el botón que llamaba a <code>generate()</code>, y el navegador ya dispara <code>click</code> nativamente al pulsar Enter/Espacio sobre un <code>&lt;button&gt;</code>. Resultado: dos generaciones por pulsación. <strong>Fix:</strong> eliminado el listener de <code>keydown</code>; el comportamiento accesible lo da el <code>click</code> nativo.</div>
-                    </div>
-
-                    <div class="finding alta">
-                        <div class="head">
-                            <span class="title">Fallback de portapapeles con <code>removeChild</code> sobre nodo no insertado</span>
-                            <span class="sev">Alta</span>
-                        </div>
-                        <div class="where">generator.js: copyToClipboard fallback</div>
-                        <div class="fix">Si <code>appendChild</code> lanzaba (raro pero posible), el <code>removeChild</code> del <code>catch</code> se ejecutaba sobre un nodo que no estaba en el DOM y la excepción se propagaba sin ser capturada. <strong>Fix:</strong> variable <code>inserted</code> + bloque <code>try/finally</code> que sólo hace <code>removeChild</code> si la inserción tuvo éxito.</div>
-                    </div>
-
-                    <div class="finding media">
-                        <div class="head">
-                            <span class="title">Cobertura parcial silenciosa cuando <code>len &lt; nSets</code></span>
-                            <span class="sev">Media</span>
-                        </div>
-                        <div class="where">generator.js: ensureCoverage</div>
-                        <div class="fix">Con longitud 3 y los 4 sets activos, sólo se cubren 3 de 4. <strong>Fix:</strong> documentado en la UI del generador ("Límites conocidos") y comentado en el código. No se ha cambiado el comportamiento porque es un compromiso razonable: con longitud tan corta, no se puede garantizar representación de los 4 sets.</div>
-                    </div>
-
-                    <div class="finding media">
-                        <div class="head">
-                            <span class="title"><code>frame-ancestors 'none'</code> en <code>&lt;meta&gt;</code> no se aplica</span>
-                            <span class="sev">Media</span>
-                        </div>
-                        <div class="where">index.html: meta CSP</div>
-                        <div class="fix">La directiva <code>frame-ancestors</code> (una orden al navegador para que nadie pueda embeber esta página dentro de un <code>&lt;iframe&gt;</code>) sólo se respeta cuando viene de cabecera HTTP, no de <code>&lt;meta&gt;</code>. En GitHub Pages, <code>X-Frame-Options: DENY</code> ya viaja por cabecera, así que la duplicación es defensa redundante pero no error. <strong>Fix:</strong> documentado explícitamente en la UI del generador ("Qué cumple") para que la proclama sea honesta.</div>
-                    </div>
-
-                    <div class="finding baja">
-                        <div class="head">
-                            <span class="title">Lógica de filtrado de ambigüedad duplicada entre <code>buildAlphabet</code> y <code>getCharsetParts</code></span>
-                            <span class="sev">Baja</span>
-                        </div>
-                        <div class="where">generator.js: dos lugares aplicando AMBIGUOUS</div>
-                        <div class="fix">Si en el futuro se añade un set nuevo y se olvida sincronizar, los alfabetos de muestreo y cobertura divergen. <strong>Fix:</strong> función única <code>filterAmbig(s)</code> llamada por ambos. Una sola fuente de verdad.</div>
-                    </div>
-
-                </div>
-
-                <h2>8. Lo que sigue abierto (deuda técnica documentada)</h2>
-
-                <p>También hubo cosas que el auditor señaló y que, de momento, dejo como están porque arreglarlas aporta más riesgo que valor:</p>
-
-                <ul>
-                    <li><strong><code>style-src 'unsafe-inline'</code></strong>: la página tiene un bloque <code>&lt;style&gt;</code> interno para particularidades del layout. No usa <em>nonce</em> (un número aleatorio que el servidor mete en la cabecera y en el HTML, y que el navegador verifica: si no coincide, bloquea el estilo), que sería lo más estricto. La alternativa sería mover todo el CSS a un archivo externo, pero entonces el artículo pierde autonomía. Acepto la relajación y la documento.</li>
-                    <li><strong>Buffer de aleatoriedad:</strong> cada llamada a <code>randomValues(1)</code> aloca un <code>Uint32Array</code> de 1 elemento. En generación masiva es ineficiente. Para el caso de uso (1–10 contraseñas por sesión), no es relevante.</li>
-                    <li><strong>Verificación HIBP en cliente:</strong> no implementada por construcción (rompería la promesa de "no red"). Si quieres esa verificación, hazla en el lado del sitio que recibe la contraseña.</li>
-                </ul>
+                <h2>Resumen para auditores</h2>
 
                 <div class="callout">
-                    <h3><i class="fa-solid fa-shield-halved"></i> TL;DR para auditores</h3>
+                    <h3><i class="fa-solid fa-shield-halved"></i> Lo esencial</h3>
                     <ul>
-                        <li><strong>CSPRNG:</strong> <code>crypto.getRandomValues</code> en muestreo, posiciones de cobertura y barajado. <code>Math.random</code> no se usa en ningún sitio.</li>
-                        <li><strong>Sin sesgo de módulo:</strong> muestreo con rechazo en todas las conversiones <code>[0, 2^32) → [0, n)</code>.</li>
-                        <li><strong>XSS A05:</strong> <code>textContent</code> en todo el volcado al DOM. No hay <code>innerHTML</code> con datos del usuario.</li>
-                        <li><strong>OWASP A03 (Supply Chain):</strong> cero dependencias externas en el JS.</li>
-                        <li><strong>OWASP A02 (Misconfig):</strong> <code>script-src 'self'</code>, sin inline, sin eval, sin Function, sin <code>setTimeout(string)</code>.</li>
-                        <li><strong>OWASP ASVS V9.1:</strong> nada se transmite, nada se persiste.</li>
-                        <li><strong>Lo que sigue abierto</strong> está documentado honestamente en la UI del generador.</li>
+                        <li><strong>CSPRNG:</strong> <code>crypto.getRandomValues</code> en todo el código. <code>Math.random</code> no se usa en ningún sitio.</li>
+                        <li><strong>Sin sesgo:</strong> muestreo con rechazo para convertir números aleatorios en índices de alfabeto.</li>
+                        <li><strong>Sin XSS:</strong> <code>textContent</code> en todo el volcado a pantalla. No hay <code>innerHTML</code> con datos del usuario.</li>
+                        <li><strong>Sin red, sin persistencia, sin dependencias externas.</strong></li>
+                        <li><strong>CSP estricta:</strong> <code>script-src 'self'</code>, sin scripts inline, sin eval.</li>
                     </ul>
                 </div>
 
-                <h2>9. Glosario rápido</h2>
+                <h2>Glosario rápido</h2>
 
                 <p>Para quien llega nuevo a estos temas, aquí van los términos que aparecen en el artículo, explicados en una frase cada uno.</p>
 
                 <dl class="glossary">
                     <dt>CSPRNG</dt>
-                    <dd>Generador de números aleatorios diseñado específicamente para criptografía. A diferencia de <code>Math.random</code>, no se puede predecir hacia atrás ni hacia adelante aunque veas muchas salidas. La API del navegador es <code>crypto.getRandomValues</code>.</dd>
+                    <dd>Generador de números aleatorios diseñado para criptografía. A diferencia de <code>Math.random</code>, no se puede predecir aunque veas muchas salidas. La API del navegador es <code>crypto.getRandomValues</code>.</dd>
 
                     <dt>Entropía (en contraseñas)</dt>
-                    <dd>Medida de la "impredecibilidad" de una contraseña, en bits. Cuantos más bits, más combinaciones tiene que probar un atacante. La fórmula es <code>log₂(tamaño_del_alfabeto) × longitud</code>.</dd>
+                    <dd>Medida de la "impredecibilidad" de una contraseña, en bits. Cuantos más bits, más combinaciones tiene que probar un atacante.</dd>
 
                     <dt>Sesgo de módulo</dt>
-                    <dd>Error muy común al convertir un número aleatorio en un índice de alfabeto: <code>n % alfabeto.length</code> no es perfectamente uniforme, porque el espacio total no es múltiplo del alfabeto. Se corrige descartando los valores "sobrantes".</dd>
-
-                    <dt>Cobertura mínima</dt>
-                    <dd>Técnica que garantiza que la contraseña contiene al menos un carácter de cada tipo activado (minúscula, mayúscula, dígito, símbolo). Útil porque muchos sitios validan reglas de composición.</dd>
-
-                    <dt>Fisher-Yates</dt>
-                    <dd>Algoritmo clásico para barajar una lista de forma que cada permutación sea equiprobable. Con CSPRNG es criptográficamente seguro.</dd>
+                    <dd>Error muy común al convertir un número aleatorio en un índice de alfabeto: <code>n % alfabeto.length</code> no es perfectamente uniforme. Se corrige descartando los valores "sobrantes".</dd>
 
                     <dt>XSS (Cross-Site Scripting)</dt>
-                    <dd>Clase de ataque donde un atacante consigue que una página web ejecute JavaScript malicioso en el navegador de la víctima. La defensa más básica es nunca inyectar HTML sin escapar: de ahí <code>textContent</code> en lugar de <code>innerHTML</code>.</dd>
+                    <dd>Clase de ataque donde un atacante consigue que una página web ejecute código malicioso en tu navegador. La defensa más básica es nunca inyectar HTML sin escapar.</dd>
 
                     <dt>CSP (Content Security Policy)</dt>
-                    <dd>Cabecera HTTP (o <code>&lt;meta&gt;</code>) que le dice al navegador de dónde puede cargar recursos una página. Una CSP estricta bloquea scripts inline, eval, recursos de terceros, etc.</dd>
-
-                    <dt>SRI (Subresource Integrity)</dt>
-                    <dd>Mecanismo para que el navegador verifique que un recurso externo (por ejemplo, una hoja de estilos de un CDN) no ha sido modificado, comparándolo con un hash que el HTML declara. Si no coincide, lo bloquea.</dd>
+                    <dd>Cabecera que le dice al navegador de dónde puede cargar recursos una página. Una CSP estricta bloquea scripts inline, eval, recursos de terceros, etc.</dd>
 
                     <dt>OWASP</dt>
-                    <dd>Open Worldwide Application Security Project, una fundación sin ánimo de lucro que publica guías y estándares abiertos de seguridad. Su Top 10 es la referencia más usada para vulnerabilidades web.</dd>
+                    <dd>Fundación sin ánimo de lucro que publica guías y estándares abiertos de seguridad. Su Top 10 es la referencia más usada para vulnerabilidades web.</dd>
 
                     <dt>NIST</dt>
-                    <dd>National Institute of Standards and Technology, la agencia de estándares de EE.UU. Sus publicaciones SP (Special Publications) son referencia mundial en criptografía y seguridad.</dd>
+                    <dd>Agencia de estándares de EE.UU. Sus publicaciones SP son referencia mundial en criptografía y seguridad.</dd>
                 </dl>
 
-                <h2>10. Fuentes y referencias</h2>
+                <h2>Fuentes y referencias</h2>
 
                 <ul>
                     <li><a href="https://pages.nist.gov/800-63-3/sp800-63b.html" target="_blank" rel="noopener noreferrer">NIST SP 800-63B</a> — Digital Identity Guidelines: Authentication and Lifecycle Management. §5.1.1.2 (Memorized Secrets) es la sección relevante.</li>
-                    <li><a href="https://csrc.nist.gov/publications/detail/sp/800-90a/rev-1/final" target="_blank" rel="noopener noreferrer">NIST SP 800-90A Rev. 1</a> — Recommendation for Random Number Generation Using Deterministic Random Bit Generators. El marco de los CSPRNG.</li>
                     <li><a href="https://owasp.org/Top10/" target="_blank" rel="noopener noreferrer">OWASP Top 10:2025</a> — A02 (Security Misconfiguration), A03 (Software Supply Chain), A05 (Injection / XSS).</li>
-                    <li><a href="https://owasp.org/www-project-application-security-verification-standard/" target="_blank" rel="noopener noreferrer">OWASP ASVS 5.0</a> — V6.2 (generadores criptográficos), V9.1 (Secret Management).</li>
                     <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">OWASP Authentication Cheat Sheet</a> — guía práctica sobre contraseñas y MFA.</li>
-                    <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html" target="_blank" rel="noopener noreferrer">OWASP XSS Prevention Cheat Sheet</a> — base de la decisión de usar <code>textContent</code>.</li>
                     <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues" target="_blank" rel="noopener noreferrer">MDN: Crypto.getRandomValues()</a> — referencia de la API.</li>
-                    <li><a href="https://www.w3.org/TR/WebCryptoAPI/" target="_blank" rel="noopener noreferrer">W3C Web Crypto API</a> — especificación formal.</li>
                 </ul>
 
                 <p>Si encuentras algo que se me haya escapado, escríbeme. La seguridad se entrena con humildad.</p>

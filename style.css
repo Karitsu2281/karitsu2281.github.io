@@ -9,10 +9,31 @@
     src: url('./assets/fonts/inter-latin.woff2') format('woff2');
 }
 
+/* JetBrains Mono (OFL 1.1) — auto-hospedada, peso Regular 400. */
+@font-face {
+    font-family: 'JetBrains Mono';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('./assets/fonts/jetbrains-mono-latin.woff2') format('woff2');
+}
+
+/* Share Tech Mono (OFL 1.1) — auto-hospedada, solo display. */
+@font-face {
+    font-family: 'Share Tech Mono';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('./assets/fonts/share-tech-mono-latin.ttf') format('truetype');
+}
+
 :root {
-    --bg: #0a0a0b;
-    --surface: rgba(18, 18, 20, 0.85);
-    --surface-hover: rgba(26, 26, 30, 0.95);
+    /* Paleta Metro 2033.
+       Contraste texto/fondo ~16:1 (WCAG AAA). */
+    --bg: #0a0b0a;
+    --bg-deep: #050605;
+    --surface: rgba(20, 22, 18, 0.85);
+    --surface-hover: rgba(28, 30, 24, 0.95);
     --border: rgba(255, 255, 255, 0.06);
     --border-hover: rgba(255, 255, 255, 0.12);
     --text: #e8e8e8;
@@ -20,9 +41,15 @@
     --accent: #e85d2c;
     --accent-dim: rgba(232, 93, 44, 0.12);
     --accent-border: rgba(232, 93, 44, 0.25);
-    --radius: 6px;
-    --radius-lg: 10px;
+    --accent-2: #8a9a4a;
+    --accent-2-dim: rgba(138, 154, 74, 0.12);
+    --accent-2-border: rgba(138, 154, 74, 0.30);
+    --warn: #fbbf24;
+    --radius: 4px;
+    --radius-lg: 8px;
     --font: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    --font-display: 'Share Tech Mono', ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
     --max-w: 1024px;
 }
 
@@ -41,6 +68,28 @@ body {
     overflow-x: hidden;
 }
 
+/* Viñeta: oscurece los bordes sin afectar el área de lectura central. */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(
+        ellipse at center,
+        transparent 0%,
+        transparent 55%,
+        rgba(0, 0, 0, 0.35) 85%,
+        rgba(0, 0, 0, 0.55) 100%
+    );
+}
+
+.container,
+.navbar {
+    position: relative;
+    z-index: 1;
+}
+
 ::selection {
     background: var(--accent);
     color: #fff;
@@ -51,7 +100,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(10, 10, 11, 0.75);
+    background: rgba(10, 11, 10, 0.78);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border);
@@ -139,13 +188,15 @@ body {
 }
 
 .hero-sub {
-    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
     color: var(--text-muted);
-    opacity: 0.3;
+    opacity: 0.55;
     margin-top: -16px;
     margin-bottom: 32px;
-    letter-spacing: 0.15em;
-    font-weight: 400;
+    letter-spacing: 0.18em;
+    font-weight: 500;
+    text-transform: uppercase;
 }
 
 .hero-actions {
@@ -225,8 +276,8 @@ body {
     content: '';
     width: 4px;
     height: 22px;
-    background: var(--accent);
-    border-radius: 2px;
+    background: var(--accent-2);
+    border-radius: 1px;
     flex-shrink: 0;
 }
 
@@ -234,7 +285,7 @@ body {
     content: '';
     flex: 1;
     height: 1px;
-    background: linear-gradient(90deg, var(--border) 0%, transparent 100%);
+    background: var(--border);
 }
 
 /* Bento Grid */
@@ -283,33 +334,42 @@ body {
 }
 
 .card-subhead {
-    font-size: 0.75rem;
-    font-weight: 600;
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 400;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--accent);
+    letter-spacing: 0.12em;
+    color: var(--accent-2);
     margin-bottom: 8px;
+}
+
+/* Marcador asimétrico: solo en cards pares. Un humano mete o no mete,
+   un generador lo pone en todas o en ninguna. */
+.bento-card:nth-child(even) .card-subhead::before {
+    content: '\25AA\2003';   /* ▪ pequeño + espacio fino */
+    color: var(--accent);
 }
 
 .status-pill {
     display: inline-block;
-    font-size: 0.65rem;
-    font-weight: 600;
+    font-family: var(--font-display);
+    font-size: 0.66rem;
+    font-weight: 400;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.12em;
     color: #38bdf8;
     background: rgba(56, 189, 248, 0.12);
     border: 1px solid rgba(56, 189, 248, 0.35);
     padding: 2px 8px;
-    border-radius: 4px;
+    border-radius: 2px;
     vertical-align: middle;
-    margin-left: 4px;
+    margin-left: 6px;
 }
 
 .status-pill.completed {
-    color: #4ade80;
-    background: rgba(34, 197, 94, 0.12);
-    border-color: rgba(34, 197, 94, 0.4);
+    color: var(--accent-2);
+    background: var(--accent-2-dim);
+    border-color: var(--accent-2-border);
 }
 
 .status-pill.completed i {
@@ -338,17 +398,11 @@ body {
 
 .card-icon {
     font-size: 2.5rem;
-    color: var(--text-muted);
-    opacity: 0.3;
+    color: var(--accent-2);
+    opacity: 0.18;
     position: absolute;
     bottom: 24px;
     right: 28px;
-    transition: all 0.3s;
-}
-
-.bento-card:hover .card-icon {
-    opacity: 0.6;
-    color: var(--accent);
 }
 
 .cta-link {
@@ -583,6 +637,20 @@ footer a:hover {
 .bento-card:nth-child(7) { animation-delay: 0.35s; }
 .bento-card:nth-child(8) { animation-delay: 0.4s; }
 
+/* Accesibilidad: respetar la preferencia del usuario.
+   WCAG 2.2 §2.3.3 (Animation from Interactions). */
+@media (prefers-reduced-motion: reduce) {
+    .bento-card {
+        animation: none;
+    }
+    * {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .hero {
@@ -653,6 +721,10 @@ footer a:hover {
     }
 }
 
+@media (min-width: 1024px) {
+    /* sin reglas extra: el rediseño es contenido y ya respira por sí solo */
+}
+
 @media (max-width: 480px) {
     .container {
         padding: 0 16px;
@@ -674,4 +746,186 @@ footer a:hover {
     .contact-actions {
         flex-direction: column;
     }
+}
+
+/* =========================================================================
+   BLOQUE DE CONSISTENCIA (Opción B-mínima)
+   -------------------------------------------------------------------------
+   Aplica defaults compartidos a las páginas que enlazan este style.css.
+   Diseñado con la regla "último gana, primero no pisa":
+   - Reglas nuevas están al final del archivo.
+   - Usan selectores y especificidad BAJOS (etiquetas y pseudoclases simples).
+   - Cualquier <style> interno de un artículo que defina la misma propiedad
+     con mayor especificidad sigue ganando. Por tanto, los artículos que
+     hoy tienen su propio look lo conservan.
+   - Solo cuando el <style> interno NO define esa propiedad, este bloque
+     aporta el default Metro 2033 (paleta, monospace, viñeta, contraste).
+   ========================================================================= */
+
+/* Tipografía base del documento: si el <style> interno de un artículo
+   no redefine body/html, esto aporta la paleta Metro 2033. */
+html {
+    background: var(--bg);
+    color: var(--text);
+}
+
+/* Enlaces: naranja máscara antigas con hover más brillante.
+   Los artículos que ya tienen su color de enlace lo conservan. */
+a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+a:hover {
+    color: #ff8a5e;
+}
+
+/* Headings: tipografía del sitio, escala coherente.
+   Un <style> interno puede sobreescribir. */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font);
+    color: #fff;
+    line-height: 1.3;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+h1 { font-size: 1.9rem; margin: 1.6em 0 0.6em; }
+h2 { font-size: 1.5rem; margin: 1.6em 0 0.5em; padding-top: 0.4em; border-top: 1px solid var(--border); }
+h3 { font-size: 1.2rem; margin: 1.4em 0 0.4em; }
+h4 { font-size: 1.05rem; margin: 1.2em 0 0.4em; color: var(--accent-2); font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* Párrafos y texto corrido. */
+p {
+    margin: 0 0 1em;
+    line-height: 1.7;
+}
+
+/* Listas: coherencia con bullets discretos en muted. */
+ul, ol {
+    margin: 0 0 1em 1.4em;
+    line-height: 1.7;
+}
+li {
+    margin-bottom: 0.4em;
+}
+
+/* Blockquote: barra vertical verde reloj + texto muted. */
+blockquote {
+    border-left: 3px solid var(--accent-2);
+    background: var(--surface);
+    margin: 1.4em 0;
+    padding: 12px 18px;
+    color: var(--text-muted);
+    border-radius: 0 4px 4px 0;
+}
+blockquote p:last-child {
+    margin-bottom: 0;
+}
+
+/* Código en línea: fondo oscuro + acento. */
+code, kbd, samp {
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+    background: rgba(232, 93, 44, 0.10);
+    color: var(--accent);
+    padding: 1px 6px;
+    border-radius: 3px;
+    border: 1px solid var(--accent-border);
+}
+
+/* Bloques de código: monospace, fondo casi negro, scroll horizontal. */
+pre {
+    font-family: var(--font-mono);
+    background: rgba(0, 0, 0, 0.45);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    padding: 14px 18px;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    margin: 1em 0;
+}
+pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text);
+    font-size: inherit;
+}
+
+/* Tablas: bordes discretos, header en monospace. */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+    font-size: 0.92rem;
+}
+th, td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+}
+th {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.78rem;
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+/* Imágenes: max-width respetuoso, border sutil opcional. */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Línea horizontal: la convención de los artículos. */
+hr {
+    border: none;
+    height: 1px;
+    background: var(--border);
+    margin: 2em 0;
+}
+
+/* Selección de texto: coherente con el resto del sitio. */
+::selection {
+    background: var(--accent);
+    color: #fff;
+}
+
+/* Foco accesible: outline visible para teclado. */
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+/* Toques Metro 2033: drop cap en el primer párrafo y símbolo ▪ en cada h2.
+   Selectores de baja especificidad: cualquier <style> interno con un
+   ::first-letter o h2::before propio gana por orden de cascada. */
+
+/* Drop cap */
+.article-body > p:first-of-type::first-letter,
+article > p:first-of-type::first-letter {
+    font-family: var(--font-display);
+    color: var(--accent-2);
+    font-size: 2.4em;
+    float: left;
+    line-height: 0.9;
+    margin: 0.06em 0.10em 0 -0.02em;
+    font-weight: 400;
+}
+
+/* Símbolo ▪ antes de cada h2 */
+h2::before {
+    content: '\25AA\2003';
+    color: var(--accent-2);
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 0.85em;
 }
