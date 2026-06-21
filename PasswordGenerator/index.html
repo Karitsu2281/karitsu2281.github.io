@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; script-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation(), payment=(), usb=()">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="robots" content="noai, noimageai">
+    <meta name="gptbot" content="noindex">
+    <meta name="googlebot" content="nosnippet">
+    <title>Generador de Contraseñas — Karitsu2281</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        .gen-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+            margin: 24px 0 48px;
+        }
+
+        @media (min-width: 900px) {
+            .gen-layout {
+                grid-template-columns: 1.2fr 1fr;
+            }
+        }
+
+        .gen-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 32px 36px;
+            position: relative;
+        }
+
+        .gen-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(135deg, var(--accent) 0%, transparent 100%);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        .gen-panel h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 0 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .gen-panel h2 i { color: var(--accent); }
+
+        .output {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+            font-size: 1.25rem;
+            line-height: 1.5;
+            color: #fff;
+            word-break: break-all;
+            min-height: 72px;
+            display: flex;
+            align-items: center;
+            user-select: all;
+            position: relative;
+        }
+
+        .output.empty {
+            color: var(--text-muted);
+            font-style: italic;
+            user-select: none;
+            font-family: var(--font);
+        }
+
+        .strength {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .strength .bar {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .strength .bar > span {
+            display: block;
+            height: 100%;
+            width: 0%;
+            background: var(--text-muted);
+            transition: width 0.3s, background 0.3s;
+        }
+
+        .strength[data-level="weak"]   .bar > span { background: #f87171; }
+        .strength[data-level="fair"]   .bar > span { background: #fb923c; }
+        .strength[data-level="strong"] .bar > span { background: #fbbf24; }
+        .strength[data-level="epic"]   .bar > span { background: #4ade80; }
+
+        .strength .label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            min-width: 84px;
+            text-align: right;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .controls {
+            display: grid;
+            gap: 18px;
+            margin-top: 28px;
+        }
+
+        .control {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 8px 16px;
+            align-items: center;
+        }
+
+        .control label {
+            font-size: 0.95rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .control .hint {
+            grid-column: 1 / -1;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: -2px;
+        }
+
+        .control input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .control input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 1px var(--accent);
+        }
+
+        .control input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            border: 2px solid #fff;
+        }
+
+        .len-readout {
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+            font-size: 0.95rem;
+            color: var(--accent);
+            font-weight: 700;
+            min-width: 38px;
+            text-align: right;
+        }
+
+        .toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border: 1px solid var(--border);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 18px;
+            height: 18px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .toggle.on {
+            background: var(--accent-dim);
+            border-color: var(--accent-border);
+        }
+
+        .toggle.on::after {
+            transform: translateX(20px);
+            background: var(--accent);
+        }
+
+        .toggle input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+            flex-wrap: wrap;
+        }
+
+        .actions .btn {
+            flex: 1;
+            justify-content: center;
+            min-width: 140px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--accent);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: var(--radius);
+            font-size: 0.9rem;
+            font-weight: 600;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s, transform 0.25s;
+            z-index: 200;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .entropy-readout {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .entropy-readout strong {
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .checks {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: grid;
+            gap: 8px;
+        }
+
+        .checks li {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .checks li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-size: 0.8rem;
+        }
+
+        .meta-line {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            line-height: 1.5;
+        }
+
+        .meta-line code {
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+            font-size: 0.85em;
+            color: var(--accent);
+        }
+
+        @media (max-width: 768px) {
+            .gen-panel { padding: 24px 20px; }
+            .output { font-size: 1.05rem; padding: 16px 18px; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="../index.html" class="nav-logo"><i class="fa-solid fa-terminal"></i> Karitsu2281</a>
+            <ul class="nav-links">
+                <li><a href="../index.html#proyectos">Proyectos</a></li>
+                <li><a href="../index.html#perfil">Perfil</a></li>
+                <li><a href="./articulo.html">Artículo</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <article class="article">
+            <a href="../index.html" class="back-link"><i class="fa-solid fa-chevron-left"></i> Volver al portfolio</a>
+
+            <div class="article-header">
+                <span class="badge"><i class="fa-solid fa-key"></i> Utilidad · Cliente</span>
+                <h1>Generador de contraseñas seguro</h1>
+                <p class="meta"><i class="fa-regular fa-calendar"></i> Junio 2026 &nbsp;·&nbsp; <i class="fa-solid fa-shield-halved"></i> NIST SP 800-63B &nbsp;·&nbsp; <i class="fa-solid fa-code"></i> Vanilla JS · sin red</p>
+            </div>
+
+            <div class="article-body">
+
+                <p>Genera contraseñas criptográficamente seguras <strong>directamente en tu navegador</strong>. No se envía nada a ningún servidor: todo se ejecuta en local con <code>crypto.getRandomValues</code>, que es un CSPRNG aprobado por NIST. Si quieres entender por qué cumple los estándares y cómo está construido, lee el <a href="./articulo.html">artículo técnico</a> que lo acompaña.</p>
+
+                <div class="gen-layout">
+
+                    <section class="gen-panel">
+                        <h2><i class="fa-solid fa-dice"></i> Resultado</h2>
+
+                        <div id="output" class="output empty" aria-live="polite">Pulsa «Generar» para crear una contraseña…</div>
+
+                        <div class="strength" id="strength" data-level="weak" aria-hidden="true">
+                            <div class="bar"><span id="strengthBar"></span></div>
+                            <span class="label" id="strengthLabel">—</span>
+                        </div>
+
+                        <div class="entropy-readout">
+                            <span>Entropía estimada:</span>
+                            <strong id="entropyBits">0</strong>
+                            <span>bits</span>
+                        </div>
+
+                        <h2 style="margin-top: 36px;"><i class="fa-solid fa-sliders"></i> Configuración</h2>
+
+                        <div class="controls">
+                            <div class="control">
+                                <label for="length">Longitud</label>
+                                <span class="len-readout"><span id="lengthValue">20</span></span>
+                                <input type="range" id="length" min="8" max="64" value="20" step="1">
+                                <span class="hint">NIST SP 800-63B recomienda 8 mínimo; por defecto uso 20 porque la longitud es el factor que más aporta a la entropía.</span>
+                            </div>
+
+                            <div class="control">
+                                <label for="lower">Minúsculas (a–z)</label>
+                                <label class="toggle on" for="lower"><input type="checkbox" id="lower" checked></label>
+                            </div>
+
+                            <div class="control">
+                                <label for="upper">Mayúsculas (A–Z)</label>
+                                <label class="toggle on" for="upper"><input type="checkbox" id="upper" checked></label>
+                            </div>
+
+                            <div class="control">
+                                <label for="digits">Dígitos (0–9)</label>
+                                <label class="toggle on" for="digits"><input type="checkbox" id="digits" checked></label>
+                            </div>
+
+                            <div class="control">
+                                <label for="symbols">Símbolos (!@#$…)</label>
+                                <label class="toggle on" for="symbols"><input type="checkbox" id="symbols" checked></label>
+                            </div>
+
+                            <div class="control">
+                                <label for="noambig">Excluir ambiguos (0/O/o, 1/l/I/|/…)</label>
+                                <label class="toggle on" for="noambig"><input type="checkbox" id="noambig" checked></label>
+                            </div>
+                        </div>
+
+                        <div class="actions">
+                            <button type="button" id="generate" class="btn btn-primary"><i class="fa-solid fa-arrows-rotate"></i> Generar</button>
+                            <button type="button" id="copy" class="btn btn-outline"><i class="fa-regular fa-copy"></i> Copiar</button>
+                        </div>
+
+                        <p class="meta-line">
+                            <i class="fa-solid fa-circle-info"></i>
+                            Consejo: pega la contraseña directamente en tu <strong>gestor de contraseñas</strong> (Bitwarden, KeePass, 1Password). Si necesitas recordarla, una passphrase larga de 4–5 palabras al azar con <a href="https://es.wikipedia.org/wiki/Dado_de_D%C3%A9dalo" target="_blank" rel="noopener noreferrer">dados de Dédalo</a> es más fácil de tipear y resistir phishing que una compleja corta.
+                        </p>
+                    </section>
+
+                    <section class="gen-panel">
+                        <h2><i class="fa-solid fa-circle-check"></i> Qué cumple</h2>
+
+                        <ul class="checks">
+                            <li><strong>NIST SP 800-63B</strong> §5.1.1.2: mínimo 8 caracteres (defecto 20) y longitud como factor principal de entropía.</li>
+                            <li><strong>NIST SP 800-63B</strong> §5.1.1.2: sin reglas de composición forzada — son recomendaciones, no requisitos.</li>
+                            <li><strong>CSPRNG</strong> del navegador (<code>crypto.getRandomValues</code>), alineado con NIST SP 800-90A. Se usa en muestreo, selección de posiciones de cobertura y barajado Fisher-Yates.</li>
+                            <li><strong>OWASP ASVS V9.1</strong> — Secret Management: nada se transmite por red, no se persiste en <code>localStorage</code> ni <code>sessionStorage</code>.</li>
+                            <li><strong>OWASP A03:2025</strong> — Software Supply Chain: cero dependencias externas en el JS. (La hoja de estilos carga Font Awesome 6 desde cdnjs con SRI, igual que el resto del portfolio.)</li>
+                            <li><strong>OWASP A02:2025</strong> — Security Misconfiguration: <code>script-src 'self'</code>, sin inline, sin <code>eval</code>, sin <code>Function()</code>. <code>style-src</code> se relaja a <code>'unsafe-inline'</code> por el bloque <code>&lt;style&gt;</code> interno (no usa nonce por simplicidad).</li>
+                            <li><strong>XSS A05:2025</strong> mitigado por construcción: todo el volcado al DOM va por <code>textContent</code>. No hay <code>innerHTML</code> con datos del usuario.</li>
+                            <li><strong>Clickjacking:</strong> GitHub Pages envía <code>X-Frame-Options: DENY</code> por cabecera HTTP; la directiva <code>frame-ancestors 'none'</code> en el <code>&lt;meta&gt;</code> CSP es redundante en este hosting (sólo aplica cuando viene de cabecera HTTP).</li>
+                            <li><strong>No telemetría</strong>. El botón «Copiar» usa <code>navigator.clipboard</code> (API local) con fallback a <code>execCommand</code> en navegadores sin HTTPS.</li>
+                        </ul>
+
+                        <h2 style="margin-top: 36px;"><i class="fa-solid fa-triangle-exclamation"></i> Límites conocidos</h2>
+
+                        <ul class="checks">
+                            <li>La entropía mostrada es una <em>estimación</em> (log₂ del tamaño del alfabeto × longitud), no una prueba criptográfica. Es válida bajo el modelo de símbolo equiprobable e independiente. La cobertura mínima introduce una desviación despreciable en longitudes ≥ 8.</li>
+                            <li>Si la longitud pedida es <strong>menor que el número de sets activos</strong>, la cobertura se aplica sólo a los primeros <code>len</code> sets en el orden declarado (minúsculas → mayúsculas → dígitos → símbolos). Los restantes se omiten. No es un bug: es un compromiso entre longitud corta y representación de todos los tipos.</li>
+                            <li>El generador asume que tu navegador no está comprometido. Si hay malware en el host, la contraseña cae en el momento de pegarla.</li>
+                            <li>El portapapeles es accesible por otras apps del sistema. Pega y borra cuanto antes.</li>
+                        </ul>
+                    </section>
+
+                </div>
+
+            </div>
+        </article>
+
+        <footer>
+            <p>Copyright &copy; 2026 Karitsu2281</p>
+            <p>
+                <a href="https://github.com/karitsu2281" target="_blank" rel="noopener noreferrer">GitHub</a>
+                &nbsp;·&nbsp;
+                <a href="https://www.linkedin.com/in/hugo-flores-molina-167247414" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            </p>
+        </footer>
+
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">Copiado al portapapeles</div>
+
+    <script src="./generator.js"></script>
+</body>
+
+</html>
