@@ -190,18 +190,18 @@
             <div class="article-header">
                 <span class="badge"><i class="fa-solid fa-shield-halved"></i> Caso Real</span>
                 <h1>Infostealer haciendo bypass a 2FA por Discord</h1>
-                <p class="meta"><i class="fa-regular fa-calendar"></i> Junio 2026 &nbsp;·&nbsp; <i class="fa-regular fa-clock"></i> 8 min de lectura</p>
+                <p class="meta"><i class="fa-regular fa-calendar"></i> Junio 2026 (caso del autor) &nbsp;·&nbsp; <i class="fa-regular fa-clock"></i> 8 min de lectura</p>
             </div>
 
             <div class="article-body">
 
-                <p>Wow. No ha pasado ni un mes cuando terminé el curso de ciberseguridad y ya tengo mi primer incidente de verdad. Al parecer, me levanté y vi un montón de "<strong>@everyone</strong>" en Discord de alguien. Y al verlo, era de un amigo mío, que me había mandado 4 fotos de una estafa de criptomonedas de MrBeast.</p>
+                <p>Wow. No había pasado ni un mes desde que terminé el curso de ciberseguridad y ya tenía mi primer incidente de verdad. Al parecer, me levanté y vi un montón de "<strong>@everyone</strong>" en Discord de alguien. Y al verlo, era de un amigo mío, que me había mandado 4 fotos de una estafa de criptomonedas de MrBeast.</p>
 
                 <p>Mi primer instinto fue de que no tenía doble factor activado en la cuenta ¿un clásico?, pero me puse a investigar por mi cuenta, y después de la declaración de mi amigo que tenía <strong>2FA activado</strong>, me quedé asombrado.</p>
 
-                <p>Era un <strong>"infostealer"</strong> que se había colado a través de Roblox (principalmente, pero se pueden colar por juegos piratas), robó el <strong>token de sesión</strong>, saltándose todas las medidas de seguridad que tenía Discord, y extraer las bases SQLite de los navegadores, y pudo acceder a su cuenta de Microsoft (que no tenía 2FA), la de EA (tampoco la tenía) y la de Ubisoft (tampoco).</p>
+                <p>Era un <strong>"infostealer"</strong> que se había colado a través de un script o cheat de Roblox (los juegos "piratas" de Roblox como tal no existen: lo que se cuelan son scripts, cheats y ejecutables disfrazados de mods), robó el <strong>token de sesión activa</strong> de Discord, lo que le permitió al atacante entrar a la cuenta sin volver a pasar por el 2FA (que ya se había superado cuando mi amigo inició sesión y Discord le generó ese token; el malware no "salta" el 2FA, te roba la prueba de que ya lo superaste), y de paso extrajo las bases SQLite de los navegadores. Con eso pudo acceder a su cuenta de Microsoft (que no tenía 2FA), la de EA (tampoco la tenía) y la de Ubisoft (tampoco).</p>
 
-                <p>Menos mal que la de Steam no fue afectada, ya que tenía el bendito <strong>Steam Guard</strong> activado, y evitó un desastre aún mayor. Le instruí de que cambie inmediatamente todas y cada una de las contraseñas desde un dispositivo que no esté infectado y pasar inmediatamente un antivirus con escaneo profundo (<strong>Malwarebytes</strong> en este caso) en el PC comprometido para erradicar la amenaza.</p>
+                <p>Menos mal que la de Steam no fue afectada, ya que tenía el bendito <strong>Steam Guard</strong> activado, y evitó un desastre aún mayor. Le dije que cambiara inmediatamente todas y cada una de las contraseñas desde un dispositivo que no estuviese infectado, y que pasara un antivirus con escaneo profundo (<strong>Malwarebytes</strong> en este caso) en el PC comprometido para erradicar la amenaza.</p>
 
                 <p>Lo más gracioso de este incidente es que pudimos adivinar el correo del atacante y probamos a poner la misma contraseña que tenía en su cuenta de Microsoft simplemente por los loles, y… <strong>¡Entró!</strong>. El atacante era tan imbécil que no cambió la contraseña de la cuenta, se dejó la sesión abierta en el servicio de Xbox y pudimos contactar con el soporte para que la bloqueasen y pueda cambiar el correo y la contraseña de forma urgente, así que día salvado para mi amigo.</p>
 
@@ -209,12 +209,38 @@
                     <h3><i class="fa-solid fa-triangle-exclamation"></i> Moraleja</h3>
                     <ul>
                         <li><strong>NO</strong> hacer clic en enlaces extraños ni descargar archivos sospechosos.</li>
-                        <li><strong>USAR SIEMPRE 2FA EN TODAS LAS CUENTAS.</strong></li>
+                        <li><strong>Activar 2FA en TODAS las cuentas que lo permitan, pero entendiendo qué cubre y qué no.</strong> El 2FA te protege de que te adivinen la contraseña, no de que te roben la sesión ya abierta del PC. Prioriza MFA resistente a phishing (passkeys, FIDO2, YubiKey) y, si no queda otra, TOTP en Aegis o 2FAS mejor que SMS.</li>
                         <li>En caso de cualquier sospecha de compromiso, <strong>REVOCAR EL CÓDIGO 2FA Y GENERAR UNO NUEVO, Y REFRESCAR SESIONES.</strong></li>
-                        <li>En caso de duda, no, por dar clic en una imagen no te pueden "robar" la cuenta. Discord quita los metadatos EXIF de las fotos para comprimirlos en sus servidores y que ocupen menos, por lo que elimina cualquier posibilidad de que te puedan comprometer la sesión de dicha forma.</li>
+                        <li>En caso de duda, no: por abrir una imagen en Discord no te van a robar la cuenta. Discord elimina los metadatos EXIF de las fotos por política de privacidad (no por compresión, eso es un efecto secundario), y además las sirve desde <code>cdn.discordapp.com</code>, un origen distinto al de la app, así que el navegador no envía cookies ni tokens de sesión al pedirlas. NO se puede comprometer una cuenta abriendo una imagen.</li>
                         <li><strong>POR DIOS, NO REUTILICES LAS CONTRASEÑAS, QUE ES UN PELIGRO ENORME.</strong></li>
                         <li><strong>NO GUARDAR CONTRASEÑAS EN EL NAVEGADOR</strong>, usar <strong>Proton Pass</strong> o <strong>Bitwarden</strong>.</li>
                     </ul>
+                </div>
+
+                <div class="fuentes" style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border);">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 12px;">
+                        <i class="fa-solid fa-link" style="color: var(--accent);"></i> Fuentes y referencias
+                    </h3>
+                    <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 0.9rem;">
+                        <li>
+                            <strong>Steam Guard y tokens de sesión:</strong> documentación oficial de Valve y notas de Huntress / ProPrivacy sobre robo de tokens locales de Steam.
+                        </li>
+                        <li>
+                            <strong>Roblox como vector de infostealers:</strong> análisis públicos de Kaspersky, Proton y Huntress (2024-2025).
+                        </li>
+                        <li>
+                            <strong>Discord y metadatos EXIF:</strong> Discord Privacy Policy y documentación del image proxy (<code>cdn.discordapp.com</code>).
+                        </li>
+                        <li>
+                            <strong>Gestores de contraseñas:</strong> NIST SP 800-63B §5.1.1, CISA #MoreThanAPassword.
+                        </li>
+                        <li>
+                            <strong>MFA resistente a phishing:</strong> NIST SP 800-63B §5.1.2, CISA #PhishingResistantMFA.
+                        </li>
+                    </ul>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 16px; font-style: italic;">
+                        Nota: este caso se narra desde la experiencia personal del autor. Los detalles técnicos están alineados con las fuentes públicas; los datos identificativos del amigo y del atacante han sido omitidos a propósito.
+                    </p>
                 </div>
 
             </div>
