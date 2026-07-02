@@ -29,3 +29,29 @@ dni-share/__pycache__/
 *~
 .DS_Store
 Thumbs.db
+
+# Configuración local de Claude Code (.claude/settings.json, hooks, etc.).
+# Por defecto se ignora todo el directorio. La triple excepción mantiene
+# las skills locales versionadas como muestra de transparencia del proceso
+# de auditoría ("audit before you trust"):
+#   1. !.claude/         → desactiva el ignore raíz
+#   2. !.claude/skills/  → reactiva el directorio de skills
+#   3. !.claude/skills/**→ reactiva el contenido de cada skill
+# Sin las tres, git seguiría ignorando los archivos nuevos dentro de
+# .claude/skills/ porque el patrón ".claude/" los matchea recursivamente
+# antes de evaluar la excepción. Si en el futuro una skill concreta
+# contiene credenciales o código ejecutable no auditable, debe ignorarse
+# individualmente (con un patrón más específico).
+.claude/
+!.claude/
+!.claude/skills/
+!.claude/skills/**
+
+# Configuración local de Continue IDE (.continue/mcpServers/*.yaml con
+# tokens, .continue/index/ con SQLite, .continue/dev_data/ con telemetría).
+# Por defecto se ignora todo el directorio, igual que .claude/. NO hay
+# excepciones: ningún YAML con apiKey o GITHUB_MCP_TOKEN debe llegar al
+# repo público de GitHub Pages. Si en el futuro quieres versionar una
+# configuración de Continue sin secretos, muévela a .continue/templates/
+# y añádela como excepción explícita.
+.continue/
