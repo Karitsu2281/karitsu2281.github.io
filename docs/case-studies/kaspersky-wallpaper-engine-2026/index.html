@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data:; script-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb()">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="robots" content="noai, noimageai">
+    <meta name="gptbot" content="noindex">
+    <meta name="googlebot" content="nosnippet">
+    
+    <title>Kaspersky Wallpaper Engine Malware Campaign 2026 — Análisis de Amenaza | Karitsu2281</title>
+    <meta name="description" content="Análisis técnico profesional de la campaña de malware distribuido mediante wallpapers maliciosos en Steam Workshop. Clasificación: OWASP A03:2025 Software Supply Chain Failures, MITRE ATT&CK T1195, T1554.">
+    
+    <link rel="stylesheet" href="../../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous">
+    
+    <style>
+        .article { 
+            background: var(--surface); 
+            border: 1px solid var(--border); 
+            border-radius: var(--radius-lg); 
+            padding: 48px 56px; 
+            margin: 40px 0 60px; 
+            position: relative; 
+        }
+        .article::before { 
+            content: ''; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 3px; 
+            background: linear-gradient(90deg, var(--accent) 0%, transparent 100%); 
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0; 
+        }
+        .article-header { 
+            margin-bottom: 32px; 
+            padding-bottom: 24px; 
+            border-bottom: 1px solid var(--border); 
+        }
+        .article-header .badge { 
+            display: inline-block; 
+            padding: 4px 12px; 
+            background: var(--accent-dim); 
+            border: 1px solid var(--accent-border); 
+            border-radius: 4px; 
+            font-size: 0.75rem; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            letter-spacing: 0.08em; 
+            color: var(--accent); 
+            margin-bottom: 12px; 
+        }
+        .article-header h1 { 
+            font-size: 2rem; 
+            font-weight: 800; 
+            letter-spacing: -0.02em; 
+            line-height: 1.2; 
+            color: #fff; 
+            margin-bottom: 12px; 
+        }
+        .article-header .meta { 
+            font-size: 0.85rem; 
+            color: var(--text-muted); 
+        }
+        .article-body { 
+            font-size: 1rem; 
+            line-height: 1.8; 
+            color: var(--text); 
+        }
+        .article-body p { 
+            margin-bottom: 20px; 
+        }
+        .article-body strong { 
+            color: #fff; 
+        }
+        .article-body em { 
+            color: var(--accent); 
+        }
+        .article-body code { 
+            background: var(--accent-dim); 
+            padding: 2px 6px; 
+            border-radius: 3px; 
+            font-size: 0.9em; 
+        }
+        
+        /* Nuevos estilos para secciones profesionales */
+        .executive-summary { 
+            background: rgba(56, 189, 248, 0.04); 
+            border-left: 3px solid var(--accent); 
+            padding: 20px 24px; 
+            margin: 0 0 32px; 
+            border-radius: 4px; 
+        }
+        .executive-summary p { 
+            font-size: 0.95rem; 
+            color: var(--text); 
+            margin: 0; 
+            line-height: 1.6; 
+        }
+        .executive-summary strong { 
+            color: var(--accent); 
+        }
+        
+        .threat-classification { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 16px; 
+            margin: 32px 0; 
+            padding: 24px 0; 
+            border-top: 1px solid var(--border); 
+            border-bottom: 1px solid var(--border);
+        }
+        .classification-card { 
+            background: rgba(56, 189, 248, 0.02); 
+            border: 1px solid var(--border); 
+            border-radius: var(--radius); 
+            padding: 16px; 
+        }
+        .classification-card .card-title { 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.08em; 
+            color: var(--text-muted); 
+            margin-bottom: 8px; 
+            font-weight: 600;
+        }
+        .classification-card .card-value { 
+            font-size: 1.1rem; 
+            font-weight: 700; 
+            color: var(--accent); 
+        }
+        
+        .technical-table { 
+            width: 100%; 
+            margin: 24px 0; 
+            border-collapse: collapse; 
+            font-size: 0.9rem;
+        }
+        .technical-table th { 
+            text-align: left; 
+            padding: 12px 16px; 
+            background: rgba(56, 189, 248, 0.06); 
+            border: 1px solid var(--border); 
+            color: var(--text-muted); 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            letter-spacing: 0.05em; 
+            font-size: 0.75rem;
+        }
+        .technical-table td { 
+            padding: 12px 16px; 
+            border: 1px solid var(--border); 
+            color: var(--text);
+        }
+        .technical-table tr:nth-child(even) { 
+            background: rgba(255, 255, 255, 0.01); 
+        }
+        
+        .severity-badge { 
+            display: inline-block; 
+            padding: 2px 8px; 
+            border-radius: 3px; 
+            font-size: 0.7rem; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            letter-spacing: 0.05em;
+        }
+        .severity-critical { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .severity-high { background: rgba(249, 115, 22, 0.15); color: #f97316; border: 1px solid rgba(249, 115, 22, 0.3); }
+        .severity-medium { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .severity-low { background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.3); }
+        
+        .key-takeaway { 
+            background: rgba(56, 189, 248, 0.06); 
+            border-left: 3px solid var(--accent); 
+            padding: 20px 24px; 
+            margin: 32px 0; 
+            border-radius: 4px; 
+        }
+        .key-takeaway h3 { 
+            font-size: 1.1rem; 
+            font-weight: 700; 
+            color: #fff; 
+            margin-bottom: 16px; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+        .key-takeaway h3 i { 
+            color: var(--accent); 
+        }
+        .key-takeaway ul { 
+            list-style: none; 
+            padding: 0; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+        }
+        .key-takeaway ul li { 
+            font-size: 0.95rem; 
+            line-height: 1.6; 
+            color: var(--text); 
+            padding-left: 24px; 
+            position: relative; 
+        }
+        .key-takeaway ul li::before { 
+            content: '\f00c'; 
+            font-family: 'Font Awesome 6 Free'; 
+            font-weight: 900; 
+            position: absolute; 
+            left: 0; 
+            color: var(--accent); 
+            font-size: 0.8rem; 
+        }
+        
+        .back-link { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-size: 0.9rem; 
+            font-weight: 600; 
+            color: var(--accent); 
+            text-decoration: none; 
+            margin-bottom: 24px; 
+            transition: gap 0.25s; 
+        }
+        .back-link:hover { 
+            gap: 12px; 
+        }
+        
+        .tree-diagram { 
+            background: rgba(56, 189, 248, 0.02); 
+            border: 1px solid var(--border); 
+            border-radius: var(--radius); 
+            padding: 20px; 
+            margin: 24px 0; 
+            font-family: 'Courier New', monospace; 
+            font-size: 0.85rem; 
+            line-height: 1.5; 
+            color: var(--text-muted);
+            overflow-x: auto;
+        }
+        .tree-diagram pre { 
+            margin: 0; 
+            white-space: pre-wrap; 
+            word-wrap: break-word; 
+        }
+        
+        @media (max-width: 768px) { 
+            .article { padding: 28px 20px; } 
+            .article-header h1 { font-size: 1.5rem; } 
+            .threat-classification { grid-template-columns: 1fr 1fr; } 
+            .technical-table { font-size: 0.8rem; } 
+            .technical-table th, .technical-table td { padding: 8px 12px; } 
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="../../../index.html" class="nav-logo"><i class="fa-solid fa-terminal"></i> Karitsu2281</a>
+            <ul class="nav-links">
+                <li><a href="../../../index.html#proyectos">Proyectos</a></li>
+                <li><a href="../../../index.html#perfil">Perfil</a></li>
+                <li><a href="../../../index.html#contacto">Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <article class="article">
+            <a href="../../../index.html" class="back-link"><i class="fa-solid fa-chevron-left"></i> Volver al portfolio</a>
+
+            <div class="article-header">
+                <span class="badge"><i class="fa-solid fa-shield-halved"></i> Análisis de Amenaza</span>
+                <h1>Campaña de Malware a través de Wallpaper Engine (2026)</h1>
+                <p class="meta">
+                    <i class="fa-regular fa-calendar"></i> Junio 2026 &nbsp;·&nbsp; 
+                    <i class="fa-regular fa-clock"></i> 8 min de lectura &nbsp;·&nbsp; 
+                    <i class="fa-solid fa-tag"></i> 
+                    <span class="severity-badge severity-high">ALTA</span>
+                </p>
+            </div>
+
+            <div class="article-body">
+                
+                <!-- RESUMEN EJECUTIVO -->
+                <div class="executive-summary">
+                    <p>
+                        <strong>ID del Caso:</strong> THREAT-2026-WE-001 <br>
+                        <strong>Fecha de Documentación:</strong> 16 de Junio de 2026 <br>
+                        <strong>Fuente Principal:</strong> Kaspersky Threat Intelligence <br>
+                        <strong>Vector de Ataque:</strong> Contenido malicioso en Steam Workshop (Ataque a Cadena de Suministro) <br>
+                        <strong>Impacto Geográfico:</strong> Global (89% China, 5.5% Rusia, casos documentados en Singapur, Alemania, India, Canadá)
+                    </p>
+                </div>
+
+                <!-- CLASIFICACIÓN DE LA AMENAZA -->
+                <div class="threat-classification">
+                    <div class="classification-card">
+                        <div class="card-title">Clasificación OWASP</div>
+                        <div class="card-value">A03:2025<br><small style="color: var(--text-muted); font-size: 0.8rem; font-weight: 400;">Software Supply Chain Failures</small></div>
+                    </div>
+                    <div class="classification-card">
+                        <div class="card-title">MITRE ATT&CK</div>
+                        <div class="card-value">T1195, T1554<br><small style="color: var(--text-muted); font-size: 0.8rem; font-weight: 400;">Supply Chain Compromise</small></div>
+                    </div>
+                    <div class="classification-card">
+                        <div class="card-title">NIST CSF</div>
+                        <div class="card-value">PR.DS-2<br><small style="color: var(--text-muted); font-size: 0.8rem; font-weight: 400;">Data Security</small></div>
+                    </div>
+                    <div class="classification-card">
+                        <div class="card-title">CIS Controls</div>
+                        <div class="card-value">v8.1 - Control 16<br><small style="color: var(--text-muted); font-size: 0.8rem; font-weight: 400;">Application Software Security</small></div>
+                    </div>
+                </div>
+
+                <!-- CONTEXTO -->
+                <section id="contexto">
+                    <h2 style="font-size: 1.4rem; font-weight: 700; color: #fff; margin: 40px 0 20px; padding-top: 24px; border-top: 1px solid var(--border);">
+                        <i class="fa-solid fa-info-circle" style="color: var(--accent); margin-right: 10px;"></i>
+                        Contexto y Vector de Ataque
+                    </h2>
+                    
+                    <p>
+                        El 16 de junio de 2026, <strong>Kaspersky</strong> documentó una campaña activa de distribución de malware que aprovecha 
+                        <strong>Wallpaper Engine</strong>, una popular aplicación de Steam para fondos de pantalla animados. 
+                        <strong>El software Wallpaper Engine NO está comprometido</strong> — el vector de infección son 
+                        <strong>wallpapers maliciosos subidos por atacantes a Steam Workshop</strong> (el marketplace de contenido generado por usuarios).
+                    </p>
+                    
+                    <p>
+                        Wallpaper Engine permite fondos de tipo <code>"aplicación"</code>, que son esencialmente <strong>ejecutables de Windows disfrazados 
+                        de fondos de pantalla</strong>. Los atacantes aprovechan esta funcionalidad para distribuir malware oculto en contenido aparentemente 
+                        legítimo, incluyendo fondos con temática de anime y otros diseños populares.
+                    </p>
+                    
+                    <p>
+                        Este tipo de ataque se enmarca dentro de los <strong>Ataques a la Cadena de Suministro (Supply Chain Attacks)</strong>, donde el vector 
+                        de compromiso no es el software principal, sino el contenido de terceros que se distribuye a través de él. Este patrón ha sido 
+                        observado previamente en incidentes como <code>event-stream</code> (npm, 2018), <code>ua-parser-js</code> (npm, 2021) y el intento de 
+                        backdoor en <code>xz-utils</code> (2024).
+                    </p>
+                </section>
+
+                <!-- ANÁLISIS TÉCNICO -->
+                <section id="analisis-tecnico">
+                    <h2 style="font-size: 1.4rem; font-weight: 700; color: #fff; margin: 40px 0 20px; padding-top: 24px; border-top: 1px solid var(--border);">
+                        <i class="fa-solid fa-microscope" style="color: var(--accent); margin-right: 10px;"></i>
+                        Análisis Técnico Detallado
+                    </h2>
+                    
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-light); margin: 24px 0 16px;">Payloads Identificados</h3>
+                    
+                    <table class="technical-table">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Nombre</th>
+                                <th>Función</th>
+                                <th>Severidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Token Stealer</td>
+                                <td>Custom</td>
+                                <td>Robo de tokens de sesión activa de Steam</td>
+                                <td><span class="severity-badge severity-high">ALTA</span></td>
+                            </tr>
+                            <tr>
+                                <td>Backdoor</td>
+                                <td>DarkKomet</td>
+                                <td>Establece acceso remoto persistente al sistema</td>
+                                <td><span class="severity-badge severity-critical">CRÍTICA</span></td>
+                            </tr>
+                            <tr>
+                                <td>Infostealer</td>
+                                <td>Lumma</td>
+                                <td>Robo de credenciales, cookies y datos de navegadores</td>
+                                <td><span class="severity-badge severity-high">ALTA</span></td>
+                            </tr>
+                            <tr>
+                                <td>Infostealer</td>
+                                <td>Vidar</td>
+                                <td>Robo de credenciales + extracción de wallets de criptomonedas</td>
+                                <td><span class="severity-badge severity-high">ALTA</span></td>
+                            </tr>
+                            <tr>
+                                <td>Loader</td>
+                                <td>RenEngine</td>
+                                <td>Descarga e instala payloads adicionales (C2)</td>
+                                <td><span class="severity-badge severity-high">ALTA</span></td>
+                            </tr>
+                            <tr>
+                                <td>Criptominero</td>
+                                <td>Variantes</td>
+                                <td>Utilización no autorizada de recursos GPU/CPU</td>
+                                <td><span class="severity-badge severity-medium">MEDIA</span></td>
+                            </tr>
+                            <tr>
+                                <td>Ransomware</td>
+                                <td>Variantes</td>
+                                <td>Cifrado de archivos y extorsión</td>
+                                <td><span class="severity-badge severity-critical">CRÍTICA</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-light); margin: 32px 0 16px;">Mecanismo de Infección</h3>
+                    <p>
+                        Los wallpapers maliciosos emplean múltiples técnicas para ocultar y ejecutar el payload:
+                    </p>
+                    <ul style="margin-left: 20px; padding-left: 20px;">
+                        <li style="margin-bottom: 12px;"><strong>Ejecutables embebidos:</strong> Archivos .exe ocultos dentro del paquete del wallpaper</li>
+                        <li style="margin-bottom: 12px;"><strong>Archivos comprimidos con contraseña:</strong> El código malicioso está protegido; la clave puede aparecer en el nombre del fondo, en archivos de configuración, o se descifra automáticamente al abrir el wallpaper</li>
+                        <li style="margin-bottom: 12px;"><strong>Ofuscación de código:</strong> Uso de empaquetadores y ofuscadores para evadir detección</li>
+                        <li style="margin-bottom: 12px;"><strong>Nombres de archivo legítimos:</strong> Archivos con nombres que imitan componentes legítimos de Wallpaper Engine</li>
+                    </ul>
+                    
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-light); margin: 32px 0 16px;">Técnicas de Evasión</h3>
+                    <ul style="margin-left: 20px; padding-left: 20px;">
+                        <li style="margin-bottom: 12px;"><strong>Ejecución retardada:</strong> El malware puede permanecer inactivo inicialmente para evitar sospechas</li>
+                        <li style="margin-bottom: 12px;"><strong>Persistencia:</strong> Creación de tareas programadas y registros de inicio</li>
+                        <li style="margin-bottom: 12px;"><strong>Aprovechamiento de confianza:</strong> Uso de Steam Workshop como fuente "oficial"</li>
+                    </ul>
+                </section>
+
+                <!-- MECANISMO DE PROPAGACIÓN -->
+                <section id="propagacion">
+                    <h2 style="font-size: 1.4rem; font-weight: 700; color: #fff; margin: 40px 0 20px; padding-top: 24px; border-top: 1px solid var(--border);">
+                        <i class="fa-solid fa-share-alt" style="color: var(--accent); margin-right: 10px;"></i>
+                        Mecanismo de Propagación
+                    </h2>
+                    
+                    <p>
+                        Esta campaña sigue un <strong>ciclo de vida de ataque a la cadena de suministro</strong> con amplificación:
+                    </p>
+                    
+                    <div class="tree-diagram">
+<pre>
+1. Compromiso Inicial
+   ├─ Atacante crea cuenta en Steam
+   ├─ Sube wallpaper malicioso a Steam Workshop
+   └─ Usa técnicas de SEO y nombres atractivos
+
+2. Distribución
+   ├─ Víctima busca fondos de pantalla
+   ├─ Encuentra wallpaper malicioso (apariencia legítima)
+   └─ Descarga e instala el wallpaper
+
+3. Ejecución
+   ├─ Wallpaper se ejecuta como aplicación
+   ├─ Payload malicioso se activa en segundo plano
+   └─ Infección del sistema
+
+4. Exfiltración
+   ├─ Robo de token de sesión Steam
+   ├─ Instalación de backdoor (DarkKomet)
+   └─ Descarga de malware adicional (Lumma, Vidar, etc.)
+
+5. Propagación (Amplificación)
+   └─ Atacante usa cuenta de Steam robada
+       └─ Sube más wallpapers maliciosos
+           └─ Ciclo se repite con mayor credibilidad
+</pre>
+                    </div>
+                    
+                    <div class="key-takeaway">
+                        <h3><i class="fa-solid fa-lightbulb"></i> Factor Clave: Credibilidad de la Cuenta</h3>
+                        <p style="margin: 0 0 16px; font-size: 0.95rem; color: var(--text); line-height: 1.6;">
+                            Los atacantes aprovechan que <strong>una cuenta de Steam con biblioteca grande, muchos juegos y reseñas positivas 
+                            genera más confianza</strong> que una cuenta recién creada. Esto permite que el ciclo de infección se amplifique 
+                            exponencialmente.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- DISTRIBUCIÓN GEOGRÁFICA -->
+                <section id="distribucion">
+                    <h2 style="font-size: 1.4rem; font-weight: 700; color: #fff; margin: 40px 0 20px; padding-top: 24px; border-top: 1px solid var(--border);">
+                        <i class="fa-solid fa-globe" style="color: var(--accent); margin-right: 10px;"></i>
+                        Distribución Geográfica
+                    </h2>
+                    
+                    <table class="technical-table">
+                        <thead>
+                            <tr>
+                                <th>País/Región</th>
+                                <th>% de Intentos de Descarga</th>
+                                <th>Categoría</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>🇨🇳 China</td>
+                                <td>~89%</td>
+                                <td>Mayor concentración de víctimas</td>
+                            </tr>
+                            <tr>
+                                <td>🇷🇺 Rusia</td>
+                                <td>~5.5%</td>
+                                <td>Segundo país más afectado</td>
+                            </tr>
+                            <tr>
+                                <td>🇸🇬 Singapur</td>
+                                <td>&lt;1%</td>
+                                <td>Casos documentados</td>
+                            </tr>
+                            <tr>
+                                <td>🇩🇪 Alemania</td>
+                                <td>&lt;1%</td>
+                                <td>Casos documentados</td>
+                            </tr>
+                            <tr>
+                                <td>🇮🇳 India</td>
+                                <td>&lt;1%</td>
+                                <td>Casos documentados</td>
+                            </tr>
+                            <tr>
+                                <td>🇨🇦 Canadá</td>
+                                <td>&lt;1%</td>
+                                <td>Casos documentados</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <p>
+                        <strong>Nota:</strong> La alta concentración en China puede deberse a la popularidad de Wallpaper Engine en la región, 
+                        mayor uso de Steam Workshop, o enfoque estratégico de los atacantes en mercados específicos.
+                    </p>
+                </section>
+
+                <!-- ACLARACIÓN TÉCNICA SOBRE 2FA -->
+                <section id="2fa">
+                    <h2 style="font-size: 1.4rem; font-weight: 700; color: #fff; margin: 40px 0 20px; padding-top: 24px; border-top: 1px solid var(--border);">
+                        <i class="fa-solid fa-key" style="color: var(--accent); margin-right: 10px;"></i>
+                        Aclaración Técnica: 2FA y Tokens de Sesión
+                    </h2>
+                    
+                    <div class="key-takeaway">
+                        <h3><i class="fa-solid fa-exclamation-triangle"></i> Concepto Fundamental</h3>
+                        <p style="margin: 0 0 16px; font-size: 0.95rem; color: var(--text); line-height: 1.6;">
+                            <strong>El malware NO "salta" el 2FA de Steam.</strong> El factor de autenticación de dos pasos (2FA) ya se había 
+                            superado cuando el usuario inició sesión y Steam generó el token de sesión.
+                        </p>
+                        <p style="margin: 0 0 16px; font-size: 0.95rem; color: var(--text); line-height: 1.6;">
+                            Lo que hace el malware es <strong>robar el token de sesión existente del disco</strong> y reutilizarlo desde otro PC, 
+                            que es exactamente para lo que están diseñados los tokens de sesión.
+                        </p>
+                        <p style="margin: 0 0 16px; font-size: 0.95rem; color: var(--text); line-height: 1.6;">
+                            Por esto, Kaspersky <strong>no menciona el 2FA en su reporte</strong>: no es el vector relevante en este ataque.
+                        </p>
+                        
+                        <h4 style="font-size: 0.95rem; font-weight: 600; color: var(--text-light); margin: 20px 0 12px;">¿Qué protege realmente el 2FA?</h4>
+                        <ul>
+                            <li>✅ Contra que alguien adivine tu contraseña</li>
+                            <li>❌ NO protege contra el robo de tokens de sesión ya autenticados</li>
+                            <li>❌ NO protege contra acceso desde dispositivos comprometidos</li>
+                            <li>❌ NO protege contra keyloggers o malware en el dispositivo local</li>
+                        </ul>
+                        <p style="margin: 16px 0 0; font-size: 0.85rem; color: var(--text-muted); font-style: italic;">
+                            Referencia: NIST SP 800-63B §5.1 (Session Management)
+                        </p>
+                    </div>
+                </section>
+
+                <!-- CASOS RELACIONADOS -->
+                <section id="casos-relacionados">
+                    <h2 style="font-size: 1.4rem; font-weight: 700; color: #fff; margin: 40px 0 20px; padding-top: 24px; border-top: 1px solid var(--border);">
+                        <i class="fa-solid fa-history" style="color: var(--accent); margin-right: 10px;"></i>
+                        Casos Relacionados en la Historia
+                    </h2>
+                    
+                    <p>
+                        Este ataque sigue un patrón establecido de <strong>Ataques a la Cadena de Suministro a través de contenido de usuarios</strong>:
+                    </p>
+                    
+                    <table class="technical-table">
+                        <thead>
+                            <tr>
+                                <th>Año</th>
+                                <th>Evento</th>
+                                <th>Descripción</th>
+                                <th>Impacto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2018</td>
+                                <td><code>event-stream</code> (npm)</td>
+                                <td>Paquete npm comprometido</td>
+                                <td>Robo de Bitcoin de proyectos dependientes</td>
+                            </tr>
+                            <tr>
+                                <td>2021</td>
+                                <td><code>ua-parser-js</code> (npm)</td>
+                                <td>Paquete popular con inyección de malware</td>
+                                <td>Ataque a miles de proyectos</td>
+                            </tr>
+                            <tr>
+                                <td>2024</td>
+                                <td><code>xz-utils</code> (Linux)</td>
+                                <td>Backdoor casi introducido</td>
+                                <td>Podría haber comprometido distribuciones Linux</td>
+                            </tr>
+                            <tr>
+                                <td>2026</td>
+                                <td><strong>Wallpaper Engine</strong></td>
+                                <td>Wallpapers maliciosos en Steam Workshop</td>
+                                <td>Robo de cuentas y sistemas</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="key-takeaway">
+                        <h3><i class="fa-solid fa-graduation-cap"></i> Lección Aprendida</h3>
+                        <p style="margin: 0; font-size: 0.95rem; color: var(--text); line-height: 1.6;">
+                            Los ataques a la cadena de suministro <strong>no son teóricos</strong> — son una amenaza real y recurrente 
+                            en el ecosistema de desarrollo de software y distribución de contenido.
+                        </p>
+                    </div>
+                </section>
+
+                <!-- RECOMENDACIONES -->
+                <section id="recomendaciones">
+                    <h2 style="font-size: 1.4rem; font-weight: 700; color: #fff; margin: 40px 0 20px; padding-top: 24px; border-top: 1px solid var(--border);">
+                        <i class="fa-solid fa-shield-alt" style="color: var(--accent); margin-right: 10px;"></i>
+                        Recomendaciones de Mitigación
+                    </h2>
+                    
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-light); margin: 24px 0 16px;">Para Usuarios</h3>
+                    
+                    <div class="key-takeaway">
+                        <h3><i class="fa-solid fa-check-circle" style="color: #22c55e;"></i> Medidas Críticas</h3>
+                        <ul>
+                            <li><strong>Verificar la reputación del creador</strong> del wallpaper antes de instalar</li>
+                            <li><strong>Revisar reseñas y comentarios</strong> (buscar patrones sospechosos)</li>
+                            <li><strong>Preferir creadores con historial verificado</strong> y alta actividad en Steam</li>
+                            <li><strong>Evitar descargas de cuentas recién creadas</strong> o con poca reputación</li>
+                            <li><strong>Usar VirusTotal</strong> para analizar archivos descargados</li>
+                            <li><strong>Ejecutar Wallpaper Engine con permisos limitados</strong> (no como administrador)</li>
+                            <li><strong>Revisar sesiones activas</strong> de Steam periódicamente en configuración</li>
+                            <li><strong>Habilitar Steam Guard (2FA)</strong> — aunque no protege contra robo de tokens</li>
+                        </ul>
+                    </div>
+                    
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-light); margin: 32px 0 16px;">Para Desarrolladores de Plataformas</h3>
+                    
+                    <div class="key-takeaway">
+                        <h3><i class="fa-solid fa-cogs"></i> Medidas de Plataforma</h3>
+                        <ul>
+                            <li><strong>Implementar escaneo automático</strong> de archivos subidos con múltiples motores antivirus</li>
+                            <li><strong>Sistema de reputación</strong> para creadores de contenido (límite de subidas para cuentas nuevas)</li>
+                            <li><strong>Sandboxing</strong>: Ejecutar contenido de usuarios en entornos aislados</li>
+                            <li><strong>Transparencia</strong>: Mostrar advertencias claras sobre riesgos de contenido de usuarios</li>
+                            <li><strong>Verificación de cuentas</strong> de creadores populares</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- FUENTES -->
+                <section id="fuentes">
+                    <h2 style="font-size: 1.4rem; font-weight: 700; color: #fff; margin: 40px 0 20px; padding-top: 24px; border-top: 1px solid var(--border);">
+                        <i class="fa-solid fa-link" style="color: var(--accent); margin-right: 10px;"></i>
+                        Fuentes y Referencias Oficiales
+                    </h2>
+                    
+                    <ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 12px; font-size: 0.95rem;">
+                        <li>
+                            <strong>📋 Kaspersky (Fuente Primaria - 16/06/2026):</strong><br>
+                            <a href="https://www.kaspersky.com/about/press-releases/kaspersky-discovered-a-malware-campaign-targeting-steam-users-through-infected-wallpaper" 
+                               target="_blank" rel="noopener noreferrer" style="color: var(--accent);">
+                                Comunicado oficial: "Kaspersky discovered a malware campaign targeting Steam users through infected wallpaper"
+                            </a>
+                        </li>
+                        <li>
+                            <strong>📰 HD-Tecnología (18/06/2026):</strong><br>
+                            <a href="https://www.hd-tecnologia.com/wallpaper-engine-malware/" 
+                               target="_blank" rel="noopener noreferrer" style="color: var(--accent);">
+                                Wallpaper Engine y el malware distribuido por wallpapers
+                            </a>
+                        </li>
+                        <li>
+                            <strong>📰 Infobae (17/06/2026):</strong><br>
+                            <a href="https://www.infobae.com/tecno/2026/06/17/popular-juego-de-steam-fue-infectado-con-malware-para-robar-datos-con-fondos-de-pantalla-para-pc/" 
+                               target="_blank" rel="noopener noreferrer" style="color: var(--accent);">
+                                "Popular juego de Steam fue infectado con malware para robar datos"
+                            </a>
+                        </li>
+                        <li>
+                            <strong>📰 MuyComputer (20/06/2026 - David Salces):</strong><br>
+                            <a href="https://www.muycomputer.com/2026/06/20/que-esta-pasando-con-wallpaper-engine/" 
+                               target="_blank" rel="noopener noreferrer" style="color: var(--accent);">
+                                "¿Qué está pasando con Wallpaper Engine?"
+                            </a>
+                        </li>
+                        <li>
+                            <strong>🔍 Frameworks de Clasificación:</strong><br>
+                            <ul style="margin-left: 20px; padding-left: 20px; margin-top: 8px;">
+                                <li style="margin-bottom: 6px;">
+                                    OWASP: <a href="https://owasp.org/Top10/2025/A03_Software_Supply_Chain_Failures/" 
+                                           target="_blank" rel="noopener noreferrer" style="color: var(--accent);">A03:2025 Software Supply Chain Failures</a>
+                                </li>
+                                <li style="margin-bottom: 6px;">
+                                    MITRE ATT&CK: <a href="https://attack.mitre.org/techniques/T1195/" 
+                                                   target="_blank" rel="noopener noreferrer" style="color: var(--accent);">T1195 Supply Chain Compromise</a>, 
+                                                    <a href="https://attack.mitre.org/techniques/T1554/" 
+                                                       target="_blank" rel="noopener noreferrer" style="color: var(--accent);">T1554 Compromise Software Supply Chain</a>
+                                </li>
+                                <li style="margin-bottom: 6px;">
+                                    NIST CSF: <a href="https://www.nist.gov/cyberframework/csf-tools" 
+                                               target="_blank" rel="noopener noreferrer" style="color: var(--accent);">PR.DS-2 Data Security</a>
+                                </li>
+                                <li style="margin-bottom: 6px;">
+                                    CIS Controls: <a href="https://www.cisecurity.org/controls/v8" 
+                                                  target="_blank" rel="noopener noreferrer" style="color: var(--accent);">v8.1 Control 16 - Application Software Security</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                    
+                    <p style="margin-top: 24px; font-size: 0.85rem; color: var(--text-muted); font-style: italic; padding-top: 16px; border-top: 1px solid var(--border);">
+                        <i class="fa-solid fa-info-circle" style="color: var(--accent); margin-right: 6px;"></i>
+                        Nota: Este análisis está basado en el reporte público de Kaspersky y en la cobertura de medios verificables. 
+                        Las cifras de afectación (89% China, 5.5% Rusia) provienen del comunicado original. El contenido técnico 
+                        ha sido ajustado para alinearse con los estándares y mejores prácticas del sector.
+                    </p>
+                </section>
+
+            </div>
+        </article>
+
+        <footer>
+            <p>Copyright &copy; 2026 Karitsu2281 — Hugo Flores Molina</p>
+            <p>
+                <a href="https://github.com/karitsu2281" target="_blank" rel="noopener noreferrer">GitHub</a>
+                &nbsp;·&nbsp;
+                <a href="https://www.linkedin.com/in/hugo-flores-molina-167247414" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            </p>
+            <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
+                <i class="fa-solid fa-shield-alt" style="color: var(--accent); margin-right: 6px;"></i>
+                Análisis de Amenazas — Portfolio de Ciberseguridad
+            </p>
+        </footer>
+    </div>
+
+</body>
+
+</html>
