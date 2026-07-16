@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data:; script-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb()">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="robots" content="noai, noimageai">
+    <meta name="gptbot" content="noindex">
+    <meta name="googlebot" content="nosnippet">
+
+    <title>Fallo de Higiene de Correo y Filtración de Material de Evaluación — Caso de Estudio | Karitsu2281</title>
+    <meta name="description" content="Análisis de un incidente de confidencialidad de baja severidad y alto valor didáctico originado por un error humano en el uso del correo electrónico durante un proceso de evaluación grupal.">
+
+    <link rel="stylesheet" href="../../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous">
+
+    <style>
+        .article {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 48px 56px;
+            margin: 40px 0 60px;
+            position: relative;
+        }
+        .article::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+        .article-header {
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        .article-header .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--accent-dim);
+            border: 1px solid var(--accent-border);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+        .article-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        .article-header .meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .article-body {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text);
+        }
+        .article-body p {
+            margin-bottom: 20px;
+        }
+        .article-body strong {
+            color: #fff;
+        }
+        .article-body em {
+            color: var(--accent);
+        }
+        .article-body code {
+            background: var(--accent-dim);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+
+        .executive-summary {
+            background: rgba(56, 189, 248, 0.04);
+            border-left: 3px solid var(--accent);
+            padding: 20px 24px;
+            margin: 0 0 32px;
+            border-radius: 4px;
+        }
+        .executive-summary p {
+            font-size: 0.95rem;
+            color: var(--text);
+            margin: 0;
+            line-height: 1.6;
+        }
+        .executive-summary strong {
+            color: var(--accent);
+        }
+
+        .threat-classification {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 32px 0;
+            padding: 24px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .classification-card {
+            background: rgba(56, 189, 248, 0.02);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+        }
+        .classification-card .card-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .classification-card .card-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .technical-table {
+            width: 100%;
+            margin: 24px 0;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .technical-table th {
+            text-align: left;
+            padding: 12px 16px;
+            background: rgba(56, 189, 248, 0.06);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 0.75rem;
+        }
+        .technical-table td {
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+        .technical-table tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .severity-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .severity-critical { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .severity-high { background: rgba(249, 115, 22, 0.15); color: #f97316; border: 1px solid rgba(249, 115, 22, 0.3); }
+        .severity-medium { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .severity-low { background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.3); }
+
+        .key-takeaway {
+            background: rgba(56, 189, 248, 0.06);
+            border-left: 3px solid var(--accent);
+            padding: 20px 24px;
+            margin: 32px 0;
+            border-radius: 4px;
+        }
+        .key-takeaway h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .key-takeaway h3 i {
+            color: var(--accent);
+        }
+        .key-takeaway ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .key-takeaway ul li {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text);
+            padding-left: 24px;
+            position: relative;
+        }
+        .key-takeaway ul li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-size: 0.8rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 24px;
+            transition: gap 0.25s;
+        }
+        .back-link:hover {
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .article { padding: 28px 20px; }
+            .article-header h1 { font-size: 1.5rem; }
+            .threat-classification { grid-template-columns: 1fr 1fr; }
+            .technical-table { font-size: 0.8rem; }
+            .technical-table th, .technical-table td { padding: 8px 12px; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="../../../index.html" class="nav-logo"><i class="fa-solid fa-terminal"></i> Karitsu2281</a>
+            <ul class="nav-links">
+                <li><a href="../../../index.html#proyectos">Proyectos</a></li>
+                <li><a href="../../../index.html#perfil">Perfil</a></li>
+                <li><a href="../../../index.html#contacto">Contacto</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <article class="article">
+            <a href="../../../index.html" class="back-link"><i class="fa-solid fa-chevron-left"></i> Volver al portfolio</a>
+
+            <div class="article-header">
+                <span class="badge"><i class="fa-solid fa-envelope-circle-check"></i> Incidente de Confidencialidad</span>
+                <h1>Fallo de Higiene de Correo y Filtración de Material de Evaluación</h1>
+                <p class="meta">
+                    <i class="fa-regular fa-calendar"></i> Julio 2026 &nbsp;·&nbsp;
+                    <i class="fa-regular fa-clock"></i> 6 min de lectura &nbsp;·&nbsp;
+                    <i class="fa-solid fa-tag"></i>
+                    <span class="severity-badge severity-low">BAJA SEVERIDAD TÉCNICA</span>
+                </p>
+            </div>
+
+            <div class="article-body">
+
+                <!-- RESUMEN EJECUTIVO -->
+                <div class="executive-summary">
+                    <p>
+                        <strong>Tipo de incidente:</strong> Confidencialidad y control de la información (error humano) <br>
+                        <strong>Contexto:</strong> Dinámica grupal dentro de un proceso de evaluación técnica <br>
+                        <strong>Vector:</strong> Uso incorrecto de funciones de correo electrónico (respuesta/reenvío masivo) <br>
+                        <strong>Impacto técnico:</strong> Ninguno (sin compromiso de sistemas, credenciales ni malware) <br>
+                        <strong>Impacto de proceso:</strong> Exposición de material de evaluación entre participantes
+                    </p>
+                </div>
+
+                <!-- CLASIFICACIÓN -->
+                <div class="threat-classification">
+                    <div class="classification-card">
+                        <div class="card-title">Principio afectado (CIA)</div>
+                        <div class="card-value">Confidencialidad<br><small style="color: var(--text-muted); font-size: 0.8rem; font-weight: 400;">Exposición no autorizada de información</small></div>
+                    </div>
+                    <div class="classification-card">
+                        <div class="card-title">Categoría</div>
+                        <div class="card-value">Error Humano<br><small style="color: var(--text-muted); font-size: 0.8rem; font-weight: 400;">Sin intencionalidad maliciosa</small></div>
+                    </div>
+                    <div class="classification-card">
+                        <div class="card-title">Marco de referencia</div>
+                        <div class="card-value">ISO 27001 A.6.3<br><small style="color: var(--text-muted); font-size: 0.8rem; font-weight: 400;">Concienciación y formación</small></div>
+                    </div>
+                    <div class="classification-card">
+                        <div class="card-title">Severidad de proceso</div>
+                        <div class="card-value">Media<br><small style="color: var(--text-muted); font-size: 0.8rem; font-weight: 400;">Afecta la integridad del proceso evaluativo</small></div>
+                    </div>
+                </div>
+
+                <!-- CONTEXTO -->
+                <section id="contexto">
+                    <h2 style="font-size: 1.4rem; font-weight: 700; color: #fff; margin: 40px 0 20px; padding-top: 24px; border-top: 1px solid var(--border);">
+                        <i class="fa-solid fa-info-circle" style="color: var(--accent); margin-right: 10px;"></i>
+                        Contexto
+                    </h2>
+
+                    <p>
+                        El incidente tuvo lugar durante una dinámica grupal en el marco de un proceso de evaluación técnica,
+                        desarrollada a través de correo electrónico y videollamada. El material en juego consistía en
+                        entregables individuales de una prueba práctica, cuyo canal de entrega previsto era exclusivamente
+                        el correo de los evaluadores, sin difusión entre el resto de participantes.
+                    </p>
+
+                    <p>
+                        No hubo compromiso de sistemas, explotación técnica ni malware involucrado. El origen del incidente
+                        fue un error de configuración de destinatarios en el envío de correo, combinado con una instrucción
+                        operativa comunicada únicamente de forma oral y sin confirmación escrita posterior.
+                    </p>
+                </section>
+
+                <!-- CRONOLOGÍA -->
+                <section id="cronologia">
+                    <h2 style="font-size: 1.4rem; font-weight: 700; color: #fff; margin: 40px 0 20px; padding-top: 24px; border-top: 1px solid var(--border);">
+                        <i class="fa-solid fa-timeline" style="color: var(--accent); margin-right: 10px;"></i>
+                        Cronología del Incidente
+                    </h2>
+
+                    <table class="technical-table">
+                        <thead>
+                            <tr>
+                                <th>Fase</th>
+                                <th>Descripción</th>
+                                <th>Riesgo asociado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1. Instrucción inicial</td>
+                                <td>Se comunica el envío de los entregables de la prueba</td>
+                                <td>Ninguno</td>
+                            </tr>
+                            <tr>
+                                <td>2. Ambigüedad operativa</td>
+                                <td>Una duda sobre qué archivos enviar se plantea verbalmente, sin registro escrito de la aclaración</td>
+                                <td>Error de interpretación por falta de confirmación escrita</td>
+                            </tr>
+                            <tr>
+                                <td>3. Fallo de control de destinatarios</td>
+                                <td>Un correo con material de evaluación se envía o reenvía al grupo completo de participantes en lugar de únicamente a los evaluadores</td>
+                                <td>Exposición lateral de información entre participantes</td>
+                            </tr>
+                            <tr>
+                                <td>4. Exposición</td>
+                                <td>El resto del grupo tiene acceso temporal a contenido que no le correspondía</td>
+                                <td>Pérdida de confidencialidad e igualdad de condiciones del proceso</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- ANÁLISIS -->
+                <section id="analisis">
+                    <h2 style="font-size: 1.4rem; font-weight: 700; color: #fff; margin: 40px 0 20px; padding-top: 24px; border-top: 1px solid var(--border);">
+                        <i class="fa-solid fa-microscope" style="color: var(--accent); margin-right: 10px;"></i>
+                        Análisis
+                    </h2>
+
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-light); margin: 24px 0 16px;">Activo comprometido</h3>
+                    <ul style="margin-left: 20px; padding-left: 20px;">
+                        <li style="margin-bottom: 12px;"><strong>Confidencialidad</strong> de entregables individuales y del proceso de evaluación</li>
+                        <li style="margin-bottom: 12px;"><strong>Integridad del proceso</strong>, en tanto la comparación entre participantes exige condiciones equivalentes</li>
+                        <li style="margin-bottom: 12px;"><strong>Privacidad</strong> de los datos de trabajo visibles por terceros no autorizados</li>
+                    </ul>
+
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-light); margin: 32px 0 16px;">Amenaza</h3>
+                    <p>
+                        No intencionada. El origen fue un error de usuario combinado con una práctica de correo deficiente.
+                        No se identificó intención maliciosa en ningún momento; el impacto se derivó exclusivamente de la
+                        ausencia de control sobre la difusión del mensaje.
+                    </p>
+
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-light); margin: 32px 0 16px;">Vulnerabilidades (no técnicas)</h3>
+                    <ul style="margin-left: 20px; padding-left: 20px;">
+                        <li style="margin-bottom: 12px;">Uso incorrecto de funciones de <strong>respuesta o reenvío masivo</strong></li>
+                        <li style="margin-bottom: 12px;">Instrucciones operativas críticas comunicadas <strong>solo de forma oral</strong>, sin checklist ni confirmación escrita</li>
+                        <li style="margin-bottom: 12px;">Ausencia de una regla explícita y visible del tipo: <em>"los entregables se envían únicamente a la dirección de evaluación, nunca a la lista de participantes"</em></li>
+                    </ul>
+
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-light); margin: 32px 0 16px;">Impacto</h3>
+                    <ul style="margin-left: 20px; padding-left: 20px;">
+                        <li style="margin-bottom: 12px;"><strong>Severidad técnica:</strong> baja — no hubo filtración a Internet ni exposición de credenciales</li>
+                        <li style="margin-bottom: 12px;"><strong>Severidad de proceso:</strong> media — afecta la confidencialidad entre participantes y la limpieza de la evaluación</li>
+                        <li style="margin-bottom: 12px;"><strong>Valor de concienciación:</strong> alto — es el mismo patrón de error que en un entorno corporativo produce incidentes de mayor alcance (por ejemplo, el envío accidental de información sensible a listas de distribución amplias)</li>
+                    </ul>
+                </section>
+
+                <!-- CONTROLES -->
+                <section id="controles">
+                    <h2 style="font-size: 1.4rem; font-weight: 700; color: #fff; margin: 40px 0 20px; padding-top: 24px; border-top: 1px solid var(--border);">
+                        <i class="fa-solid fa-shield-alt" style="color: var(--accent); margin-right: 10px;"></i>
+                        Controles que Habrían Mitigado el Incidente
+                    </h2>
+
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-light); margin: 24px 0 16px;">Preventivos</h3>
+                    <div class="key-takeaway">
+                        <ul>
+                            <li>Instrucción escrita e inequívoca sobre destinatario único y archivos a enviar, con indicación explícita de no usar "Responder a todos" ni reenviar a otros participantes</li>
+                            <li>Plantilla de envío con campos fijos: asunto, destinatario y lista de adjuntos esperados</li>
+                            <li>Canal único de entrega, como un formulario, una carpeta compartida con permisos restringidos o un buzón dedicado</li>
+                        </ul>
+                    </div>
+
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-light); margin: 32px 0 16px;">Detectivos</h3>
+                    <div class="key-takeaway">
+                        <ul>
+                            <li>Alertas de reenvío masivo a nivel de tenant, cuando el correo es corporativo</li>
+                            <li>Revisión de la lista de destinatarios antes de confirmar el envío, como hábito de usuario</li>
+                        </ul>
+                    </div>
+
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-light); margin: 32px 0 16px;">Correctivos</h3>
+                    <div class="key-takeaway">
+                        <ul>
+                            <li>Comunicación inmediata del organizador aclarando qué envíos son válidos y cuáles deben ignorarse</li>
+                            <li>Recordatorio de buenas prácticas de correo al cierre de la sesión</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- LECCIONES APRENDIDAS -->
+                <section id="lecciones">
+                    <h2 style="font-size: 1.4rem; font-weight: 700; color: #fff; margin: 40px 0 20px; padding-top: 24px; border-top: 1px solid var(--border);">
+                        <i class="fa-solid fa-graduation-cap" style="color: var(--accent); margin-right: 10px;"></i>
+                        Lecciones Aprendidas
+                    </h2>
+
+                    <div class="key-takeaway">
+                        <h3><i class="fa-solid fa-lightbulb"></i> Conclusiones Clave</h3>
+                        <ul>
+                            <li>La confidencialidad se compromete con más frecuencia por prácticas deficientes de correo electrónico que por vulnerabilidades técnicas sofisticadas</li>
+                            <li>Las funciones de reenvío o respuesta masiva actúan, en la práctica, como un control de acceso que queda en manos del usuario final</li>
+                            <li>Las instrucciones operativas ambiguas comunicadas solo de forma oral son un riesgo evitable: cuando la información es sensible, debe documentarse y confirmarse por escrito</li>
+                            <li>En un proceso de evaluación, el material de prueba constituye información sensible del propio proceso y debe tratarse con los mismos criterios de control de acceso que cualquier dato confidencial</li>
+                            <li>Observar y documentar un fallo sin amplificarlo es también una competencia relevante en seguridad de la información</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- POSTURA ADOPTADA -->
+                <section id="postura">
+                    <h2 style="font-size: 1.4rem; font-weight: 700; color: #fff; margin: 40px 0 20px; padding-top: 24px; border-top: 1px solid var(--border);">
+                        <i class="fa-solid fa-user-shield" style="color: var(--accent); margin-right: 10px;"></i>
+                        Postura Adoptada
+                    </h2>
+
+                    <p>
+                        Ante la exposición accidental, se optó por no reenviar el mensaje, no responder al hilo generado
+                        y no amplificar la difusión del incidente. El episodio se trató como una oportunidad de
+                        aprendizaje sobre concienciación en seguridad, priorizando completar y enviar los propios
+                        entregables por el canal correcto establecido.
+                    </p>
+
+                    <p>
+                        En términos de gestión de incidentes, esto equivale a priorizar la <strong>contención</strong>
+                        antes que cualquier otra consideración.
+                    </p>
+                </section>
+
+                <!-- MAPEO A MARCOS -->
+                <section id="marcos">
+                    <h2 style="font-size: 1.4rem; font-weight: 700; color: #fff; margin: 40px 0 20px; padding-top: 24px; border-top: 1px solid var(--border);">
+                        <i class="fa-solid fa-diagram-project" style="color: var(--accent); margin-right: 10px;"></i>
+                        Mapeo a Marcos de Referencia
+                    </h2>
+
+                    <table class="technical-table">
+                        <thead>
+                            <tr>
+                                <th>Concepto</th>
+                                <th>Aplicación en el caso</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>CIA — Confidencialidad</td>
+                                <td>Entregables individuales visibles para participantes no autorizados</td>
+                            </tr>
+                            <tr>
+                                <td>Principio de mínimo privilegio</td>
+                                <td>El grupo no requería acceso al trabajo de otros participantes</td>
+                            </tr>
+                            <tr>
+                                <td>Separación de funciones</td>
+                                <td>Los evaluadores no coinciden con la audiencia prevista de los entregables</td>
+                            </tr>
+                            <tr>
+                                <td>Concienciación (ISO 27001 A.6 / NIST awareness)</td>
+                                <td>Fallo enteramente humano, sin componente de explotación técnica</td>
+                            </tr>
+                            <tr>
+                                <td>Gestión de incidentes</td>
+                                <td>Contención (no reenvío), documentación y mejora de instrucciones futuras</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- CONCLUSIÓN -->
+                <section id="conclusion">
+                    <h2 style="font-size: 1.4rem; font-weight: 700; color: #fff; margin: 40px 0 20px; padding-top: 24px; border-top: 1px solid var(--border);">
+                        <i class="fa-solid fa-flag-checkered" style="color: var(--accent); margin-right: 10px;"></i>
+                        Conclusión
+                    </h2>
+
+                    <p>
+                        Este caso constituye un ejemplo aplicado de seguridad de la información centrado en el
+                        factor humano: una instrucción ambigua transmitida solo de forma verbal, seguida de un error
+                        de configuración de destinatarios, resultó en la exposición temporal de material sensible
+                        entre participantes de un mismo proceso.
+                    </p>
+
+                    <p>
+                        No fue necesaria una vulnerabilidad técnica para producir un incidente de confidencialidad
+                        real. El caso refuerza que la capacidad de diagnosticar redes, sistemas y herramientas de
+                        seguridad debe complementarse con la capacidad de reconocer y gestionar correctamente los
+                        fallos derivados del comportamiento humano, que en la práctica siguen siendo una de las
+                        causas más frecuentes de incidentes de confidencialidad.
+                    </p>
+                </section>
+
+                <!-- NOTA -->
+                <section id="nota">
+                    <p style="margin-top: 24px; font-size: 0.85rem; color: var(--text-muted); font-style: italic; padding-top: 16px; border-top: 1px solid var(--border);">
+                        <i class="fa-solid fa-info-circle" style="color: var(--accent); margin-right: 6px;"></i>
+                        Nota: caso real anonimizado correspondiente a un proceso de evaluación técnica grupal.
+                        No se identifican personas, organizaciones ni contenido de terceros; no se incluyen capturas
+                        de pantalla, nombres ni datos que permitan identificar a los participantes involucrados.
+                    </p>
+                </section>
+
+            </div>
+        </article>
+
+        <footer>
+            <p>Copyright &copy; 2026 Karitsu2281 — Hugo Flores Molina</p>
+            <p>
+                <a href="https://github.com/karitsu2281" target="_blank" rel="noopener noreferrer">GitHub</a>
+                &nbsp;·&nbsp;
+                <a href="https://www.linkedin.com/in/hugo-flores-molina-167247414" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            </p>
+            <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">
+                <i class="fa-solid fa-shield-alt" style="color: var(--accent); margin-right: 6px;"></i>
+                Casos de Estudio — Portfolio de Ciberseguridad
+            </p>
+        </footer>
+    </div>
+
+</body>
+
+</html>
