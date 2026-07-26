@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; img-src 'self' data:; script-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; connect-src 'self' https://api.duckduckgo.com; upgrade-insecure-requests;">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=()">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="robots" content="noai, noimageai">
+    <meta name="gptbot" content="noindex">
+    <meta name="googlebot" content="nosnippet">
+    <title>LogWise — Analizador Forense de Logs & Dumps — Karitsu2281</title>
+    <link rel="stylesheet" href="../../../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous">
+    <style>
+        :root {
+            --analysis-bg: #0d0e0c;
+            --card-bg: rgba(20, 22, 18, 0.85);
+            --accent-cyan: #5bc0be;
+            --accent-cyan-dim: rgba(91, 192, 190, 0.12);
+            --accent-cyan-border: rgba(91, 192, 190, 0.25);
+            --accent-red: #f87171;
+            --accent-orange: #fb923c;
+            --accent-yellow: #fbbf24;
+            --accent-green: #4ade80;
+            --accent-blue: #60a5fa;
+        }
+
+        .tool-header {
+            text-align: center;
+            padding: 60px 0 40px;
+        }
+
+        .tool-header h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .tool-header h1 span {
+            color: var(--accent-cyan);
+        }
+
+        .tool-header .subtitle {
+            font-size: 1rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .tool-header .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            background: var(--accent-cyan-dim);
+            border: 1px solid var(--accent-cyan-border);
+            border-radius: 4px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 16px;
+        }
+
+        .upload-zone {
+            background: var(--card-bg);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-lg);
+            padding: 60px 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .upload-zone:hover,
+        .upload-zone.dragover {
+            border-color: var(--accent-cyan);
+            background: var(--accent-cyan-dim);
+        }
+
+        .upload-zone.has-file {
+            border-style: solid;
+            border-color: var(--accent-cyan-border);
+        }
+
+        .upload-zone .icon {
+            font-size: 3rem;
+            color: var(--accent-cyan);
+            margin-bottom: 16px;
+            opacity: 0.6;
+        }
+
+        .upload-zone h2 {
+            font-size: 1.2rem;
+            color: #fff;
+            margin: 0 0 8px;
+            border: none;
+            padding: 0;
+        }
+
+        .upload-zone p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin: 0 0 4px;
+        }
+
+        .upload-zone .formats {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            opacity: 0.6;
+            margin-top: 12px;
+            font-family: var(--font-mono);
+        }
+
+        .upload-zone .file-info {
+            display: none;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius);
+            margin-top: 16px;
+            text-align: left;
+        }
+
+        .upload-zone .file-info.show {
+            display: block;
+        }
+
+        .upload-zone .file-info .name {
+            font-weight: 600;
+            color: var(--accent-cyan);
+            font-size: 0.95rem;
+        }
+
+        .upload-zone .file-info .meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .upload-zone input[type="file"] {
+            display: none;
+        }
+
+        .config-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 28px 32px;
+            margin-top: 20px;
+        }
+
+        .config-panel h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            margin: 0 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            padding: 0;
+        }
+
+        .config-panel h3 i {
+            color: var(--accent-cyan);
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .config-grid label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.88rem;
+            color: var(--text);
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: var(--radius);
+            background: rgba(0, 0, 0, 0.2);
+            transition: background 0.2s;
+        }
+
+        .config-grid label:hover {
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .config-grid input[type="checkbox"] {
+            accent-color: var(--accent-cyan);
+            width: 16px;
+            height: 16px;
+        }
+
+        .actions-bar {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .actions-bar .btn {
+            flex: 1;
+            justify-content: center;
+            min-width: 160px;
+        }
+
+        .btn-analyze {
+            background: var(--accent-cyan);
+            color: #000;
+        }
+
+        .btn-analyze:hover {
+            background: #4aadab;
+            transform: translateY(-1px);
+        }
+
+        .btn-analyze:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(0, 0, 0, 0.2);
+            border-top-color: #000;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .report {
+            display: none;
+            margin-top: 32px;
+        }
+
+        .report.show {
+            display: block;
+        }
+
+        .report-header {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .report-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-cyan) 0%, transparent 100%);
+        }
+
+        .report-header .title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .report-header h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 0;
+            border: none;
+            padding: 0;
+        }
+
+        .report-header h2 i {
+            color: var(--accent-cyan);
+            margin-right: 8px;
+        }
+
+        .report-header .timestamp {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .severity-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .severity-item {
+            text-align: center;
+            padding: 16px 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+
+        .severity-item .count {
+            font-size: 1.8rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .severity-item .label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-top: 6px;
+            font-family: var(--font-display);
+        }
+
+        .severity-item.critical .count { color: var(--accent-red); }
+        .severity-item.high .count { color: var(--accent-orange); }
+        .severity-item.medium .count { color: var(--accent-yellow); }
+        .severity-item.low .count { color: var(--accent-green); }
+        .severity-item.info .count { color: var(--accent-blue); }
+
+        .severity-item.critical { border-color: rgba(248, 113, 113, 0.3); }
+        .severity-item.high { border-color: rgba(251, 146, 60, 0.3); }
+        .severity-item.medium { border-color: rgba(251, 191, 36, 0.3); }
+        .severity-item.low { border-color: rgba(74, 222, 128, 0.3); }
+        .severity-item.info { border-color: rgba(96, 165, 250, 0.3); }
+
+        .findings-section {
+            margin-top: 24px;
+        }
+
+        .findings-section h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            margin: 0 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            padding: 0;
+        }
+
+        .finding-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin-bottom: 12px;
+            position: relative;
+            border-left: 4px solid var(--text-muted);
+        }
+
+        .finding-card.severity-critical { border-left-color: var(--accent-red); }
+        .finding-card.severity-high { border-left-color: var(--accent-orange); }
+        .finding-card.severity-medium { border-left-color: var(--accent-yellow); }
+        .finding-card.severity-low { border-left-color: var(--accent-green); }
+        .finding-card.severity-info { border-left-color: var(--accent-blue); }
+
+        .finding-card .finding-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .finding-card .finding-title {
+            font-weight: 600;
+            color: #fff;
+            font-size: 0.95rem;
+        }
+
+        .finding-card .finding-severity {
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 3px 10px;
+            border-radius: 3px;
+            white-space: nowrap;
+            font-family: var(--font-display);
+        }
+
+        .finding-card .finding-severity.s-critical { background: rgba(248, 113, 113, 0.15); color: var(--accent-red); border: 1px solid rgba(248, 113, 113, 0.3); }
+        .finding-card .finding-severity.s-high { background: rgba(251, 146, 60, 0.15); color: var(--accent-orange); border: 1px solid rgba(251, 146, 60, 0.3); }
+        .finding-card .finding-severity.s-medium { background: rgba(251, 191, 36, 0.15); color: var(--accent-yellow); border: 1px solid rgba(251, 191, 36, 0.3); }
+        .finding-card .finding-severity.s-low { background: rgba(74, 222, 128, 0.15); color: var(--accent-green); border: 1px solid rgba(74, 222, 128, 0.3); }
+        .finding-card .finding-severity.s-info { background: rgba(96, 165, 250, 0.15); color: var(--accent-blue); border: 1px solid rgba(96, 165, 250, 0.3); }
+
+        .finding-card .finding-detail {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .finding-card .finding-detail strong {
+            color: var(--text);
+        }
+
+        .finding-card .finding-remediation {
+            margin-top: 12px;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-left: 3px solid var(--accent-cyan);
+        }
+
+        .finding-card .finding-remediation strong {
+            color: var(--accent-cyan);
+        }
+
+        .finding-card .finding-mitre {
+            margin-top: 8px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        .finding-card .finding-mitre strong {
+            color: var(--accent-yellow);
+        }
+
+        .finding-card .finding-line {
+            margin-top: 6px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            background: rgba(0, 0, 0, 0.4);
+            padding: 6px 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .no-findings {
+            text-align: center;
+            padding: 48px 24px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+        }
+
+        .no-findings .icon {
+            font-size: 3rem;
+            color: var(--accent-green);
+            margin-bottom: 12px;
+            opacity: 0.6;
+        }
+
+        .no-findings h3 {
+            font-size: 1.1rem;
+            color: #fff;
+            margin: 0 0 8px;
+            border: none;
+            padding: 0;
+        }
+
+        .no-findings p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .article-body > p:first-of-type::first-letter {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .upload-zone {
+                padding: 40px 20px;
+            }
+            .config-panel {
+                padding: 20px;
+            }
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+            .report-header {
+                padding: 24px 20px;
+            }
+            .finding-card {
+                padding: 16px;
+            }
+            .research-bar {
+                flex-wrap: wrap;
+            }
+            .research-btn {
+                font-size: 0.72rem;
+                padding: 4px 10px;
+            }
+        }
+
+        .research-bar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .research-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            font-family: var(--font-display);
+            margin-right: 4px;
+        }
+
+        .research-label i {
+            margin-right: 3px;
+            color: var(--accent-cyan);
+        }
+
+        .research-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 12px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.25);
+            color: var(--text-muted);
+        }
+
+        .research-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .research-btn.ddg:hover { background: rgba(255, 95, 0, 0.15); border-color: #de5833; color: #de5833; }
+        .research-btn.so:hover { background: rgba(244, 128, 36, 0.15); border-color: #f48024; color: #f48024; }
+        .research-btn.sf:hover { background: rgba(185, 79, 43, 0.15); border-color: #b94f2b; color: #b94f2b; }
+        .research-btn.ms:hover { background: rgba(0, 120, 212, 0.15); border-color: #0078d4; color: #0078d4; }
+        .research-btn.mitre:hover { background: rgba(187, 30, 40, 0.15); border-color: #bb1e28; color: #bb1e28; }
+
+        .ddg-search-btn {
+            background: rgba(91, 192, 190, 0.12);
+            border-color: var(--accent-cyan-border);
+            color: var(--accent-cyan);
+        }
+        .ddg-search-btn:hover {
+            background: rgba(91, 192, 190, 0.25);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+        .ddg-search-btn .spinner {
+            border-color: rgba(91, 192, 190, 0.3);
+            border-top-color: var(--accent-cyan);
+        }
+
+        .ddg-results {
+            margin-top: 12px;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .ddg-loading {
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ddg-header {
+            font-weight: 600;
+            color: var(--accent-cyan);
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .ddg-abstract {
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .ddg-source {
+            font-size: 0.78rem;
+            margin-bottom: 10px;
+        }
+        .ddg-source a { color: var(--accent-cyan); }
+
+        .ddg-topics ul, .ddg-results-list ul {
+            margin: 6px 0 6px 16px;
+            padding: 0;
+        }
+        .ddg-topics li, .ddg-results-list li {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .ddg-results-list a { color: var(--accent); }
+
+        .ddg-empty {
+            color: var(--text-muted);
+            font-style: italic;
+            padding: 8px 0;
+        }
+
+        .ddg-error {
+            color: var(--accent-red);
+            padding: 8px 0;
+        }
+
+        .ddg-footer {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            opacity: 0.6;
+            margin-top: 8px;
+            padding-top: 6px;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="../../../index.html" class="nav-logo"><i class="fa-solid fa-terminal"></i> Karitsu2281</a>
+            <ul class="nav-links">
+                <li><a href="../../../index.html#proyectos">Proyectos</a></li>
+                <li><a href="../../../index.html#perfil">Perfil</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <article class="article">
+            <a href="../../../index.html" class="back-link"><i class="fa-solid fa-chevron-left"></i> Volver al portfolio</a>
+
+            <div class="article-header">
+                <span class="badge"><i class="fa-solid fa-microscope"></i> Herramienta · Análisis Forense</span>
+                <h1>LogWise: Analizador Forense</h1>
+                <p class="meta"><i class="fa-regular fa-calendar"></i> Julio 2026 &nbsp;·&nbsp; <i class="fa-solid fa-shield-halved"></i> Análisis de Logs & Dumps &nbsp;·&nbsp; <i class="fa-solid fa-code"></i> 100% cliente · sin red</p>
+            </div>
+
+            <div class="article-body">
+
+                <p>Analiza logs de <strong>Linux</strong> (syslog, journald, kernel) y Windows (Event Log, <code>.dmp</code>) directamente en tu navegador. El motor identifica errores del sistema, fallos de hardware, ataques de seguridad, problemas de red, y mucho más usando más de <strong>120 firmas</strong> en 8 categorías. Todo se procesa localmente — ningún dato sale de tu máquina.</p>
+
+                <div class="tool-header">
+                    <div class="badge"><i class="fa-solid fa-shield"></i> Zero red · Zero dependencias externas</div>
+                </div>
+
+                <div class="upload-zone" id="dropZone">
+                    <div class="icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                    <h2>Sube un archivo para analizar</h2>
+                    <p>Arrastra y suelta o haz clic para seleccionar</p>
+                    <p class="formats">Soportados: .log · .txt · .dmp · .evtx · .syslog · .csv · journalctl · dmesg</p>
+                    <div class="file-info" id="fileInfo">
+                        <div class="name" id="fileName"></div>
+                        <div class="meta" id="fileMeta"></div>
+                    </div>
+                    <input type="file" id="fileInput" accept=".log,.txt,.dmp,.evtx,.syslog,.csv,.json">
+                </div>
+
+                <div class="config-panel">
+                    <h3><i class="fa-solid fa-sliders"></i> Configuración de análisis</h3>
+                    <div class="config-grid">
+                        <label><input type="checkbox" id="cfgLinux" checked> Sistema Linux</label>
+                        <label><input type="checkbox" id="cfgWindows" checked> Eventos Windows</label>
+                        <label><input type="checkbox" id="cfgAuth" checked> Autenticación</label>
+                        <label><input type="checkbox" id="cfgWeb" checked> Ataques Web</label>
+                        <label><input type="checkbox" id="cfgMalware" checked> Malware & TTPs</label>
+                        <label><input type="checkbox" id="cfgNetwork" checked> Red & Firewall</label>
+                        <label><input type="checkbox" id="cfgCrash" checked> Crash & Dumps</label>
+                        <label><input type="checkbox" id="cfgCompliance" checked> Compliance</label>
+                    </div>
+                    <div class="actions-bar">
+                        <button type="button" id="analyzeBtn" class="btn btn-analyze" disabled><i class="fa-solid fa-flask"></i> Analizar</button>
+                        <button type="button" id="resetBtn" class="btn btn-outline"><i class="fa-solid fa-rotate"></i> Limpiar</button>
+                    </div>
+                </div>
+
+                <div class="report" id="report">
+                    <div class="report-header">
+                        <div class="title-row">
+                            <h2><i class="fa-solid fa-file-lines"></i> <span id="reportTitle">Informe de Análisis</span></h2>
+                            <span class="timestamp" id="reportTimestamp"></span>
+                        </div>
+                        <div class="severity-summary" id="severitySummary"></div>
+                    </div>
+
+                    <div class="findings-section">
+                        <h3><i class="fa-solid fa-list"></i> Hallazgos</h3>
+                        <div id="findingsList"></div>
+                    </div>
+
+                    <div class="actions-bar" style="margin-top:24px">
+                        <button type="button" id="exportBtn" class="btn btn-outline"><i class="fa-solid fa-download"></i> Exportar Informe (JSON)</button>
+                        <button type="button" id="printBtn" class="btn btn-outline"><i class="fa-solid fa-print"></i> Imprimir</button>
+                    </div>
+                </div>
+
+                <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 32px; padding: 16px 20px; background: rgba(91, 192, 190, 0.06); border: 1px solid rgba(91, 192, 190, 0.25); border-left: 3px solid var(--accent-cyan); border-radius: 6px; line-height: 1.65;">
+                    <i class="fa-solid fa-circle-info" style="color: var(--accent-cyan); margin-right: 6px;"></i>
+                    <strong style="color: #fff;">Nota:</strong> Esta herramienta procesa todo localmente en tu navegador.
+                    Los archivos <code>.dmp</code> se analizan extrayendo cadenas de texto incrustadas; no se realiza un parsing completo del formato binario.
+                    Para un análisis forense profundo de volcados de memoria, usa herramientas como <strong>WinDbg</strong>, <strong>Volatility</strong> o <strong>Recuva</strong>.
+                </p>
+
+            </div>
+        </article>
+
+        <footer>
+            <p>Copyright &copy; 2026 Karitsu2281</p>
+            <p>
+                <a href="https://github.com/karitsu2281" target="_blank" rel="noopener noreferrer">GitHub</a>
+                &nbsp;·&nbsp;
+                <a href="https://www.linkedin.com/in/hugo-flores-molina-167247414" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            </p>
+        </footer>
+
+    </div>
+
+    <script src="./analyzer.js"></script>
+</body>
+
+</html>
